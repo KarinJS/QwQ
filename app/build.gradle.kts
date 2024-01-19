@@ -187,5 +187,7 @@ dependencies {
     compileOnly("de.robv.android.xposed:api:82")
     compileOnly(project(":qqinterface"))
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0-RC2")
+    implementation("com.google.protobuf:protobuf-java:3.24.0")
     implementation("androidx.core:core-ktx:1.12.0")
 }

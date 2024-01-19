@@ -6,8 +6,10 @@ import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import moe.fuqiuluo.xposed.loader.LuoClassloader
-import moe.qwq.miko.tools.FuzzySearchClass
-import moe.qwq.miko.tools.afterHook
+import moe.qwq.miko.ext.FuzzySearchClass
+import moe.qwq.miko.tools.MMKVTools
+import moe.qwq.miko.tools.PlatformTools
+import moe.qwq.miko.ext.afterHook
 import mqq.app.MobileQQ
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -98,7 +100,11 @@ class MainEntry: IXposedHookLoadPackage {
 
             secStaticStageInited = true
 
+            if(PlatformTools.isTim()) {
+                MMKVTools.initMMKV(ctx)
+            }
 
+            ActionManager.runFirst(ctx)
         }
     }
 

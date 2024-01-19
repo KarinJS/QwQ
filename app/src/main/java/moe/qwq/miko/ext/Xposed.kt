@@ -1,4 +1,4 @@
-package moe.qwq.miko.tools
+package moe.qwq.miko.ext
 
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XC_MethodHook.MethodHookParam

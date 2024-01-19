@@ -1,4 +1,4 @@
-package moe.qwq.miko.tools
+package moe.qwq.miko.ext
 
 import java.util.Locale
 
