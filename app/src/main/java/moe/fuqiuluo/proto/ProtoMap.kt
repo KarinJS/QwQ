@@ -4,7 +4,7 @@ import com.google.protobuf.ByteString
 import com.google.protobuf.CodedOutputStream
 import com.google.protobuf.WireFormat
 import kotlinx.serialization.json.JsonElement
-import moe.fuqiuluo.shamrock.tools.jsonObject
+import moe.qwq.miko.ext.jsonObject
 
 class ProtoMap(
     val value: HashMap<Int, ProtoValue>,

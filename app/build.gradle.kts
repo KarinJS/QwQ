@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    kotlin("plugin.serialization") version "1.9.21"
 }
 
 android {
@@ -188,6 +189,7 @@ dependencies {
     compileOnly(project(":qqinterface"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0-RC2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     implementation("com.google.protobuf:protobuf-java:3.24.0")
     implementation("androidx.core:core-ktx:1.12.0")
 }

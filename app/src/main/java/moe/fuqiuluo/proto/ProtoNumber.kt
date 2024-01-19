@@ -2,7 +2,7 @@ package moe.fuqiuluo.proto
 
 import com.google.protobuf.CodedOutputStream
 import kotlinx.serialization.json.JsonElement
-import moe.fuqiuluo.shamrock.tools.json
+import moe.qwq.miko.ext.json
 
 class ProtoNumber(
     val value: Number
