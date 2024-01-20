@@ -2,12 +2,15 @@ package moe.qwq.miko
 
 import android.content.Context
 import moe.qwq.miko.actions.Broadcast
+import moe.qwq.miko.actions.BrowserAccessRestrictions
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.actions.PacketHijacker
 
 object ActionManager {
     private val FIRST_ACTION = arrayOf(
         Broadcast::class.java,
+
+        BrowserAccessRestrictions::class.java,
         PacketHijacker::class.java
     )
 
