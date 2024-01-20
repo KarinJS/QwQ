@@ -43,7 +43,7 @@ internal fun Class<*>.hookMethod(name: String): XCHook {
 
 internal fun beforeHook(ver: Int = XCallback.PRIORITY_DEFAULT, block: (param: XC_MethodHook.MethodHookParam) -> Unit): XC_MethodHook {
     return object :XC_MethodHook(ver) {
-        override fun afterHookedMethod(param: MethodHookParam) {
+        override fun beforeHookedMethod(param: MethodHookParam) {
             block(param)
         }
     }
@@ -124,9 +124,9 @@ object FuzzySearchClass {
         return list
     }
 
-    fun findClassByMethod(prefix: String, check: (Class<*>, Method) -> Boolean): Class<*>? {
+    fun findClassByMethod(prefix: String, isSubClass: Boolean = false, check: (Class<*>, Method) -> Boolean): Class<*>? {
         dic.forEach { className ->
-            val clz = LuoClassloader.load("$prefix.$className")
+            val clz = LuoClassloader.load("$prefix${if (isSubClass) "$" else "."}$className")
             clz?.methods?.forEach {
                 if (check(clz, it)) return clz
             }
@@ -134,19 +134,25 @@ object FuzzySearchClass {
         return null
     }
 
-    private fun isBaseType(clz: Class<*>): Boolean {
-        if (
-            clz == Long::class.java ||
-            clz == Double::class.java ||
-            clz == Float::class.java ||
-            clz == Int::class.java ||
-            clz == Short::class.java ||
-            clz == Char::class.java ||
-            clz == Byte::class.java
-        ) {
-            return true
+    fun findClassesByMethod(prefix: String, isSubClass: Boolean = false, check: (Class<*>, Method) -> Boolean): List<Class<*>> {
+        val arrayList = arrayListOf<Class<*>>()
+        dic.forEach { className ->
+            val clz = LuoClassloader.load("$prefix${if (isSubClass) "$" else "."}$className")
+            clz?.methods?.forEach {
+                if (check(clz, it)) arrayList.add(clz)
+            }
         }
-        return false
+        return arrayList
+    }
+
+    private fun isBaseType(clz: Class<*>): Boolean {
+        return clz == Long::class.java ||
+                clz == Double::class.java ||
+                clz == Float::class.java ||
+                clz == Int::class.java ||
+                clz == Short::class.java ||
+                clz == Char::class.java ||
+                clz == Byte::class.java
     }
 }
 

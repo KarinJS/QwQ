@@ -13,8 +13,6 @@ class Broadcast: IAction {
         //    MobileQQ.getMobileQQ().unregisterReceiver(DynamicReceiver)
         //}
 
-        if (PlatformTools.isMainProcess()) {
-            GlobalUi = Handler(ctx.mainLooper)
-        }
+        GlobalUi = Handler(ctx.mainLooper)
     }
 }

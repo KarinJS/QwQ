@@ -51,8 +51,7 @@ object MsgPush: IHijacker {
 
                 else -> false
             }
-        } catch (e: Throwable) {
-            XposedBridge.log(e)
+        } catch (_: Throwable) {
         }
         return false
     }
