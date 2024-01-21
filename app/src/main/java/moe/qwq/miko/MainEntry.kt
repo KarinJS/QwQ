@@ -144,7 +144,6 @@ class MainEntry: IXposedHookLoadPackage {
 
     companion object {
         @JvmStatic var secStaticStageInited = false
-        @JvmStatic var sec_static_nativehook_inited = false
 
         internal const val PACKAGE_NAME_QQ = "com.tencent.mobileqq"
         internal const val PACKAGE_NAME_QQ_INTERNATIONAL = "com.tencent.mobileqqi"

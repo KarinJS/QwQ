@@ -1,7 +1,12 @@
 package moe.qwq.miko.tools
 
-object QwQSetting {
+import mqq.app.MobileQQ
 
+object QwQSetting {
+    private val DataDir = MobileQQ.getContext().getExternalFilesDir(null)!!
+        .parentFile!!.resolve("Tencent/QwQ").also {
+            it.mkdirs()
+        }
 
     /**
      * 是否拦截撤回消息事件
@@ -26,4 +31,13 @@ object QwQSetting {
             MMKVTools.mmkvWithId("qwq")
                 .putBoolean("anti_browser_access_restriction", value)
         }
+
+    val settingUrl: String
+        get() = DataDir.resolve("domain").also {
+            if (!it.exists()) {
+                it.createNewFile()
+                it.writeText("qwq.owo233.com")
+            }
+        }.readText()
+
 }

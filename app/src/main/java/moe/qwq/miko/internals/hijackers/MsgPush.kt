@@ -58,6 +58,7 @@ object MsgPush: IHijacker {
 
     private fun onGroupRecall(msgTime: Long, pb: ProtoMap): Boolean {
         if (QwQSetting.interceptRecall) {
+
             return true
         }
         return false
