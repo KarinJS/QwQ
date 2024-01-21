@@ -1,6 +1,7 @@
 package com.tencent.mobileqq.app;
 
 import com.tencent.common.app.business.BaseQQAppInterface;
+import com.tencent.imcore.message.QQMessageFacade;
 
 import mqq.manager.Manager;
 
@@ -24,6 +25,10 @@ public class QQAppInterface extends BaseQQAppInterface {
     }
 
     public void syncOnlineFriend() {
+    }
+
+    public QQMessageFacade getMessageFacade() {
+        return null;
     }
 
     public MessageHandler getMsgHandler() {

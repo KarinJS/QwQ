@@ -9,8 +9,6 @@ import moe.qwq.miko.ext.EMPTY_BYTE_ARRAY
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.ext.slice
 import moe.qwq.miko.internals.hijackers.IHijacker
-import moe.qwq.miko.internals.hijackers.InfoSyncPush
-import moe.qwq.miko.internals.hijackers.MsgPush
 import moe.qwq.miko.tools.PlatformTools
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -83,9 +81,6 @@ class PacketHijacker: IAction {
         get() = ActionProcess.MSF
 
     companion object {
-        private val packetHijackers = hashMapOf(
-            "trpc.msg.olpush.OlPushService.MsgPush" to MsgPush,
-            "trpc.msg.register_proxy.RegisterProxy.InfoSyncPush" to InfoSyncPush
-        )
+        private val packetHijackers = hashMapOf<String, IHijacker>()
     }
 }

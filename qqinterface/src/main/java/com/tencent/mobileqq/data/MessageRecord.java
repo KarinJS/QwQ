@@ -322,5 +322,11 @@ public class MessageRecord {
     public void setSelfIsConfessor(boolean z) {
     }
 
+    public void init(String selfuin, String frienduin, String senderuin, String msg, long time, int msgtype, int istroop, long msgseq) {
 
+    }
+
+    public void init(long j2, long j3, long j4, String str, long j5, int i2, int i3, long j6) {
+
+    }
 }

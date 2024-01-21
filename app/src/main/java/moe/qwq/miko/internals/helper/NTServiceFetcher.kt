@@ -1,15 +1,16 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package moe.qwq.miko.internals.helper
 
 import com.tencent.qqnt.kernel.api.IKernelService
 import com.tencent.qqnt.kernel.api.impl.MsgService
-import com.tencent.qqnt.kernel.nativeinterface.IKernelGroupService
-import com.tencent.qqnt.kernel.nativeinterface.IKernelMsgListener
 import de.robv.android.xposed.XposedBridge
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.protobuf.ProtoBuf
+import moe.fuqiuluo.entries.MessagePush
 import moe.qwq.miko.ext.hookMethod
-import moe.qwq.miko.tools.PlatformTools
-import moe.qwq.miko.tools.QwQSetting
+import moe.qwq.miko.internals.AioListener
 
 internal object NTServiceFetcher {
     private lateinit var iKernelService: IKernelService
@@ -22,21 +23,29 @@ internal object NTServiceFetcher {
 
         curKernelHash = curHash
         this.iKernelService = service
-        initNTKernelListener(msgService)
+        initNTKernel(msgService)
     }
 
     private inline fun isInitForNt(hash: Int): Boolean {
         return hash == curKernelHash
     }
 
-    private fun initNTKernelListener(msgService: MsgService) {
-        XposedBridge.log("[QwQ] Init NT Kernel Listener.")
-        msgService.javaClass.hookMethod("addMsgListener").before {
-            val listener = it.args[0] as IKernelMsgListener
-            listener.javaClass.hookMethod("onMsgRecall").before {
-                if (QwQSetting.interceptRecall) it.result = Unit
+    private fun initNTKernel(msgService: MsgService) {
+        XposedBridge.log("[QwQ] Init NT Kernel.")
+
+        kernelService.wrapperSession.javaClass.hookMethod("onMsfPush").before {
+            val cmd = it.args[0] as String
+            val buffer = it.args[1] as ByteArray
+            if (cmd == "trpc.msg.register_proxy.RegisterProxy.InfoSyncPush") {
+
+            } else if (cmd == "trpc.msg.olpush.OlPushService.MsgPush") {
+                val msgPush = ProtoBuf.decodeFromByteArray<MessagePush>(buffer)
+                if (AioListener.onMsgPush(msgPush)) {
+                    it.result = Unit
+                }
             }
         }
+
 
     }
 

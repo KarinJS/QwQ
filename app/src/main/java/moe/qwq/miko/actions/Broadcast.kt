@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import moe.qwq.miko.ext.GlobalUi
 import moe.qwq.miko.internals.broadcasts.BroadcastRequest
 import moe.qwq.miko.internals.broadcasts.DynamicReceiver
-import moe.qwq.miko.internals.receiver.MsgRecall
+import moe.qwq.miko.internals.receiver.IBroadcastReceiver
 import moe.qwq.miko.tools.PlatformTools
 import mqq.app.MobileQQ
 
@@ -39,7 +39,11 @@ class Broadcast: IAction {
 
                 mainReceivers.forEach {
                     DynamicReceiver.register(it.getCommand(), BroadcastRequest { intent ->
-                        it.onReceive(MobileQQ.getContext(), intent)
+                        runCatching {
+                            it.onReceive(MobileQQ.getContext(), intent)
+                        }.onFailure {
+                            XposedBridge.log(it)
+                        }
                     })
                 }
 
@@ -61,8 +65,6 @@ class Broadcast: IAction {
     }
 
     companion object {
-        private val mainReceivers = arrayOf(
-            MsgRecall
-        )
+        private val mainReceivers = arrayOf<IBroadcastReceiver>()
     }
 }

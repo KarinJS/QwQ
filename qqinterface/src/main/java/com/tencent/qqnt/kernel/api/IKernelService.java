@@ -8,4 +8,6 @@ public interface IKernelService extends IRuntimeService {
     IQQNTWrapperSession getWrapperSession();
 
     boolean isInit();
+
+    void onMsfPush(String str, byte[] bArr);
 }
