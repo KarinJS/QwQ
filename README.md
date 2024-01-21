@@ -24,6 +24,12 @@ QwQ 是基于 LSPosed 实现的类似于QAuxiliary的通用性QQ增强LSPosed模
 - 安卓版本 >= 8.1
 - QQ版本 >= 8.9.60
 
+## 使用方法
+
+> 访问 ``qwq.dev`` 或者 ``qwq.qq.com`` 即可进入设置界面
+> 设置界面采用的是 **element-plus** + **vue** 实现
+> 您可以通过编辑``/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QwQ/domain``中的域名，将设置界面定义到您的自定义美化设置界面站点，通过QwQ开放的Js桥接口，实现您需要的功能。
+
 ## 权限声明
 
 > 如出现未在此处声明的权限，请警惕 QwQ 是否被修改/植入恶意代码
