@@ -20,7 +20,9 @@ import moe.fuqiuluo.entries.Message
 import moe.fuqiuluo.entries.MessageHead
 import moe.fuqiuluo.entries.MessagePush
 import moe.fuqiuluo.entries.RecallMessage
+import moe.qwq.miko.ext.ifNullOrEmpty
 import moe.qwq.miko.internals.helper.ContactHelper
+import moe.qwq.miko.internals.helper.GroupHelper
 import moe.qwq.miko.internals.helper.LocalGrayTips
 import moe.qwq.miko.tools.MessageHelper
 import moe.qwq.miko.tools.PlatformTools
@@ -85,27 +87,37 @@ object AioListener {
 
             val groupCode = message.msgHead.peerId
             val msgUid = message.content.msgUid
-            val targetUid = recallData.operation.msgInfo?.senderUid ?: "0"
-            val operatorUid = recallData.operation.operatorUid ?: "0"
+            val targetUid = recallData.operation.msgInfo?.senderUid ?: ""
+            val operatorUid = recallData.operation.operatorUid ?: ""
             val msgSeq = recallData.operation.msgInfo?.msgSeq ?: 0L
             val wording = recallData.operation.wording?.wording ?: ""
 
             val target = ContactHelper.getUinByUidAsync(targetUid)
             val operator = ContactHelper.getUinByUidAsync(operatorUid)
 
+            val targetInfo = if (targetUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode.toString(), target).getOrNull()
+            val targetNick = targetInfo?.troopnick
+                .ifNullOrEmpty(targetInfo?.friendnick) ?: target
+            val operatorInfo = if (operatorUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode.toString(), operator).getOrNull()
+            val operatorNick = operatorInfo?.troopnick
+                .ifNullOrEmpty(operatorInfo?.friendnick) ?: operator
+
             runCatching {
                 val contact = ContactHelper.generateContact(
                     chatType = MsgConstant.KCHATTYPEGROUP,
                     id = groupCode.toString()
                 )
-                LocalGrayTips.addLocalGrayTip(contact, JsonGrayBusiId.AIO_AV_GROUP_NOTICE, LocalGrayTips.Align.CENTER) {
-                    member(operatorUid, operator, "操作者", "3")
+                LocalGrayTips.addLocalGrayTip(contact, JsonGrayBusiId.AIO_ROBOT_SAFETY_TIP, LocalGrayTips.Align.CENTER) {
+                    member(operatorUid, operator, operatorNick, "3")
                     text("尝试撤回")
-                    member(targetUid, target, "目标", "3")
+                    if (targetUid == operatorUid) {
+                        text("自己")
+                    } else {
+                        member(targetUid, target, targetNick, "3")
+                    }
                     text("的")
                     msgRef("消息", msgSeq)
-                    text("，但是失败了")
-                    image("https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png", "Baidu")
+                    text("，但是失败了！")
                 }
             }.onFailure {
                 XposedBridge.log(it)
