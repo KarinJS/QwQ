@@ -2,8 +2,6 @@ package com.tencent.qqnt.kernel.nativeinterface;
 
 import java.io.Serializable;
 
-/* compiled from: P */
-/* loaded from: classes2.dex */
 public final class RevokeElement implements Serializable {
     boolean isSelfOperate;
     String operatorMemRemark;
@@ -63,19 +61,16 @@ public final class RevokeElement implements Serializable {
         return "RevokeElement{operatorTinyId=" + this.operatorTinyId + ",operatorRole=" + this.operatorRole + ",operatorUid=" + this.operatorUid + ",operatorNick=" + this.operatorNick + ",operatorRemark=" + this.operatorRemark + ",operatorMemRemark=" + this.operatorMemRemark + ",origMsgSenderUid=" + this.origMsgSenderUid + ",isSelfOperate=" + this.isSelfOperate + ",wording=" + this.wording + ",}";
     }
 
-    public RevokeElement(long j2, long j3, String str, String str2, String str3, String str4, String str5, boolean z, String str6) {
+    public RevokeElement(long tinyId, long role, String operatorUid, String operatorNick, String operatorRemark, String operatorMemRemark, String origMsgSenderUid, boolean isSelfOperate, String wording) {
         this.serialVersionUID = 1L;
-        this.operatorUid = "";
-        this.origMsgSenderUid = "";
-        this.wording = "";
-        this.operatorTinyId = j2;
-        this.operatorRole = j3;
-        this.operatorUid = str;
-        this.operatorNick = str2;
-        this.operatorRemark = str3;
-        this.operatorMemRemark = str4;
-        this.origMsgSenderUid = str5;
-        this.isSelfOperate = z;
-        this.wording = str6;
+        this.operatorTinyId = tinyId;
+        this.operatorRole = role;
+        this.operatorUid = operatorUid;
+        this.operatorNick = operatorNick;
+        this.operatorRemark = operatorRemark;
+        this.operatorMemRemark = operatorMemRemark;
+        this.origMsgSenderUid = origMsgSenderUid;
+        this.isSelfOperate = isSelfOperate;
+        this.wording = wording;
     }
 }

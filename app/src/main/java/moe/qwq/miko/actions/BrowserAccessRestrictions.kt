@@ -19,7 +19,6 @@ class BrowserAccessRestrictions: IAction {
         FuzzySearchClass.findClassesByMethod(WebSecurityPluginV2Plugin.name, isSubClass = true) { clz, method ->
             method.parameterCount == 1 && method.parameterTypes[0] == Bundle::class.java
         }.forEach {
-            //ctx.toast(it.name)
             it.declaredMethods.filter {
                 it.parameterCount == 1 && it.parameterTypes[0] == Bundle::class.java
             }.forEach {
@@ -28,7 +27,6 @@ class BrowserAccessRestrictions: IAction {
                     if (bundle.getInt("jumpResult", 0) != 0) {
                         bundle.putInt("jumpResult", 0)
                         bundle.putString("jumpUrl", "")
-                        //ctx.toast("阻止浏览器安全拦截")
                     }
                 })
             }

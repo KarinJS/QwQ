@@ -2,7 +2,15 @@ package moe.qwq.miko.internals.receiver
 
 import android.content.Context
 import android.content.Intent
+import com.tencent.mobileqq.qroute.QRoute
+import com.tencent.qqnt.kernel.nativeinterface.GrayTipElement
+import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
+import com.tencent.qqnt.kernel.nativeinterface.MsgElement
+import com.tencent.qqnt.kernel.nativeinterface.RevokeElement
+import com.tencent.qqnt.msg.api.IMsgService
+import de.robv.android.xposed.XposedBridge
 import moe.qwq.miko.internals.broadcasts.DynamicReceiver
+import moe.qwq.miko.internals.helper.ContactHelper
 
 @BroadcastReceiver(ReceiveScope.MSF)
 object MsgRecall: IBroadcastReceiver {
@@ -14,6 +22,14 @@ object MsgRecall: IBroadcastReceiver {
         val msgSeq = intent.getLongExtra("msgSeq", 0)
         val tipText = intent.getStringExtra("tipText") ?: ""
 
+        XposedBridge.log("撤回消息事件")
+        val contact = ContactHelper.generateContact(chatType, peerId)
+        val msgService = QRoute.api(IMsgService::class.java)
+        msgService.addSendMsg(contact, arrayListOf(MsgElement().also {
+            it.elementType = MsgConstant.KELEMTYPEGRAYTIP
+            val revokeElement = RevokeElement(0L, 0L, operatorUid, "A", "B", "C", targetUid, false, "天才：$tipText")
+            it.grayTipElement = GrayTipElement(MsgConstant.GRAYTIPELEMENTSUBTYPEREVOKE, revokeElement, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+        }))
     }
 
     operator fun invoke(

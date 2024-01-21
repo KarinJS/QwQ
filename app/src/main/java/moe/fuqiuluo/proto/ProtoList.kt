@@ -5,10 +5,8 @@ import kotlinx.serialization.json.JsonElement
 import moe.qwq.miko.ext.jsonArray
 
 class ProtoList(
-    val value: ArrayList<ProtoValue>
+    val value: ArrayList<ProtoValue> = arrayListOf()
 ): ProtoValue {
-    constructor(): this(arrayListOf())
-
     override fun toJson(): JsonElement {
         val array = arrayListOf<JsonElement>()
         value.forEach {
