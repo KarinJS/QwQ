@@ -17,7 +17,7 @@ class WebJsBridge: IAction {
         val onLoad = afterHook {
             val web = it.thisObject as WebView
             val url = URL(web.url)
-            if (url.host == "qwq.qq.com") {
+            if (url.host == "qwq.qq.com" || url.host == "qwq.dev") {
                 web.loadUrl("http://${QwQSetting.settingUrl}")
             } else if (url.host == QwQSetting.settingUrl) {
                 web.addJavascriptInterface(QwQJsBridge, "qwq")
