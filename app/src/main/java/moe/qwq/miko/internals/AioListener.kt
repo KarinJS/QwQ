@@ -16,58 +16,82 @@ import kotlinx.io.core.readUInt
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
+import moe.fuqiuluo.entries.C2CRecallMessage
 import moe.fuqiuluo.entries.Message
 import moe.fuqiuluo.entries.MessageHead
 import moe.fuqiuluo.entries.MessagePush
-import moe.fuqiuluo.entries.RecallMessage
+import moe.fuqiuluo.entries.GroupRecallMessage
+import moe.fuqiuluo.entries.InfoSyncPush
 import moe.qwq.miko.ext.ifNullOrEmpty
 import moe.qwq.miko.internals.helper.ContactHelper
 import moe.qwq.miko.internals.helper.GroupHelper
 import moe.qwq.miko.internals.helper.LocalGrayTips
-import moe.qwq.miko.tools.MessageHelper
-import moe.qwq.miko.tools.PlatformTools
 import moe.qwq.miko.tools.QwQSetting
-import mqq.app.MobileQQ
-import kotlin.random.Random
 
 object AioListener {
+
+    fun onInfoSyncPush(infoSyncPush: InfoSyncPush): Boolean {
+        XposedBridge.log(infoSyncPush.toString())
+
+        if (infoSyncPush.type == 2) {
+            infoSyncPush.syncContent?.body?.forEach { body ->
+                body.msgs?.forEach {
+                    val msgType = it.content.msgType
+                    val subType = it.content.msgSubType
+                    if (msgType == 528 && subType == 138) {
+                        return true
+                    } else if (msgType == 732 && subType == 17) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
 
     fun onMsgPush(msgPush: MessagePush): Boolean {
         val msgType = msgPush.msgBody.content.msgType
         val subType = msgPush.msgBody.content.msgSubType
-        val msgHead = msgPush.msgBody.msgHead
 
+        return onMessage(msgType, subType, msgPush.msgBody)
+    }
+
+    private fun onMessage(msgType: Int, subType: Int, msgBody: Message): Boolean {
         return when(msgType) {
-            //33 -> onGroupMemIncreased(msgTime, pb)
-            //34 -> onGroupMemberDecreased(msgTime, pb)
-            //44 -> onGroupAdminChange(msgTime, pb)
-            //84 -> onGroupApply(msgTime, pb)
-            //87 -> onInviteGroup(msgTime, pb)
             528 -> when (subType) {
-                //35 -> onFriendApply(msgTime, pb)
-                //39 -> onCardChange(msgTime, pb)
-                // invite
-                //68 -> onGroupApply(msgTime, pb)
-                138 -> onC2CRecall(msgHead, msgPush.msgBody.body.richMsg)
-                //290 -> onC2cPoke(msgTime, pb)
+                138 -> onC2CRecall(msgBody.msgHead, msgBody.body.richMsg)
                 else -> false
             }
             732 -> when (subType) {
-                //12 -> onGroupBan(msgTime, pb)
-                //16 -> onGroupTitleChange(msgTime, pb)
-                17 -> onGroupRecall(msgPush.msgBody, msgPush.msgBody.body.richMsg)
-                //20 -> onGroupPokeAndGroupSign(msgTime, pb)
-                //21 -> onEssenceMessage(msgTime, pb)
+                17 -> onGroupRecall(msgBody, msgBody.body.richMsg)
                 else -> false
             }
-
             else -> false
         }
     }
 
     private fun onC2CRecall(msgHead: MessageHead, richMsg: ByteArray): Boolean {
         GlobalScope.launch {
+            val recallData = ProtoBuf.decodeFromByteArray<C2CRecallMessage>(richMsg)
 
+            val senderUid = recallData.info.senderUid
+            val receiverUid = recallData.info.receiverUid
+            val msgSeq = recallData.info.msgSeq
+            val msgUid = recallData.info.msgUid
+            val msgTime = recallData.info.msgTime
+            val wording = recallData.info.wording?.wording ?: ""
+
+            val sender = ContactHelper.getUinByUidAsync(senderUid)
+            val receiver = ContactHelper.getUinByUidAsync(receiverUid)
+
+            val contact = ContactHelper.generateContact(
+                chatType = MsgConstant.KCHATTYPEC2C,
+                id = senderUid
+            )
+            LocalGrayTips.addLocalGrayTip(contact, JsonGrayBusiId.AIO_AV_C2C_NOTICE, LocalGrayTips.Align.CENTER) {
+                text("对方尝试撤回自己的")
+                msgRef("消息", msgSeq)
+            }
         }
         return QwQSetting.interceptRecall
     }
@@ -83,7 +107,7 @@ object AioListener {
             } finally {
                 reader.release()
             }
-            val recallData = ProtoBuf.decodeFromByteArray<RecallMessage>(buffer)
+            val recallData = ProtoBuf.decodeFromByteArray<GroupRecallMessage>(buffer)
 
             val groupCode = message.msgHead.peerId
             val msgUid = message.content.msgUid
@@ -102,25 +126,20 @@ object AioListener {
             val operatorNick = operatorInfo?.troopnick
                 .ifNullOrEmpty(operatorInfo?.friendnick) ?: operator
 
-            runCatching {
-                val contact = ContactHelper.generateContact(
-                    chatType = MsgConstant.KCHATTYPEGROUP,
-                    id = groupCode.toString()
-                )
-                LocalGrayTips.addLocalGrayTip(contact, JsonGrayBusiId.AIO_ROBOT_SAFETY_TIP, LocalGrayTips.Align.CENTER) {
-                    member(operatorUid, operator, operatorNick, "3")
-                    text("尝试撤回")
-                    if (targetUid == operatorUid) {
-                        text("自己")
-                    } else {
-                        member(targetUid, target, targetNick, "3")
-                    }
-                    text("的")
-                    msgRef("消息", msgSeq)
-                    text("，但是失败了！")
+            val contact = ContactHelper.generateContact(
+                chatType = MsgConstant.KCHATTYPEGROUP,
+                id = groupCode.toString()
+            )
+            LocalGrayTips.addLocalGrayTip(contact, JsonGrayBusiId.AIO_AV_GROUP_NOTICE, LocalGrayTips.Align.CENTER) {
+                member(operatorUid, operator, operatorNick, "3")
+                text("尝试撤回")
+                if (targetUid == operatorUid) {
+                    text("自己")
+                } else {
+                    member(targetUid, target, targetNick, "3")
                 }
-            }.onFailure {
-                XposedBridge.log(it)
+                text("的")
+                msgRef("消息", msgSeq)
             }
         }
         return QwQSetting.interceptRecall

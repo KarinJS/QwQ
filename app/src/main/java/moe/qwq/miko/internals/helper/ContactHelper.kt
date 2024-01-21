@@ -33,7 +33,7 @@ internal object ContactHelper {
 
     suspend fun generateContact(chatType: Int, id: String, subId: String = ""): Contact {
         val peerId = if (MsgConstant.KCHATTYPEC2C == chatType || MsgConstant.KCHATTYPETEMPC2CFROMGROUP == chatType) {
-            getUidByUinAsync(id.toLong())
+            if (id.startsWith("u_")) id else getUidByUinAsync(id.toLong())
         } else id
         return Contact(chatType, peerId, subId)
     }

@@ -8,6 +8,7 @@ import de.robv.android.xposed.XposedBridge
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
+import moe.fuqiuluo.entries.InfoSyncPush
 import moe.fuqiuluo.entries.MessagePush
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.AioListener
@@ -37,7 +38,10 @@ internal object NTServiceFetcher {
             val cmd = it.args[0] as String
             val buffer = it.args[1] as ByteArray
             if (cmd == "trpc.msg.register_proxy.RegisterProxy.InfoSyncPush") {
-
+                val syncPush = ProtoBuf.decodeFromByteArray<InfoSyncPush>(buffer)
+                if (AioListener.onInfoSyncPush(syncPush)) {
+                    it.result = Unit
+                }
             } else if (cmd == "trpc.msg.olpush.OlPushService.MsgPush") {
                 val msgPush = ProtoBuf.decodeFromByteArray<MessagePush>(buffer)
                 if (AioListener.onMsgPush(msgPush)) {
