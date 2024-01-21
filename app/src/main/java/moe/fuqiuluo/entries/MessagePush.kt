@@ -8,11 +8,11 @@ import moe.qwq.miko.ext.EMPTY_BYTE_ARRAY
 
 @Serializable
 data class MessagePush(
-    @ProtoNumber(1) var msgBody: MessageRecord
+    @ProtoNumber(1) var msgBody: Message
 )
 
 @Serializable
-data class MessageRecord(
+data class Message(
     @ProtoNumber(1) var msgHead: MessageHead,
     @ProtoNumber(2) var content: MessageContentInfo,
     @ProtoNumber(3) var body: MessageBody

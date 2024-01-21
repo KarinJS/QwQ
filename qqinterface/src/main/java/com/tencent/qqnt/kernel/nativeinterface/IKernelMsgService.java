@@ -16,6 +16,8 @@ public interface IKernelMsgService {
 
     void recallMsg(Contact contact, ArrayList<Long> msgIdList, IOperateCallback callback);
 
+    void addLocalJsonGrayTipMsg(Contact contact, JsonGrayElement jsonGrayElement, boolean z, boolean z2, IAddJsonGrayTipMsgCallback iAddJsonGrayTipMsgCallback);
+
     void addLocalRecordMsg(Contact contact, long msgId, MsgElement elem, HashMap<Integer, MsgAttributeInfo> hashMap, boolean z, IOperateCallback callback);
 
     long getMsgUniqueId(long time);

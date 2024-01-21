@@ -1,7 +1,5 @@
 package com.tencent.qqnt.kernel.nativeinterface;
 
-/* compiled from: P */
-/* loaded from: classes2.dex */
 public final class JsonGrayBusiId {
     public static final int AIO_AV_C2C_NOTICE = 2021;
     public static final int AIO_AV_GROUP_NOTICE = 2022;
@@ -12,6 +10,7 @@ public final class JsonGrayBusiId {
     public static final int AIO_RECALL_MSGCUSTOM_WORDINGGUIDE = 2000;
     public static final int AIO_ROBOT_SAFETY_TIP = 2201;
     public static final int AIO_ZPLAN_EMOTICON_GUIDE = 2301;
+    public static final int AIO_ZPLAN_SCENE_LINKAGE = 2302;
     public static final int AIO_ZPLAN_SEND_MEME = 2300;
     public static final int DISBAND_DISCUSSION_GRAY_TIP_ID = 2603;
     public static final int GROUP_AIO_CONFIGURABLE_GRAY_TIPS = 2407;
@@ -52,6 +51,7 @@ public final class JsonGrayBusiId {
     public static final int RELATION_EMOJIEGG_WILL_DEGRADE = 1002;
     public static final int RELATION_FRIEND_CLONE_INFO = 1006;
     public static final int RELATION_GROUP_BATCH_ADD_FRIEND = 1020;
+    public static final int RELATION_GROUP_MEMBER_ADD = 1022;
     public static final int RELATION_GROUP_MEMBER_ADD_WITH_MODIFY_NAME = 1015;
     public static final int RELATION_GROUP_MEMBER_ADD_WITH_WELCOME = 1016;
     public static final int RELATION_GROUP_MEMBER_RECOMMEND = 1021;
@@ -62,8 +62,4 @@ public final class JsonGrayBusiId {
     public static final int RELATION_ONEWAY_FRIEND_NEW_GRAY_TIP_ID = 1013;
     public static final int RELATION_YQT = 1010;
     public static final long UI_RESERVE_100000_110000 = 100000;
-
-    public String toString() {
-        return "JsonGrayBusiId{}";
-    }
 }
