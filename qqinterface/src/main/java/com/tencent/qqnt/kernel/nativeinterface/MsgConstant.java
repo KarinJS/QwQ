@@ -58,6 +58,8 @@ public final class MsgConstant {
     public static final int GRAYTIPELEMENTSUBTYPEUNKNOWN = 0;
     public static final int GRAYTIPELEMENTSUBTYPEWALLET = 16;
     public static final int GRAYTIPELEMENTSUBTYPEXMLMSG = 12;
+
+
     public static final int INPUTSTATUSTYPECANCEL = 2;
     public static final int INPUTSTATUSTYPESPEAK = 3;
     public static final int INPUTSTATUSTYPETEXT = 1;

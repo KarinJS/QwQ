@@ -6,6 +6,7 @@ import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import moe.fuqiuluo.xposed.loader.LuoClassloader
+import moe.qwq.miko.actions.ActionProcess
 import moe.qwq.miko.ext.FuzzySearchClass
 import moe.qwq.miko.tools.MMKVTools
 import moe.qwq.miko.tools.PlatformTools
@@ -104,7 +105,11 @@ class MainEntry: IXposedHookLoadPackage {
                 MMKVTools.initMMKV(ctx)
             }
 
-            ActionManager.runFirst(ctx)
+            ActionManager.runFirst(ctx, when {
+                PlatformTools.isMainProcess() -> ActionProcess.MAIN
+                PlatformTools.isMsfProcess() -> ActionProcess.MSF
+                else -> ActionProcess.ALL
+            })
         }
     }
 
