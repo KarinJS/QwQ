@@ -69,6 +69,7 @@ object AioListener {
     }
 
     private fun onC2CRecall(msgHead: MessageHead, richMsg: ByteArray): Boolean {
+        if (!QwQSetting.interceptRecall) return false
         GlobalScope.launch {
             val recallData = ProtoBuf.decodeFromByteArray<C2CRecallMessage>(richMsg)
 
@@ -91,10 +92,11 @@ object AioListener {
                 msgRef("消息", msgSeq)
             }
         }
-        return QwQSetting.interceptRecall
+        return true
     }
 
     private fun onGroupRecall(message: Message, richMsg: ByteArray): Boolean {
+        if (!QwQSetting.interceptRecall) return false
         GlobalScope.launch {
             val reader = ByteReadPacket(richMsg)
             val buffer = try {
@@ -140,6 +142,6 @@ object AioListener {
                 msgRef("消息", msgSeq)
             }
         }
-        return QwQSetting.interceptRecall
+        return true
     }
 }
