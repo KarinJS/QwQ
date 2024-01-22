@@ -13,6 +13,9 @@ import moe.qwq.miko.tools.QwQSetting
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 
+/**
+ * 个人设置侧边栏简化
+ */
 class SimplifyHomepageSidebar: IAction {
     companion object {
         private val TRASH_ITEMS = arrayOf(
@@ -23,10 +26,9 @@ class SimplifyHomepageSidebar: IAction {
         private fun findKeyField(bean: QQSettingMeBizBean) {
             if(!::FIELD_KEY.isInitialized) {
                 FIELD_KEY = QQSettingMeBizBean::class.java.declaredFields.first {
-                    if (!it.isAccessible) {
-                        it.isAccessible = true
-                    }
-                    !Modifier.isStatic(it.modifiers) && it.type == String::class.java && (it.get(bean) as String).startsWith("d_")
+                    !Modifier.isStatic(it.modifiers) && it.type == String::class.java && (it.also {
+                        if (!it.isAccessible) it.isAccessible = true
+                    }.get(bean) as String).startsWith("d_")
                 }
             }
         }
