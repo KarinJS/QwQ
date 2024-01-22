@@ -20,7 +20,7 @@ data class Message(
 
 @Serializable
 data class MessageHead(
-    @ProtoNumber(1) val peerId: Long = Long.MIN_VALUE,
+    @ProtoNumber(1) val peerId: ULong = ULong.MIN_VALUE,
     @ProtoNumber(2) val peerUid: String? = null,
     @ProtoNumber(5) val targetId: Long = Long.MIN_VALUE,
     @ProtoNumber(6) val targetUid: String? = null

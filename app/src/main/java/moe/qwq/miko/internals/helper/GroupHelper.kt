@@ -165,7 +165,7 @@ internal object GroupHelper {
         METHOD_REQ_MEMBER_INFO_V2.invoke(businessHandler, groupId.toString(), groupUin2GroupCode(groupId).toString(), arrayListOf(memberUin.toString()))
     }
 
-    private fun groupUin2GroupCode(groupuin: Long): Long {
+    fun groupUin2GroupCode(groupuin: Long): Long {
         var calc = groupuin / 1000000L
         while (true) {
             calc -= if (calc >= 0 + 202 && calc + 202 <= 10) {

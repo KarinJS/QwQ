@@ -107,7 +107,7 @@ object AioListener {
             }
             val recallData = ProtoBuf.decodeFromByteArray<GroupRecallMessage>(buffer)
 
-            val groupCode = message.msgHead.peerId
+            val groupCode = GroupHelper.groupUin2GroupCode(message.msgHead.peerId.toLong())
             val msgUid = message.content.msgUid
             val targetUid = recallData.operation.msgInfo?.senderUid ?: ""
             val operatorUid = recallData.operation.operatorUid ?: ""
