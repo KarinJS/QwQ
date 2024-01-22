@@ -5,6 +5,8 @@ import android.webkit.JavascriptInterface
 import com.tencent.smtt.sdk.WebView
 import de.robv.android.xposed.XposedBridge
 import moe.qwq.miko.ext.afterHook
+import moe.qwq.miko.ext.getVersionName
+import moe.qwq.miko.ext.json
 import moe.qwq.miko.ext.toast
 import moe.qwq.miko.tools.MMKVTools
 import moe.qwq.miko.tools.PlatformTools
@@ -19,7 +21,7 @@ class WebJsBridge: IAction {
             val url = URL(web.url)
             if (url.host == "qwq.qq.com" || url.host == "qwq.dev") {
                 web.loadUrl("http://${QwQSetting.settingUrl}")
-            } else if (url.host == QwQSetting.settingUrl) {
+            } else if (url.host == QwQSetting.settingUrl.split(":")[0]) {
                 web.addJavascriptInterface(QwQJsBridge, "qwq")
             }
         }
@@ -41,7 +43,7 @@ class WebJsBridge: IAction {
 
         @JavascriptInterface
         fun getModuleVersion(): String {
-            return "1.0.0"
+            return MobileQQ.getContext().getVersionName("moe.qwq.miko")
         }
 
         @JavascriptInterface
@@ -50,33 +52,18 @@ class WebJsBridge: IAction {
         }
 
         @JavascriptInterface
-        fun mmkvGetValueString(key: String): String {
-            return MMKVTools.mmkvWithId("qwq").getString(key, "")!!
+        fun getSetting(key: String): String {
+            val setting = QwQSetting.getSetting(key)
+            return mapOf(
+                "value" to setting.getValue(setting, null),
+                "failed" to setting.isFailed
+            ).json.toString()
         }
 
         @JavascriptInterface
-        fun mmkvGetValueBoolean(key: String): Boolean {
-            return MMKVTools.mmkvWithId("qwq").getBoolean(key, false)
-        }
-
-        @JavascriptInterface
-        fun mmkvGetValueInt(key: String): Int {
-            return MMKVTools.mmkvWithId("qwq").getInt(key, 0)
-        }
-
-        @JavascriptInterface
-        fun mmkvSetValueBoolean(key: String, value: Boolean) {
-            MMKVTools.mmkvWithId("qwq").putBoolean(key, value)
-        }
-
-        @JavascriptInterface
-        fun mmkvSetValueString(key: String, value: String) {
-            MMKVTools.mmkvWithId("qwq").putString(key, value)
-        }
-
-        @JavascriptInterface
-        fun mmkvSetValueInt(key: String, value: Int) {
-            MMKVTools.mmkvWithId("qwq").putInt(key, value)
+        fun setSetting(key: String, value: Boolean) {
+            val setting = QwQSetting.getSetting(key) as QwQSetting.Setting<Any>
+            setting.setValue(setting, null, value)
         }
     }
 }

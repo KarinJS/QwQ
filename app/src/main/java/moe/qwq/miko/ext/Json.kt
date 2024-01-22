@@ -51,7 +51,7 @@ val Collection<Any>.json: JsonArray
         return arrayList.jsonArray
     }
 
-val Map<String, Any>.json: JsonObject
+val Map<String, Any?>.json: JsonObject
     get() {
         val map = hashMapOf<String, JsonElement>()
         forEach { (key, any) ->

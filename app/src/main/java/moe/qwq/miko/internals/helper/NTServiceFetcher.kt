@@ -12,6 +12,7 @@ import moe.fuqiuluo.entries.InfoSyncPush
 import moe.fuqiuluo.entries.MessagePush
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.AioListener
+import moe.qwq.miko.tools.QwQSetting
 
 internal object NTServiceFetcher {
     private lateinit var iKernelService: IKernelService
@@ -34,6 +35,7 @@ internal object NTServiceFetcher {
     private fun initNTKernel(msgService: MsgService) {
         XposedBridge.log("[QwQ] Init NT Kernel.")
 
+        QwQSetting.getSetting(QwQSetting.INTERCEPT_RECALL).isFailed = false
         kernelService.wrapperSession.javaClass.hookMethod("onMsfPush").before {
             val cmd = it.args[0] as String
             val buffer = it.args[1] as ByteArray

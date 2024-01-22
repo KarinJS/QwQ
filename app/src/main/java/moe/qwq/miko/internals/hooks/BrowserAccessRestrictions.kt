@@ -1,5 +1,6 @@
-@file:Suppress("UNUSED_VARIABLE", "LocalVariableName")
-package moe.qwq.miko.actions
+@file:Suppress("LocalVariableName")
+
+package moe.qwq.miko.internals.hooks
 
 import android.content.Context
 import android.os.Bundle
@@ -7,16 +8,21 @@ import com.tencent.mobileqq.qroute.QRoute
 import com.tencent.mobileqq.webview.api.IJsApi
 import com.tencent.mobileqq.webview.swift.WebViewPlugin
 import de.robv.android.xposed.XposedBridge
-import moe.qwq.miko.ext.FuzzySearchClass
+import moe.qwq.miko.actions.IAction
+import moe.qwq.miko.ext.FuzzyClassKit
 import moe.qwq.miko.ext.beforeHook
-import moe.qwq.miko.ext.toast
+import moe.qwq.miko.tools.QwQSetting
 
 class BrowserAccessRestrictions: IAction {
     override fun invoke(ctx: Context) {
-        val tmpWebSecurityPluginV2Plugin = QRoute.api(IJsApi::class.java).getWebSecurityPluginV2Plugin<WebViewPlugin>()
+        val tmpWebSecurityPluginV2Plugin = QRoute.api(IJsApi::class.java)
+            .getWebSecurityPluginV2Plugin<WebViewPlugin>()
         val WebSecurityPluginV2Plugin = tmpWebSecurityPluginV2Plugin.javaClass
 
-        FuzzySearchClass.findClassesByMethod(WebSecurityPluginV2Plugin.name, isSubClass = true) { clz, method ->
+        FuzzyClassKit.findClassesByMethod(
+            WebSecurityPluginV2Plugin.name,
+            isSubClass = true
+        ) { clz, method ->
             method.parameterCount == 1 && method.parameterTypes[0] == Bundle::class.java
         }.forEach {
             it.declaredMethods.filter {
@@ -31,6 +37,5 @@ class BrowserAccessRestrictions: IAction {
                 })
             }
         }
-
     }
 }

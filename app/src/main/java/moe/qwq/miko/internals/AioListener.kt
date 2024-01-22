@@ -31,17 +31,15 @@ import moe.qwq.miko.tools.QwQSetting
 object AioListener {
 
     fun onInfoSyncPush(infoSyncPush: InfoSyncPush): Boolean {
-        XposedBridge.log(infoSyncPush.toString())
-
         if (infoSyncPush.type == 2) {
             infoSyncPush.syncContent?.body?.forEach { body ->
                 body.msgs?.forEach {
                     val msgType = it.content.msgType
                     val subType = it.content.msgSubType
                     if (msgType == 528 && subType == 138) {
-                        return true
+                        return QwQSetting.interceptRecall
                     } else if (msgType == 732 && subType == 17) {
-                        return true
+                        return QwQSetting.interceptRecall
                     }
                 }
             }

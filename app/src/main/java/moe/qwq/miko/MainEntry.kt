@@ -7,7 +7,7 @@ import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import moe.fuqiuluo.xposed.loader.LuoClassloader
 import moe.qwq.miko.actions.ActionProcess
-import moe.qwq.miko.ext.FuzzySearchClass
+import moe.qwq.miko.ext.FuzzyClassKit
 import moe.qwq.miko.tools.MMKVTools
 import moe.qwq.miko.tools.PlatformTools
 import moe.qwq.miko.ext.afterHook
@@ -56,7 +56,7 @@ class MainEntry: IXposedHookLoadPackage {
         }.onFailure {
             // For NT QQ
             val fieldList = arrayListOf<Field>()
-            FuzzySearchClass.findAllClassByField(classLoader, "com.tencent.mobileqq.startup.task.config") { _, field ->
+            FuzzyClassKit.findClassesByField(classLoader, "com.tencent.mobileqq.startup.task.config") { _, field ->
                 (field.type == HashMap::class.java || field.type == Map::class.java) && Modifier.isStatic(field.modifiers)
             }.forEach {
                 it.declaredFields.forEach { field ->
