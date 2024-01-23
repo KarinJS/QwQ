@@ -5,29 +5,32 @@ import com.tencent.msf.service.protocol.pb.SSOLoginMerge
 import com.tencent.qphone.base.remote.FromServiceMsg
 import com.tencent.qphone.base.util.CodecWarpper
 import de.robv.android.xposed.XposedBridge
+import moe.fuqiuluo.entries.ClassEnum.CodecWarpperImpl
 import moe.qwq.miko.ext.EMPTY_BYTE_ARRAY
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.ext.slice
+import moe.qwq.miko.internals.helper.DvmLocator
 import moe.qwq.miko.internals.hijackers.IHijacker
 import moe.qwq.miko.tools.PlatformTools
 import java.util.concurrent.atomic.AtomicBoolean
 
 class PacketHijacker: IAction {
     override fun invoke(ctx: Context) {
-        if (!PlatformTools.isMsfProcess()) {
-            // QQ的收发包在MSF服务进程
-            return
-        }
+        if (!PlatformTools.isMsfProcess()) return
         try {
+            DvmLocator.findClass(CodecWarpperImpl)?.let {
+                hookReceive(it)
+                return
+            }
             val isInit = AtomicBoolean(false)
             CodecWarpper::class.java.hookMethod("init").after {
                 if (isInit.get()) return@after
-                hookReceive(it.thisObject, it.thisObject.javaClass)
+                hookReceive(it.thisObject.javaClass)
                 isInit.lazySet(true)
             }
             CodecWarpper::class.java.hookMethod("nativeOnReceData").before {
                 if (isInit.get()) return@before
-                hookReceive(it.thisObject, it.thisObject.javaClass)
+                hookReceive(it.thisObject.javaClass)
                 isInit.lazySet(true)
             }
         } catch (e: Throwable) {
@@ -35,10 +38,10 @@ class PacketHijacker: IAction {
         }
     }
 
-    private fun hookReceive(thiz: Any, thizClass: Class<*>) {
-        val onResponse = thizClass.getDeclaredMethod("onResponse", Integer.TYPE, Any::class.java, Integer.TYPE)
-
-        thizClass.hookMethod("onResponse").before {
+    private fun hookReceive(tzClass: Class<*>) {
+        //val onResponse = tzClass.getDeclaredMethod("onResponse", Integer.TYPE, Any::class.java, Integer.TYPE)
+        DvmLocator.locateClass(CodecWarpperImpl, tzClass)
+        tzClass.hookMethod("onResponse").before {
             val from = it.args[1] as FromServiceMsg
             try {
                 if ("SSO.LoginMerge" == from.serviceCmd) {

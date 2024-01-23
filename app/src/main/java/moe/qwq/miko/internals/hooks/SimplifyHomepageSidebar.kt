@@ -4,12 +4,14 @@ package moe.qwq.miko.internals.hooks
 import android.content.Context
 import com.tencent.mobileqq.activity.qqsettingme.config.QQSettingMeBizBean
 import de.robv.android.xposed.XposedBridge
-import moe.fuqiuluo.xposed.loader.LuoClassloader
+import de.robv.android.xposed.XposedBridge.log
+import moe.fuqiuluo.entries.ClassEnum
+import moe.fuqiuluo.entries.FieldEnum.QQSettingMeItemName
 import moe.qwq.miko.actions.ActionProcess
 import moe.qwq.miko.actions.IAction
-import moe.qwq.miko.ext.FuzzyClassKit
 import moe.qwq.miko.ext.afterHook
-import moe.qwq.miko.tools.QwQSetting
+import moe.qwq.miko.internals.helper.DvmLocator
+import moe.qwq.miko.internals.setting.QwQSetting
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 
@@ -19,50 +21,53 @@ import java.lang.reflect.Modifier
 class SimplifyHomepageSidebar: IAction {
     companion object {
         private val TRASH_ITEMS = arrayOf(
-            "d_zplan", "d_qq_shopping", "d_smallworld", "d_vip_identity", "d_financial", "d_decoration", "d_vip_card", "d_minigame"
+            //"d_zplan"
+            "d_qq_shopping", "d_smallworld", "d_vip_identity", "d_financial", "d_decoration", "d_vip_card", "d_minigame"
         )
-        private lateinit var FIELD_KEY: Field
+        private lateinit var FieldQQSettingMeItemName: Field
 
-        private fun findKeyField(bean: QQSettingMeBizBean) {
-            if(!::FIELD_KEY.isInitialized) {
-                FIELD_KEY = QQSettingMeBizBean::class.java.declaredFields.first {
+        private fun findItemNameField(bean: QQSettingMeBizBean) {
+            if(!::FieldQQSettingMeItemName.isInitialized) {
+                DvmLocator.findField(QQSettingMeItemName)?.let {
+                    FieldQQSettingMeItemName = it
+                    return
+                }
+                FieldQQSettingMeItemName = QQSettingMeBizBean::class.java.declaredFields.first {
                     !Modifier.isStatic(it.modifiers) && it.type == String::class.java && (it.also {
                         if (!it.isAccessible) it.isAccessible = true
                     }.get(bean) as? String)?.startsWith("d_") == true
                 }
+                DvmLocator.locateField(QQSettingMeItemName, QQSettingMeBizBean::class.java to FieldQQSettingMeItemName)
             }
         }
     }
 
     override fun invoke(ctx: Context) {
         val setting = QwQSetting.getSetting(QwQSetting.SIMPLIFY_HOMEPAGE_SIDEBAR)
-        val QQSettingMeBizBean = LuoClassloader.load("com.tencent.mobileqq.activity.qqsettingme.config.QQSettingMeBizBean")
-        if (QQSettingMeBizBean != null) {
+        runCatching {
+            val QQSettingMeBizBean = QQSettingMeBizBean::class.java
             if (!QwQSetting.simplifyHomepageSidebar) return
-            val QQSettingMeConfigs = FuzzyClassKit.findClassesByField(prefix = "com.tencent.mobileqq.activity.qqsettingme.config") { _, field ->
-                field.type.isArray && field.type.componentType == QQSettingMeBizBean
-            }
-            if (QQSettingMeConfigs.isEmpty()) {
+
+            val QQSettingMeConfig = DvmLocator.findClass(ClassEnum.QQSettingMeConfig)
+            if (QQSettingMeConfig == null) {
                 setting.isFailed = true
             } else {
-                runCatching {
-                    val QQSettingMeConfig = QQSettingMeConfigs.first()
-                    XposedBridge.hookMethod(QQSettingMeConfig.methods.first {
-                        !Modifier.isStatic(it.modifiers) && it.returnType.isArray && it.returnType.componentType == QQSettingMeBizBean
-                    }, afterHook {
-                        val result = it.result as Array<QQSettingMeBizBean>
-                        if (result.isEmpty()) return@afterHook
-                        findKeyField(result.first())
-                        it.result = result.filter {
-                            (FIELD_KEY.get(it) as? String) !in TRASH_ITEMS
-                        }.toTypedArray()
-                    })
-                }.onFailure {
-                    setting.isFailed = true
-                    XposedBridge.log(it)
-                }
+                XposedBridge.hookMethod(QQSettingMeConfig.methods.firstOrNull {
+                    !Modifier.isStatic(it.modifiers) && it.returnType.isArray && it.returnType.componentType == com.tencent.mobileqq.activity.qqsettingme.config.QQSettingMeBizBean::class.java
+                }, afterHook {
+                    val result = it.result as Array<QQSettingMeBizBean>
+                    if (result.isEmpty()) return@afterHook
+                    findItemNameField(result.first())
+                    if (!FieldQQSettingMeItemName.isAccessible) {
+                        FieldQQSettingMeItemName.isAccessible = true
+                    }
+                    it.result = result.filter { bean ->
+                        (FieldQQSettingMeItemName.get(bean) as? String) !in TRASH_ITEMS
+                    }.toTypedArray()
+                })
             }
-        } else {
+        }.onFailure {
+            log(it)
             setting.isFailed = true
         }
     }

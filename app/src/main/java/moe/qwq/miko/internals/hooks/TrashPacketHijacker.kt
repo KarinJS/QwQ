@@ -6,7 +6,7 @@ import com.tencent.qphone.base.remote.ToServiceMsg
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.helper.AppRuntimeFetcher
-import moe.qwq.miko.tools.QwQSetting
+import moe.qwq.miko.internals.setting.QwQSetting
 
 /**
  * 拦截无用发包 + 修复主题验证 + 禁用更新检查

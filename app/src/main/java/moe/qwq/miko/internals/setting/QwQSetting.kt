@@ -1,7 +1,7 @@
-@file:Suppress("UNCHECKED_CAST", "RemoveExplicitTypeArguments")
-package moe.qwq.miko.tools
+package moe.qwq.miko.internals.setting
 
 import com.tencent.mmkv.MMKV
+import moe.qwq.miko.tools.MMKVTools
 import mqq.app.MobileQQ
 import kotlin.reflect.KProperty
 
@@ -13,7 +13,7 @@ object QwQSetting {
     const val DISABLE_HOT_UPDATE_SO_BY_TRAFFIC = "disable_hot_update_so_by_traffic"
     const val DISABLE_USELESS_PACKET = "disable_useless_packet"
 
-    private val DataDir = MobileQQ.getContext().getExternalFilesDir(null)!!
+    internal val dataDir = MobileQQ.getContext().getExternalFilesDir(null)!!
         .parentFile!!.resolve("Tencent/QwQ").also {
             it.mkdirs()
         }
@@ -58,7 +58,7 @@ object QwQSetting {
     var disableUselessPacket by settingMap[DISABLE_USELESS_PACKET] as Setting<Boolean>
 
     val settingUrl: String
-        get() = DataDir.resolve("domain").also {
+        get() = dataDir.resolve("domain").also {
             if (!it.exists()) {
                 it.createNewFile()
                 it.writeText("qwq.owo233.com")

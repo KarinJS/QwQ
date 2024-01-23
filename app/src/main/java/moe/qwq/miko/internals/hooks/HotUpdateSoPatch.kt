@@ -5,8 +5,8 @@ import com.tencent.mobileqq.earlydownload.xmldata.XmlData
 import de.robv.android.xposed.XposedBridge
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.hookMethod
-import moe.qwq.miko.tools.QwQSetting
-import moe.qwq.miko.tools.QwQSetting.DISABLE_HOT_UPDATE_SO_BY_TRAFFIC
+import moe.qwq.miko.internals.setting.QwQSetting
+import moe.qwq.miko.internals.setting.QwQSetting.DISABLE_HOT_UPDATE_SO_BY_TRAFFIC
 
 class HotUpdateSoPatch: IAction {
     override fun invoke(ctx: Context) {
@@ -20,7 +20,6 @@ class HotUpdateSoPatch: IAction {
                 xmlData.load3G = false
                 xmlData.net_2_2G = false
                 xmlData.net_2_3G = false
-
             }
         }.onFailure {
             XposedBridge.log(it)

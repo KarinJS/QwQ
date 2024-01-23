@@ -14,8 +14,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
 import moe.qwq.miko.internals.helper.AppRuntimeFetcher.appRuntime
-import tencent.im.group.group_member_info
-import tencent.im.troop.honor.troop_honor
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.coroutines.resume

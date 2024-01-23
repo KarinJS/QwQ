@@ -5,7 +5,6 @@ package moe.qwq.miko.internals
 
 import com.tencent.qqnt.kernel.nativeinterface.JsonGrayBusiId
 import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
-import de.robv.android.xposed.XposedBridge
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -26,7 +25,7 @@ import moe.qwq.miko.ext.ifNullOrEmpty
 import moe.qwq.miko.internals.helper.ContactHelper
 import moe.qwq.miko.internals.helper.GroupHelper
 import moe.qwq.miko.internals.helper.LocalGrayTips
-import moe.qwq.miko.tools.QwQSetting
+import moe.qwq.miko.internals.setting.QwQSetting
 
 object AioListener {
 

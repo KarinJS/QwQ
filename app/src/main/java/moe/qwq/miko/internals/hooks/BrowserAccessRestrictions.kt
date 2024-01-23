@@ -8,19 +8,24 @@ import com.tencent.mobileqq.qroute.QRoute
 import com.tencent.mobileqq.webview.api.IJsApi
 import com.tencent.mobileqq.webview.swift.WebViewPlugin
 import de.robv.android.xposed.XposedBridge
+import moe.fuqiuluo.entries.ClassEnum
+import moe.fuqiuluo.entries.ClassEnum.WebSecurityPluginV2Plugin
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.FuzzyClassKit
 import moe.qwq.miko.ext.beforeHook
-import moe.qwq.miko.tools.QwQSetting
+import moe.qwq.miko.ext.toast
+import moe.qwq.miko.internals.helper.DvmLocator
 
 /**
  * 内置浏览器安全限制解除
  */
 class BrowserAccessRestrictions: IAction {
     override fun invoke(ctx: Context) {
-        val tmpWebSecurityPluginV2Plugin = QRoute.api(IJsApi::class.java)
-            .getWebSecurityPluginV2Plugin<WebViewPlugin>()
-        val WebSecurityPluginV2Plugin = tmpWebSecurityPluginV2Plugin.javaClass
+        val WebSecurityPluginV2Plugin = DvmLocator.findClass(WebSecurityPluginV2Plugin)
+        if (WebSecurityPluginV2Plugin == null) {
+            ctx.toast("QwQ模块无法载入")
+            return
+        }
 
         FuzzyClassKit.findClassesByMethod(
             WebSecurityPluginV2Plugin.name,

@@ -8,9 +8,8 @@ import moe.qwq.miko.ext.afterHook
 import moe.qwq.miko.ext.getVersionName
 import moe.qwq.miko.ext.json
 import moe.qwq.miko.ext.toast
-import moe.qwq.miko.tools.MMKVTools
 import moe.qwq.miko.tools.PlatformTools
-import moe.qwq.miko.tools.QwQSetting
+import moe.qwq.miko.internals.setting.QwQSetting
 import mqq.app.MobileQQ
 import java.net.URL
 
