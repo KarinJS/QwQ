@@ -9,6 +9,7 @@ import kotlinx.serialization.protobuf.ProtoNumber
 @Serializable
 data class InfoSyncPush(
     @ProtoNumber(3) val type: Int = Int.MIN_VALUE,
+    @ProtoNumber(4) val pushId: Long = Long.MIN_VALUE,
     @ProtoNumber(8) val syncContent: InfoSyncPushContent? = null,
 )
 
@@ -16,7 +17,7 @@ data class InfoSyncPush(
 data class InfoSyncPushContent(
     @ProtoNumber(3) val head: SyncInfoHead? = null,
     @ProtoNumber(4) val body: ArrayList<SyncInfoBody>? = null,
-
+    @ProtoNumber(5) val subHead: SyncInfoHead? = null,
 )
 
 @Serializable

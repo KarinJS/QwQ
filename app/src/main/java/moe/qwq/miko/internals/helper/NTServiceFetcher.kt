@@ -7,6 +7,7 @@ import com.tencent.qqnt.kernel.api.impl.MsgService
 import de.robv.android.xposed.XposedBridge
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import moe.fuqiuluo.entries.InfoSyncPush
 import moe.fuqiuluo.entries.MessagePush
@@ -42,7 +43,9 @@ internal object NTServiceFetcher {
             if (cmd == "trpc.msg.register_proxy.RegisterProxy.InfoSyncPush") {
                 val syncPush = ProtoBuf.decodeFromByteArray<InfoSyncPush>(buffer)
                 if (AioListener.onInfoSyncPush(syncPush)) {
-                    it.result = Unit
+                    it.result = ProtoBuf.encodeToByteArray(syncPush.copy(
+                        syncContent = syncPush.syncContent?.copy(body = arrayListOf())
+                    ))
                 }
             } else if (cmd == "trpc.msg.olpush.OlPushService.MsgPush") {
                 val msgPush = ProtoBuf.decodeFromByteArray<MessagePush>(buffer)
