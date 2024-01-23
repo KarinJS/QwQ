@@ -8,7 +8,9 @@ import moe.qwq.miko.actions.FetchService
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.actions.PacketHijacker
 import moe.qwq.miko.actions.WebJsBridge
+import moe.qwq.miko.internals.hooks.HotUpdateSoPatch
 import moe.qwq.miko.internals.hooks.SimplifyHomepageSidebar
+import moe.qwq.miko.internals.hooks.TrashPacketHijacker
 
 object ActionManager {
     private val FIRST_ACTION = arrayOf(
@@ -19,6 +21,8 @@ object ActionManager {
 
         BrowserAccessRestrictions::class.java,
         SimplifyHomepageSidebar::class.java,
+        TrashPacketHijacker::class.java,
+        HotUpdateSoPatch::class.java,
     )
 
     private val instanceMap = hashMapOf<Class<*>, IAction>()

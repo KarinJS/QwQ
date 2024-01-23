@@ -13,6 +13,9 @@ import moe.qwq.miko.ext.FuzzyClassKit
 import moe.qwq.miko.ext.beforeHook
 import moe.qwq.miko.tools.QwQSetting
 
+/**
+ * 内置浏览器安全限制解除
+ */
 class BrowserAccessRestrictions: IAction {
     override fun invoke(ctx: Context) {
         val tmpWebSecurityPluginV2Plugin = QRoute.api(IJsApi::class.java)
@@ -22,7 +25,7 @@ class BrowserAccessRestrictions: IAction {
         FuzzyClassKit.findClassesByMethod(
             WebSecurityPluginV2Plugin.name,
             isSubClass = true
-        ) { clz, method ->
+        ) { _, method ->
             method.parameterCount == 1 && method.parameterTypes[0] == Bundle::class.java
         }.forEach {
             it.declaredMethods.filter {

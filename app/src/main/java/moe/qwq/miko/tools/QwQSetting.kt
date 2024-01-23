@@ -10,17 +10,21 @@ object QwQSetting {
     const val ANTI_BROWSER_ACCESS_RESTRICTIONS = "anti_browser_access_restrictions"
     const val SIMPLIFY_HOMEPAGE_SIDEBAR = "simplify_homepage_sidebar"
     const val DISABLE_UPDATE_CHECK = "disable_update_check"
+    const val DISABLE_HOT_UPDATE_SO_BY_TRAFFIC = "disable_hot_update_so_by_traffic"
+    const val DISABLE_USELESS_PACKET = "disable_useless_packet"
 
     private val DataDir = MobileQQ.getContext().getExternalFilesDir(null)!!
         .parentFile!!.resolve("Tencent/QwQ").also {
             it.mkdirs()
         }
     private val config: MMKV get() = MMKVTools.mmkvWithId("qwq")
-    private val settingMap = hashMapOf<String, Setting<*>>(
+    private val settingMap = hashMapOf(
         INTERCEPT_RECALL to Setting<Boolean>(INTERCEPT_RECALL, SettingType.BOOLEAN),
         ANTI_BROWSER_ACCESS_RESTRICTIONS to Setting<Boolean>(ANTI_BROWSER_ACCESS_RESTRICTIONS, SettingType.BOOLEAN),
         SIMPLIFY_HOMEPAGE_SIDEBAR to Setting<Boolean>(SIMPLIFY_HOMEPAGE_SIDEBAR, SettingType.BOOLEAN),
-        DISABLE_UPDATE_CHECK to Setting<Boolean>(DISABLE_UPDATE_CHECK, SettingType.BOOLEAN)
+        DISABLE_UPDATE_CHECK to Setting<Boolean>(DISABLE_UPDATE_CHECK, SettingType.BOOLEAN),
+        DISABLE_HOT_UPDATE_SO_BY_TRAFFIC to Setting<Boolean>(DISABLE_HOT_UPDATE_SO_BY_TRAFFIC, SettingType.BOOLEAN),
+        DISABLE_USELESS_PACKET to Setting<Boolean>(DISABLE_USELESS_PACKET, SettingType.BOOLEAN),
     )
 
     /**
@@ -42,6 +46,16 @@ object QwQSetting {
      * 禁止更新检查
      */
     var disableUpdateCheck by settingMap[DISABLE_UPDATE_CHECK] as Setting<Boolean>
+
+    /**
+     * 禁止使用流量热更新SO文件
+     */
+    var disableHotUpdateSoByTraffic by settingMap[DISABLE_HOT_UPDATE_SO_BY_TRAFFIC] as Setting<Boolean>
+
+    /**
+     * 禁止发送无用发包
+     */
+    var disableUselessPacket by settingMap[DISABLE_USELESS_PACKET] as Setting<Boolean>
 
     val settingUrl: String
         get() = DataDir.resolve("domain").also {
