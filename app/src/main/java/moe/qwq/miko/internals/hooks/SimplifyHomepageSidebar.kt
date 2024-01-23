@@ -54,7 +54,7 @@ class SimplifyHomepageSidebar: IAction {
                         if (result.isEmpty()) return@afterHook
                         findKeyField(result.first())
                         it.result = result.filter {
-                            (FIELD_KEY.get(it) as String) !in TRASH_ITEMS
+                            (FIELD_KEY.get(it) as? String) !in TRASH_ITEMS
                         }.toTypedArray()
                     })
                 }.onFailure {
