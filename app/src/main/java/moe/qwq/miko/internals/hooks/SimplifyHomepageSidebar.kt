@@ -28,7 +28,7 @@ class SimplifyHomepageSidebar: IAction {
                 FIELD_KEY = QQSettingMeBizBean::class.java.declaredFields.first {
                     !Modifier.isStatic(it.modifiers) && it.type == String::class.java && (it.also {
                         if (!it.isAccessible) it.isAccessible = true
-                    }.get(bean) as String).startsWith("d_")
+                    }.get(bean) as? String)?.startsWith("d_") == true
                 }
             }
         }
