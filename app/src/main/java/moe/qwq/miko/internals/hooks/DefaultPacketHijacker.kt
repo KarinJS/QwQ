@@ -7,6 +7,8 @@ import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.helper.AppRuntimeFetcher
 import moe.qwq.miko.internals.setting.QwQSetting
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 /**
  * 拦截无用发包 + 修复主题验证 + 禁用更新检查
@@ -23,8 +25,15 @@ class DefaultPacketHijacker: IAction {
             } else if (QwQSetting.disableUpdateCheck && to.serviceCmd == "ProfileService.CheckUpdateReq") {
                 it.result = Unit
             } else if (QwQSetting.oneClickLike && to.serviceCmd == "VisitorSvc.ReqFavorite") {
+                var total = 0
                 val toServiceMsg = it.args[0] as ToServiceMsg
-                toServiceMsg.extraData.putInt("iCount", 20)
+                while (total != 20) {
+                    val random = Random.nextInt(1 .. 10)
+                    toServiceMsg.extraData.putInt("iCount", random)
+                    app.sendToService(toServiceMsg)
+                    total += random
+                }
+                it.result = Unit
             }
         }
     }
