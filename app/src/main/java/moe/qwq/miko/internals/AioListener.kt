@@ -22,6 +22,7 @@ import moe.fuqiuluo.entries.MessagePush
 import moe.fuqiuluo.entries.GroupRecallMessage
 import moe.fuqiuluo.entries.InfoSyncPush
 import moe.qwq.miko.ext.ifNullOrEmpty
+import moe.qwq.miko.internals.helper.AppRuntimeFetcher.appRuntime
 import moe.qwq.miko.internals.helper.ContactHelper
 import moe.qwq.miko.internals.helper.GroupHelper
 import moe.qwq.miko.internals.helper.LocalGrayTips
@@ -114,6 +115,8 @@ object AioListener {
             val operatorUid = recallData.operation.operatorUid ?: ""
             val msgSeq = recallData.operation.msgInfo?.msgSeq ?: 0L
             val wording = recallData.operation.wording?.wording ?: ""
+
+            if (operatorUid == appRuntime.currentUid) return@launch
 
             val target = ContactHelper.getUinByUidAsync(targetUid)
             val operator = ContactHelper.getUinByUidAsync(operatorUid)
