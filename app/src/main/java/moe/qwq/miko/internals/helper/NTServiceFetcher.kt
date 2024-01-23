@@ -44,7 +44,7 @@ internal object NTServiceFetcher {
                 val syncPush = ProtoBuf.decodeFromByteArray<InfoSyncPush>(buffer)
                 if (AioListener.onInfoSyncPush(syncPush)) {
                     it.result = ProtoBuf.encodeToByteArray(syncPush.copy(
-                        syncContent = syncPush.syncContent?.copy(body = arrayListOf())
+                        syncContent = syncPush.syncContent?.copy(body = ArrayList(0))
                     ))
                 }
             } else if (cmd == "trpc.msg.olpush.OlPushService.MsgPush") {

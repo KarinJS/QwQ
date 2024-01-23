@@ -12,6 +12,7 @@ object QwQSetting {
     const val DISABLE_UPDATE_CHECK = "disable_update_check"
     const val DISABLE_HOT_UPDATE_SO_BY_TRAFFIC = "disable_hot_update_so_by_traffic"
     const val DISABLE_USELESS_PACKET = "disable_useless_packet"
+    const val ONE_KEY_LIKE = "one_click_like"
 
     internal val dataDir = MobileQQ.getContext().getExternalFilesDir(null)!!
         .parentFile!!.resolve("Tencent/QwQ").also {
@@ -25,6 +26,7 @@ object QwQSetting {
         DISABLE_UPDATE_CHECK to Setting<Boolean>(DISABLE_UPDATE_CHECK, SettingType.BOOLEAN),
         DISABLE_HOT_UPDATE_SO_BY_TRAFFIC to Setting<Boolean>(DISABLE_HOT_UPDATE_SO_BY_TRAFFIC, SettingType.BOOLEAN),
         DISABLE_USELESS_PACKET to Setting<Boolean>(DISABLE_USELESS_PACKET, SettingType.BOOLEAN),
+        ONE_KEY_LIKE to Setting<Boolean>(ONE_KEY_LIKE, SettingType.BOOLEAN),
     )
 
     /**
@@ -56,6 +58,11 @@ object QwQSetting {
      * 禁止发送无用发包
      */
     var disableUselessPacket by settingMap[DISABLE_USELESS_PACKET] as Setting<Boolean>
+
+    /**
+     * 一键点赞20次
+     */
+    var oneClickLike by settingMap[ONE_KEY_LIKE] as Setting<Boolean>
 
     val settingUrl: String
         get() = dataDir.resolve("domain").also {

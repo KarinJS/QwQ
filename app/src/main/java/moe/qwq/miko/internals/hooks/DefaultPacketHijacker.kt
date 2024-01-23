@@ -11,7 +11,7 @@ import moe.qwq.miko.internals.setting.QwQSetting
 /**
  * 拦截无用发包 + 修复主题验证 + 禁用更新检查
  */
-class TrashPacketHijacker: IAction {
+class DefaultPacketHijacker: IAction {
     override fun invoke(ctx: Context) {
         val app = AppRuntimeFetcher.appRuntime
         if (app !is AppInterface) return
@@ -22,6 +22,9 @@ class TrashPacketHijacker: IAction {
                 it.result = Unit
             } else if (QwQSetting.disableUpdateCheck && to.serviceCmd == "ProfileService.CheckUpdateReq") {
                 it.result = Unit
+            } else if (QwQSetting.oneClickLike && to.serviceCmd == "VisitorSvc.ReqFavorite") {
+                val toServiceMsg = it.args[0] as ToServiceMsg
+                toServiceMsg.extraData.putInt("iCount", 20)
             }
         }
     }
