@@ -24,6 +24,8 @@ object ActionManager {
         SimplifyHomepageSidebar::class.java,
         DefaultPacketHijacker::class.java,
         HotUpdateSoPatch::class.java,
+
+        RepeatMessage::class.java
     )
 
     private val instanceMap = hashMapOf<Class<*>, IAction>()

@@ -43,7 +43,7 @@ internal object NTServiceFetcher {
             if (cmd == "trpc.msg.register_proxy.RegisterProxy.InfoSyncPush") {
                 val syncPush = ProtoBuf.decodeFromByteArray<InfoSyncPush>(buffer)
                 if (AioListener.onInfoSyncPush(syncPush)) {
-                    it.result = ProtoBuf.encodeToByteArray(syncPush.copy(
+                    it.args[1] = ProtoBuf.encodeToByteArray(syncPush.copy(
                         syncContent = syncPush.syncContent?.copy(body = ArrayList(0))
                     ))
                 }
