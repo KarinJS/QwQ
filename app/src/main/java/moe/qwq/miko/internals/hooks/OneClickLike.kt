@@ -32,6 +32,7 @@ class OneClickLike: IAction {
 
             if (!QwQSetting.oneClickLike) return@runCatching
 
+            voteHelperField.isAccessible = true
             VisitorsActivity::class.java.hookMethod("onClick").before {
                 val view = it.args[0] as View
                 val profile = view.tag

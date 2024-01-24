@@ -13,6 +13,7 @@ object QwQSetting {
     const val DISABLE_HOT_UPDATE_SO_BY_TRAFFIC = "disable_hot_update_so_by_traffic"
     const val DISABLE_USELESS_PACKET = "disable_useless_packet"
     const val ONE_KEY_LIKE = "one_click_like"
+    const val FORCE_TABLET_MODE = "force_tablet_mode"
 
     internal val dataDir = MobileQQ.getContext().getExternalFilesDir(null)!!
         .parentFile!!.resolve("Tencent/QwQ").also {
@@ -27,6 +28,7 @@ object QwQSetting {
         DISABLE_HOT_UPDATE_SO_BY_TRAFFIC to Setting<Boolean>(DISABLE_HOT_UPDATE_SO_BY_TRAFFIC, SettingType.BOOLEAN),
         DISABLE_USELESS_PACKET to Setting<Boolean>(DISABLE_USELESS_PACKET, SettingType.BOOLEAN),
         ONE_KEY_LIKE to Setting<Boolean>(ONE_KEY_LIKE, SettingType.BOOLEAN),
+        FORCE_TABLET_MODE to Setting<Boolean>(FORCE_TABLET_MODE, SettingType.BOOLEAN),
     )
 
     /**
@@ -63,6 +65,11 @@ object QwQSetting {
      * 一键点赞20次
      */
     var oneClickLike by settingMap[ONE_KEY_LIKE] as Setting<Boolean>
+
+    /**
+     * 强制平板模式
+     */
+    var forceTabletMode by settingMap[FORCE_TABLET_MODE] as Setting<Boolean>
 
     val settingUrl: String
         get() = dataDir.resolve("domain").also {

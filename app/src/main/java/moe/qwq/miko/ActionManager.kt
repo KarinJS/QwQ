@@ -18,6 +18,7 @@ object ActionManager {
         PacketHijacker::class.java,
 
         OneClickLike::class.java,
+        ForceTabletMode::class.java,
 
         BrowserAccessRestrictions::class.java,
         SimplifyHomepageSidebar::class.java,
