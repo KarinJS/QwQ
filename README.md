@@ -54,6 +54,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ```
 
+## 感谢以下项目
+
+- [QAuxiliary](https://github.com/cinit/QAuxiliary): Plagiarism of the project code
+- [LSPosed](https://github.com/LSPosed/LSPosed): Hook framework
+- [vue](https://cn.vuejs.org/): Setting page framework
+- [OpenShamrock](https://github.com/whitechi73/OpenShamrock): Protocol Hook
+
 ## 贡献者
 
 [![][contrib-image]][contrib-link]

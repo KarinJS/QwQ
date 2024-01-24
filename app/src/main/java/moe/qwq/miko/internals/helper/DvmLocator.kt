@@ -34,7 +34,9 @@ object DvmLocator {
 
     fun findClass(cls: ClassEnum, locator: ClassLocator? = cls.locator): Class<*>? {
         if (locator != null && !cacheMap.classes.containsKey(cls)) {
-            locateClass(cls, runCatching { locator() }.getOrNull())
+            val locatedClass = runCatching { locator() }.getOrNull()
+            locateClass(cls, locatedClass)
+            return locatedClass
         }
         if(cacheMap.classes.containsKey(cls)) {
             val ret = cacheMap.classes[cls]!!.toClass()
@@ -54,7 +56,9 @@ object DvmLocator {
 
     fun findField(field: FieldEnum, locator: FieldLocator? = field.locator): Field? {
         if (locator != null && !cacheMap.fields.containsKey(field)) {
-           locateField(field, runCatching { locator() }.getOrNull())
+            val locatedField = runCatching { locator() }.getOrNull()
+            locateField(field, locatedField)
+            return locatedField?.second
         }
         return cacheMap.fields[field]?.toField()
     }
@@ -77,20 +81,20 @@ object DvmLocator {
 
     fun findMethod(method: MethodEnum, locator: MethodLocator? = method.locator): Method? {
         if (locator != null && !cacheMap.methods.containsKey(method)) {
-            locateMethod(method, runCatching { locator() }.getOrNull())
+            val locatedMethod = runCatching { locator() }.getOrNull()
+            locateMethod(method, locatedMethod)
+            return locatedMethod?.second
         }
         return cacheMap.methods[method]?.toMethod()
     }
 
     fun locateMethod(method: MethodEnum, result: Pair<Class<*>, Method>?) {
         if (result != null && !cacheMap.methods.containsKey(method)) {
-            val returnType = if (result.second.returnType == Void.TYPE) ClassInfo.VOID
-            else if (result.second.returnType.isArray) ClassInfo(result.second.returnType.componentType.name, true)
+            if (result.second.returnType.isArray) ClassInfo(result.second.returnType.componentType.name, true)
             else ClassInfo(result.second.returnType.name, false)
             cacheMap.methods[method] = MethodInfo(
                 parent = ClassInfo(result.first.name, false),
                 methodName = result.second.name,
-                returnType = returnType,
                 private = Modifier.isPrivate(result.second.modifiers),
                 static = Modifier.isStatic(result.second.modifiers),
                 args = result.second.parameterTypes.map {

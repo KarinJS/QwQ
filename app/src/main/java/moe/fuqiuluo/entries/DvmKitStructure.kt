@@ -11,6 +11,7 @@ import moe.qwq.miko.internals.locators.ClassLocator
 import moe.qwq.miko.internals.locators.FieldLocator
 import moe.qwq.miko.internals.locators.MethodLocator
 import moe.qwq.miko.internals.locators.QQSettingMeConfigLocator
+import moe.qwq.miko.internals.locators.VoteHelperVoteLocator
 import moe.qwq.miko.internals.locators.WebSecurityPluginV2PluginLocator
 import java.lang.reflect.Array as JavaReflectArray
 
@@ -38,6 +39,7 @@ enum class MethodEnum(
 ) {
     @Deprecated("Lower Speed")
     @SerialName("QQSettingMeConfig.GetItems") QQSettingMeConfigGetItems,
+    @SerialName("VoteHelper.Vote") VoteHelperVote(VoteHelperVoteLocator),
 }
 
 @Serializable
@@ -52,22 +54,13 @@ data class ClassInfo(
     @SerialName("full_name") val fullName: String,
     @SerialName("array") val isArray: Boolean,
 ) {
-    val isVoid: Boolean = fullName == "void"
-
     fun toClass(): Class<*>? {
-        if (isVoid) {
-            return Void.TYPE
-        }
         if (isArray) {
             return LuoClassloader.load(fullName)?.let {
                 JavaReflectArray.newInstance(it, 0).javaClass
             }
         }
         return LuoClassloader.load(fullName)
-    }
-
-    companion object {
-        val VOID = ClassInfo("void", false)
     }
 }
 
@@ -100,7 +93,6 @@ data class MethodInfo(
     @SerialName("private") val private: Boolean,
     @SerialName("static") val static: Boolean,
     @SerialName("args") val args: List<ClassInfo>,
-    @SerialName("return_type") val returnType: ClassInfo,
 ) {
    fun toMethod(): Method? {
        val cls = parent.toClass()
@@ -108,14 +100,11 @@ data class MethodInfo(
        val argTypes = args.map {
            it.toClass() ?: return null
        }.toTypedArray()
-       val returnType = returnType.toClass()
-           ?: return null
        return cls.declaredMethods.firstOrNull {
            Modifier.isStatic(it.modifiers) == static &&
            Modifier.isPrivate(it.modifiers) == private &&
            it.name == methodName &&
-           it.parameterTypes.contentEquals(argTypes) &&
-           it.returnType == returnType
+           it.parameterTypes.contentEquals(argTypes)
        }
    }
 }

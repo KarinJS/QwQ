@@ -17,6 +17,8 @@ object ActionManager {
         FetchService::class.java,
         PacketHijacker::class.java,
 
+        OneClickLike::class.java,
+
         BrowserAccessRestrictions::class.java,
         SimplifyHomepageSidebar::class.java,
         DefaultPacketHijacker::class.java,

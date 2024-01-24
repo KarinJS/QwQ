@@ -1,8 +1,13 @@
+@file:OptIn(DelicateCoroutinesApi::class)
+
 package moe.qwq.miko.internals.hooks
 
 import android.content.Context
 import com.tencent.common.app.AppInterface
 import com.tencent.qphone.base.remote.ToServiceMsg
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.helper.AppRuntimeFetcher
@@ -19,22 +24,32 @@ class DefaultPacketHijacker: IAction {
         if (app !is AppInterface) return
 
         AppInterface::class.java.hookMethod("sendToService").before {
-            val to = it.args[0] as ToServiceMsg
-            if (QwQSetting.disableUselessPacket && to.serviceCmd in TRASH_PACKET) {
+            val toServiceMsg = it.args[0] as ToServiceMsg
+            if (QwQSetting.disableUselessPacket && toServiceMsg.serviceCmd in TRASH_PACKET) {
                 it.result = Unit
-            } else if (QwQSetting.disableUpdateCheck && to.serviceCmd == "ProfileService.CheckUpdateReq") {
-                it.result = Unit
-            } else if (QwQSetting.oneClickLike && to.serviceCmd == "VisitorSvc.ReqFavorite") {
-                var total = 0
-                val toServiceMsg = it.args[0] as ToServiceMsg
-                while (total != 20) {
-                    val random = Random.nextInt(1 .. 10)
-                    toServiceMsg.extraData.putInt("iCount", random)
-                    app.sendToService(toServiceMsg)
-                    total += random
-                }
+            } else if (QwQSetting.disableUpdateCheck && toServiceMsg.serviceCmd == "ProfileService.CheckUpdateReq") {
                 it.result = Unit
             }
+
+            /* 协议一键赞 问题多多
+            else if (QwQSetting.oneClickLike && toServiceMsg.serviceCmd == "VisitorSvc.ReqFavorite" &&
+                !toServiceMsg.extraData.getBoolean("qwq", false)
+                ) {
+                toServiceMsg.extraData.putBoolean("qwq", true)
+                GlobalScope.launch {
+                    var total = 0
+                    while (total < 20) {
+                        var random = Random.nextInt(1 .. 10)
+                        if (20 - total < random) {
+                            random = 20 - total
+                        }
+                        toServiceMsg.extraData.putInt("iCount", random)
+                        app.sendToService(toServiceMsg)
+                        total += random
+                    }
+                }
+                it.result = Unit
+            }*/
         }
     }
 
