@@ -14,6 +14,9 @@ object QwQSetting {
     const val DISABLE_USELESS_PACKET = "disable_useless_packet"
     const val ONE_KEY_LIKE = "one_click_like"
     const val FORCE_TABLET_MODE = "force_tablet_mode"
+    const val SIMPLIFY_BUBBLE_FONT = "simplify_bubble_font"
+    const val SIMPLIFY_BUBBLE_AVATAR = "simplify_bubble_avatar"
+    const val REPEAT_MESSAGE = "repeat_message"
 
     internal val dataDir = MobileQQ.getContext().getExternalFilesDir(null)!!
         .parentFile!!.resolve("Tencent/QwQ").also {
@@ -29,47 +32,22 @@ object QwQSetting {
         DISABLE_USELESS_PACKET to Setting<Boolean>(DISABLE_USELESS_PACKET, SettingType.BOOLEAN),
         ONE_KEY_LIKE to Setting<Boolean>(ONE_KEY_LIKE, SettingType.BOOLEAN),
         FORCE_TABLET_MODE to Setting<Boolean>(FORCE_TABLET_MODE, SettingType.BOOLEAN),
+        SIMPLIFY_BUBBLE_FONT to Setting<Boolean>(SIMPLIFY_BUBBLE_FONT, SettingType.BOOLEAN),
+        SIMPLIFY_BUBBLE_AVATAR to Setting<Boolean>(SIMPLIFY_BUBBLE_AVATAR, SettingType.BOOLEAN),
+        REPEAT_MESSAGE to Setting<Boolean>(REPEAT_MESSAGE, SettingType.BOOLEAN),
     )
 
-    /**
-     * 是否拦截撤回消息事件
-     */
     var interceptRecall by settingMap[INTERCEPT_RECALL] as Setting<Boolean>
-
-    /**
-     * 反浏览器访问限制
-     */
     var antiBrowserAccessRestrictions by settingMap[ANTI_BROWSER_ACCESS_RESTRICTIONS] as Setting<Boolean>
-
-    /**
-     * 主页侧边栏简化
-     */
     var simplifyHomepageSidebar by settingMap[SIMPLIFY_HOMEPAGE_SIDEBAR] as Setting<Boolean>
-
-    /**
-     * 禁止更新检查
-     */
     var disableUpdateCheck by settingMap[DISABLE_UPDATE_CHECK] as Setting<Boolean>
-
-    /**
-     * 禁止使用流量热更新SO文件
-     */
     var disableHotUpdateSoByTraffic by settingMap[DISABLE_HOT_UPDATE_SO_BY_TRAFFIC] as Setting<Boolean>
-
-    /**
-     * 禁止发送无用发包
-     */
     var disableUselessPacket by settingMap[DISABLE_USELESS_PACKET] as Setting<Boolean>
-
-    /**
-     * 一键点赞20次
-     */
     var oneClickLike by settingMap[ONE_KEY_LIKE] as Setting<Boolean>
-
-    /**
-     * 强制平板模式
-     */
     var forceTabletMode by settingMap[FORCE_TABLET_MODE] as Setting<Boolean>
+    var simplifyBubbleFont by settingMap[SIMPLIFY_BUBBLE_FONT] as Setting<Boolean>
+    var simplifyBubbleAvatar by settingMap[SIMPLIFY_BUBBLE_AVATAR] as Setting<Boolean>
+    var repeatMessage by settingMap[REPEAT_MESSAGE] as Setting<Boolean>
 
     val settingUrl: String
         get() = dataDir.resolve("domain").also {
