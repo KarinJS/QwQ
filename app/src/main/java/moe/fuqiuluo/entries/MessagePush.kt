@@ -15,12 +15,12 @@ data class MessagePush(
 data class Message(
     @ProtoNumber(1) var msgHead: MessageHead,
     @ProtoNumber(2) var content: MessageContentInfo,
-    @ProtoNumber(3) var body: MessageBody
+    @ProtoNumber(3) var body: MessageBody? = null
 )
 
 @Serializable
 data class MessageHead(
-    @ProtoNumber(1) val peerId: ULong = ULong.MIN_VALUE,
+    @ProtoNumber(1) val peerId: Long = Long.MIN_VALUE,
     @ProtoNumber(2) val peerUid: String? = null,
     @ProtoNumber(5) val targetId: Long = Long.MIN_VALUE,
     @ProtoNumber(6) val targetUid: String? = null

@@ -57,11 +57,11 @@ object AioListener {
     private fun onMessage(msgType: Int, subType: Int, msgBody: Message): Boolean {
         return when(msgType) {
             528 -> when (subType) {
-                138 -> onC2CRecall(msgBody.msgHead, msgBody.body.richMsg)
+                138 -> onC2CRecall(msgBody.msgHead, msgBody.body!!.richMsg)
                 else -> false
             }
             732 -> when (subType) {
-                17 -> onGroupRecall(msgBody, msgBody.body.richMsg)
+                17 -> onGroupRecall(msgBody, msgBody.body!!.richMsg)
                 else -> false
             }
             else -> false
@@ -109,7 +109,7 @@ object AioListener {
             }
             val recallData = ProtoBuf.decodeFromByteArray<GroupRecallMessage>(buffer)
 
-            val groupCode = GroupHelper.groupUin2GroupCode(message.msgHead.peerId.toLong())
+            val groupCode = GroupHelper.groupUin2GroupCode(message.msgHead.peerId)
             val msgUid = message.content.msgUid
             val targetUid = recallData.operation.msgInfo?.senderUid ?: ""
             val operatorUid = recallData.operation.operatorUid ?: ""

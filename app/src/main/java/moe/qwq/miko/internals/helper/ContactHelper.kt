@@ -3,6 +3,7 @@ package moe.qwq.miko.internals.helper
 import com.tencent.qqnt.kernel.nativeinterface.Contact
 import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.lang.IllegalArgumentException
 import kotlin.coroutines.resume
 
 internal object ContactHelper {
@@ -36,5 +37,12 @@ internal object ContactHelper {
             if (id.startsWith("u_")) id else getUidByUinAsync(id.toLong())
         } else id
         return Contact(chatType, peerId, subId)
+    }
+
+    fun generateContactV2(chatType: Int, uid: String, subId: String = ""): Contact {
+        if (chatType == MsgConstant.KCHATTYPEC2C && !uid.startsWith("u_")) {
+            throw IllegalArgumentException("uid must start with u_")
+        }
+        return Contact(chatType, uid, subId)
     }
 }
