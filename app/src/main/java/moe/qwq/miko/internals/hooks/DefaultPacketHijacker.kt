@@ -59,6 +59,12 @@ class DefaultPacketHijacker: IAction {
             "FeedCloudSvr.trpc.feedcloud.eeveeundealmsg.EeveeMsgChannel.FcUndealMsgs",
             "trpc.qqva.uni_log_server.uni_log_server.Report",
             "OidbSvc.0x5eb_ForTheme",
+            "FeedCloudSvr.trpc.feedcloud.eeveeundealmsg.EeveeMsgChannel.FcUndealMsgs",
+            "QQClubComm.getNewFlag",
+            "LightAppSvc.mini_app_ad.GetAd",
+            "TianShu.GetAds", // noteworthy
+            "LightAppSvc.mini_app_info.GetAppInfoByLink",
+            "SQQzoneSvc.getActiveFeeds"
         )
     }
 }
