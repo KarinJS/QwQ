@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 [![][contrib-image]][contrib-link]
 
-[banner]: https://socialify.git.ci/whitechi73/QwQ/image?description=1&forks=1&issues=1&logo=https%3A%2F%2Fwhitechi73.github.io%2FOpenShamrock%2Fshamrock.jpg&pattern=Plus&pulls=1&stargazers=1&theme=Auto
+[banner]: https://socialify.git.ci/whitechi73/QwQ/image?description=1&forks=1&issues=1&logo=https://github.com/whitechi73/QwQ/assets/98259561/bf4ebdb6-da8d-4204-80aa-5db91e0c97ab&pattern=Plus&pulls=1&stargazers=1&theme=Auto
 
 [actions]: https://img.shields.io/github/actions/workflow/status/whitechi73/QwQ/build-apk.yml?style=for-the-badge
 

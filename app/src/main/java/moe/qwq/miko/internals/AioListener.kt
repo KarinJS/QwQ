@@ -123,10 +123,10 @@ object AioListener {
 
             val targetInfo = if (targetUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode.toString(), target).getOrNull()
             val targetNick = targetInfo?.troopnick
-                .ifNullOrEmpty(targetInfo?.friendnick) ?: target
+                .ifNullOrEmpty(targetInfo?.friendnick) ?: targetUid
             val operatorInfo = if (operatorUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode.toString(), operator).getOrNull()
             val operatorNick = operatorInfo?.troopnick
-                .ifNullOrEmpty(operatorInfo?.friendnick) ?: operator
+                .ifNullOrEmpty(operatorInfo?.friendnick) ?: operatorUid
 
             val contact = ContactHelper.generateContact(
                 chatType = MsgConstant.KCHATTYPEGROUP,

@@ -49,6 +49,13 @@ class RepeatMessage: IAction {
                     val contact = ContactHelper.generateContactV2(msgRecord.chatType, msgRecord.peerUid)
                     val newMsgId = MessageTools.generateMsgUniseq(msgRecord.chatType)
                     val msgService = QRoute.api(IMsgService::class.java)
+
+                    //msgService.resendMsg(contact, msgId) { result, _ ->
+                    //    if (result != 0) {
+                    //        log("[QwQ] repeat message failed: (msgType = ${msgRecord.msgType})")
+                    //    }
+                    //}
+
                     msgService.sendMsgWithMsgId(contact, newMsgId, msgRecord.elements) { result, _ ->
                         if (result != 0) {
                             log("[QwQ] repeat message failed: (msgType = ${msgRecord.msgType})")
