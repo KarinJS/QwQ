@@ -17,6 +17,11 @@ object QwQSetting {
     const val SIMPLIFY_BUBBLE_FONT = "simplify_bubble_font"
     const val SIMPLIFY_BUBBLE_AVATAR = "simplify_bubble_avatar"
     const val REPEAT_MESSAGE = "repeat_message"
+    const val DISABLE_VISIT_GROUP_ANIMATION = "disable_visit_group_animation"
+    const val SUPER_GROUP_FILE = "super_group_file"
+    const val SHOW_BAN_OPERATOR = "show_ban_operator"
+    const val OPTIMIZE_AT_SORT = "optimize_at_sort"
+    const val DISABLE_FLASH_PICTURE = "disable_flash_picture"
 
     internal val dataDir = MobileQQ.getContext().getExternalFilesDir(null)!!
         .parentFile!!.resolve("Tencent/QwQ").also {
@@ -35,6 +40,11 @@ object QwQSetting {
         SIMPLIFY_BUBBLE_FONT to Setting<Boolean>(SIMPLIFY_BUBBLE_FONT, SettingType.BOOLEAN),
         SIMPLIFY_BUBBLE_AVATAR to Setting<Boolean>(SIMPLIFY_BUBBLE_AVATAR, SettingType.BOOLEAN),
         REPEAT_MESSAGE to Setting<Boolean>(REPEAT_MESSAGE, SettingType.BOOLEAN),
+        DISABLE_VISIT_GROUP_ANIMATION to Setting<Boolean>(DISABLE_VISIT_GROUP_ANIMATION, SettingType.BOOLEAN),
+        SUPER_GROUP_FILE to Setting<Boolean>(SUPER_GROUP_FILE, SettingType.BOOLEAN),
+        SHOW_BAN_OPERATOR to Setting<Boolean>(SHOW_BAN_OPERATOR, SettingType.BOOLEAN),
+        OPTIMIZE_AT_SORT to Setting<Boolean>(OPTIMIZE_AT_SORT, SettingType.BOOLEAN),
+        DISABLE_FLASH_PICTURE to Setting<Boolean>(DISABLE_FLASH_PICTURE, SettingType.BOOLEAN)
     )
 
     var interceptRecall by settingMap[INTERCEPT_RECALL] as Setting<Boolean>
@@ -48,6 +58,11 @@ object QwQSetting {
     var simplifyBubbleFont by settingMap[SIMPLIFY_BUBBLE_FONT] as Setting<Boolean>
     var simplifyBubbleAvatar by settingMap[SIMPLIFY_BUBBLE_AVATAR] as Setting<Boolean>
     var repeatMessage by settingMap[REPEAT_MESSAGE] as Setting<Boolean>
+    var disableVisitGroupAnimation by settingMap[DISABLE_VISIT_GROUP_ANIMATION] as Setting<Boolean>
+    var superGroupFile by settingMap[SUPER_GROUP_FILE] as Setting<Boolean>
+    var showBanOperator by settingMap[SHOW_BAN_OPERATOR] as Setting<Boolean>
+    var optimizeAtSort by settingMap[OPTIMIZE_AT_SORT] as Setting<Boolean>
+    var disableFlashPicture by settingMap[DISABLE_FLASH_PICTURE] as Setting<Boolean>
 
     val settingUrl: String
         get() = dataDir.resolve("domain").also {

@@ -54,7 +54,7 @@ class DefaultPacketHijacker: IAction {
     }
 
     companion object {
-        private val TRASH_PACKET = arrayOf(
+        private val TRASH_PACKET = setOf(
             "AuthSvr.ThemeAuth", // 主题验证
             "FeedCloudSvr.trpc.feedcloud.eeveeundealmsg.EeveeMsgChannel.FcUndealMsgs",
             "trpc.qqva.uni_log_server.uni_log_server.Report",
@@ -63,7 +63,8 @@ class DefaultPacketHijacker: IAction {
             "LightAppSvc.mini_app_ad.GetAd",
             "TianShu.GetAds", // noteworthy
             "LightAppSvc.mini_app_info.GetAppInfoByLink",
-            "SQQzoneSvc.getActiveFeeds"
+            "SQQzoneSvc.getActiveFeeds",
+            "trpc.qqshop.adpush.PushService.GetAd"
         )
     }
 }

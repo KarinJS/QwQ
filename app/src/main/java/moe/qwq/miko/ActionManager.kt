@@ -25,7 +25,8 @@ object ActionManager {
         DefaultPacketHijacker::class.java,
         HotUpdateSoPatch::class.java,
 
-        RepeatMessage::class.java
+        RepeatMessage::class.java,
+        DisableFlashPictures::class.java
     )
 
     private val instanceMap = hashMapOf<Class<*>, IAction>()
