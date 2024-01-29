@@ -77,7 +77,9 @@ object AioListener: IKernelMsgListener {
     }
 
     private suspend fun onFlashPic(record: MsgRecord, picElement: PicElement) {
-        if (picElement.isFlashPic == false) return
+        if (picElement.isFlashPic == null || picElement.isFlashPic == false) return
+        if (picElement.original) return
+        //if (picElement.picType != 0) return
         val peer = if (record.chatType == MsgConstant.KCHATTYPEGROUP)
             record.peerUin
         else record.senderUin
