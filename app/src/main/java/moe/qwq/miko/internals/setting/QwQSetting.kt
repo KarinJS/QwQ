@@ -76,7 +76,7 @@ object QwQSetting {
         }.readText()
 
     fun getSetting(key: String): Setting<*> {
-        return settingMap[key] ?: Setting<Boolean>("unknown", SettingType.BOOLEAN)
+        return settingMap[key] ?: Setting<Boolean>(key, SettingType.BOOLEAN)
     }
 
     enum class SettingType {
