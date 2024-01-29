@@ -71,7 +71,7 @@ object QwQSetting {
         get() = dataDir.resolve("domain").also {
             if (!it.exists()) {
                 it.createNewFile()
-                it.writeText("qwq.owo233.com")
+                it.writeText("qwq-web-setting.pages.dev")
             }
         }.readText()
 
