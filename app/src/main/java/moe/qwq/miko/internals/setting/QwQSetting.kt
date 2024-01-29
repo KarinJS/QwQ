@@ -22,6 +22,7 @@ object QwQSetting {
     const val SHOW_BAN_OPERATOR = "show_ban_operator"
     const val OPTIMIZE_AT_SORT = "optimize_at_sort"
     const val DISABLE_FLASH_PICTURE = "disable_flash_picture"
+    const val ALLOW_GROUP_FLASH_PIC = "allow_group_flash_pic"
 
     internal val dataDir = MobileQQ.getContext().getExternalFilesDir(null)!!
         .parentFile!!.resolve("Tencent/QwQ").also {
@@ -44,7 +45,8 @@ object QwQSetting {
         SUPER_GROUP_FILE to Setting<Boolean>(SUPER_GROUP_FILE, SettingType.BOOLEAN),
         SHOW_BAN_OPERATOR to Setting<Boolean>(SHOW_BAN_OPERATOR, SettingType.BOOLEAN),
         OPTIMIZE_AT_SORT to Setting<Boolean>(OPTIMIZE_AT_SORT, SettingType.BOOLEAN),
-        DISABLE_FLASH_PICTURE to Setting<Boolean>(DISABLE_FLASH_PICTURE, SettingType.BOOLEAN)
+        DISABLE_FLASH_PICTURE to Setting<Boolean>(DISABLE_FLASH_PICTURE, SettingType.BOOLEAN),
+        ALLOW_GROUP_FLASH_PIC to Setting<Boolean>(ALLOW_GROUP_FLASH_PIC, SettingType.BOOLEAN),
     )
 
     var interceptRecall by settingMap[INTERCEPT_RECALL] as Setting<Boolean>
@@ -63,6 +65,7 @@ object QwQSetting {
     var showBanOperator by settingMap[SHOW_BAN_OPERATOR] as Setting<Boolean>
     var optimizeAtSort by settingMap[OPTIMIZE_AT_SORT] as Setting<Boolean>
     var disableFlashPicture by settingMap[DISABLE_FLASH_PICTURE] as Setting<Boolean>
+    var allowGroupFlashPic by settingMap[ALLOW_GROUP_FLASH_PIC] as Setting<Boolean>
 
     val settingUrl: String
         get() = dataDir.resolve("domain").also {

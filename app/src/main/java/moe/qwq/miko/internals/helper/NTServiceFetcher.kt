@@ -37,6 +37,7 @@ internal object NTServiceFetcher {
         XposedBridge.log("[QwQ] Init NT Kernel.")
 
         QwQSetting.getSetting(QwQSetting.INTERCEPT_RECALL).isFailed = false
+
         kernelService.wrapperSession.javaClass.hookMethod("onMsfPush").before {
             val cmd = it.args[0] as String
             val buffer = it.args[1] as ByteArray
@@ -55,7 +56,7 @@ internal object NTServiceFetcher {
             }
         }
 
-
+        msgService.addMsgListener(AioListener)
     }
 
     val kernelService: IKernelService

@@ -26,7 +26,8 @@ object ActionManager {
         HotUpdateSoPatch::class.java,
 
         RepeatMessage::class.java,
-        DisableFlashPictures::class.java
+        DisableFlashPictures::class.java,
+        AllowGroupFlashPic::class.java
     )
 
     private val instanceMap = hashMapOf<Class<*>, IAction>()

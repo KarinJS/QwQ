@@ -4,15 +4,11 @@ package moe.fuqiuluo.entries
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import moe.fuqiuluo.xposed.loader.LuoClassloader
+import moe.qwq.miko.internals.locators.AbstractPreviewUiLocator
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
-import moe.qwq.miko.internals.locators.ClassLocator
-import moe.qwq.miko.internals.locators.FieldLocator
-import moe.qwq.miko.internals.locators.MethodLocator
-import moe.qwq.miko.internals.locators.QQSettingMeConfigLocator
-import moe.qwq.miko.internals.locators.VoteHelperVoteLocator
-import moe.qwq.miko.internals.locators.WebSecurityPluginV2PluginLocator
+import moe.qwq.miko.internals.locators.*
 import java.lang.reflect.Array as JavaReflectArray
 
 @Serializable
@@ -22,7 +18,8 @@ enum class ClassEnum(
     @SerialName("WebSecurityPluginV2Plugin") WebSecurityPluginV2Plugin(WebSecurityPluginV2PluginLocator),
     @SerialName("CodecWarpperImpl") CodecWarpperImpl,
     @SerialName("QQSettingMeConfig") QQSettingMeConfig(QQSettingMeConfigLocator),
-
+    @SerialName("AbstractPreviewUi") AbstractPreviewUi(AbstractPreviewUiLocator),
+    @SerialName("PreviewUserInteractionPart") PreviewUserInteractionPart(PreviewUserInteractionPartLocator)
 }
 
 @Serializable
