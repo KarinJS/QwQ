@@ -39,6 +39,7 @@ import com.tencent.qqnt.kernel.nativeinterface.SearchGroupFileResult
 import com.tencent.qqnt.kernel.nativeinterface.TabStatusInfo
 import com.tencent.qqnt.kernel.nativeinterface.TempChatInfo
 import com.tencent.qqnt.kernel.nativeinterface.UnreadCntInfo
+import de.robv.android.xposed.XposedBridge
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -134,27 +135,31 @@ object AioListener: IKernelMsgListener {
     private fun onC2CRecall(msgHead: MessageHead, richMsg: ByteArray): Boolean {
         if (!QwQSetting.interceptRecall) return false
         GlobalScope.launch {
-            val recallData = ProtoBuf.decodeFromByteArray<C2CRecallMessage>(richMsg)
+            try {
+                val recallData = ProtoBuf.decodeFromByteArray<C2CRecallMessage>(richMsg)
 
-            val senderUid = recallData.info.senderUid
-            val receiverUid = recallData.info.receiverUid
-            val msgSeq = recallData.info.msgSeq
-            val msgUid = recallData.info.msgUid
-            val msgTime = recallData.info.msgTime
-            val wording = recallData.info.wording?.wording ?: ""
+                val senderUid = recallData.info.senderUid
+                val receiverUid = recallData.info.receiverUid
+                val msgSeq = recallData.info.msgSeq
+                val msgUid = recallData.info.msgUid
+                val msgTime = recallData.info.msgTime
+                val wording = recallData.info.wording?.wording ?: ""
 
-            if (senderUid == appRuntime.currentUid) return@launch
+                if (senderUid == appRuntime.currentUid) return@launch
 
-            val sender = ContactHelper.getUinByUidAsync(senderUid)
-            val receiver = ContactHelper.getUinByUidAsync(receiverUid)
+                val sender = ContactHelper.getUinByUidAsync(senderUid)
+                val receiver = ContactHelper.getUinByUidAsync(receiverUid)
 
-            val contact = ContactHelper.generateContact(
-                chatType = MsgConstant.KCHATTYPEC2C,
-                id = senderUid
-            )
-            LocalGrayTips.addLocalGrayTip(contact, JsonGrayBusiId.AIO_AV_C2C_NOTICE, LocalGrayTips.Align.CENTER) {
-                text("对方尝试撤回自己的")
-                msgRef("消息", msgSeq)
+                val contact = ContactHelper.generateContact(
+                    chatType = MsgConstant.KCHATTYPEC2C,
+                    id = senderUid
+                )
+                LocalGrayTips.addLocalGrayTip(contact, JsonGrayBusiId.AIO_AV_C2C_NOTICE, LocalGrayTips.Align.CENTER) {
+                    text("对方尝试撤回自己的")
+                    msgRef("消息", msgSeq)
+                }
+            } catch (e: Exception) {
+                XposedBridge.log("[QwQ onC2CRecall] 发生异常:${e.message}")
             }
         }
         return true
@@ -163,50 +168,54 @@ object AioListener: IKernelMsgListener {
     private fun onGroupRecall(message: Message, richMsg: ByteArray): Boolean {
         if (!QwQSetting.interceptRecall) return false
         GlobalScope.launch {
-            val reader = ByteReadPacket(richMsg)
-            val buffer = try {
-                if (reader.readUInt() == message.msgHead.peerId.toUInt()) {
-                    reader.discardExact(1)
-                    reader.readBytes(reader.readShort().toInt())
-                } else richMsg
-            } finally {
-                reader.release()
-            }
-            val recallData = ProtoBuf.decodeFromByteArray<GroupRecallMessage>(buffer)
-
-            val groupCode = GroupHelper.groupUin2GroupCode(message.msgHead.peerId)
-            val msgUid = message.content.msgUid
-            val targetUid = recallData.operation.msgInfo?.senderUid ?: ""
-            val operatorUid = recallData.operation.operatorUid ?: ""
-            val msgSeq = recallData.operation.msgInfo?.msgSeq ?: 0L
-            val wording = recallData.operation.wording?.wording ?: ""
-
-            if (operatorUid == appRuntime.currentUid) return@launch
-
-            val target = ContactHelper.getUinByUidAsync(targetUid)
-            val operator = ContactHelper.getUinByUidAsync(operatorUid)
-
-            val targetInfo = if (targetUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode.toString(), target).getOrNull()
-            val targetNick = targetInfo?.troopnick
-                .ifNullOrEmpty(targetInfo?.friendnick) ?: targetUid
-            val operatorInfo = if (operatorUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode.toString(), operator).getOrNull()
-            val operatorNick = operatorInfo?.troopnick
-                .ifNullOrEmpty(operatorInfo?.friendnick) ?: operatorUid
-
-            val contact = ContactHelper.generateContact(
-                chatType = MsgConstant.KCHATTYPEGROUP,
-                id = groupCode.toString()
-            )
-            LocalGrayTips.addLocalGrayTip(contact, JsonGrayBusiId.AIO_AV_GROUP_NOTICE, LocalGrayTips.Align.CENTER) {
-                member(operatorUid, operator, operatorNick, "3")
-                text("尝试撤回")
-                if (targetUid == operatorUid) {
-                    text("自己")
-                } else {
-                    member(targetUid, target, targetNick, "3")
+            try {
+                val reader = ByteReadPacket(richMsg)
+                val buffer = try {
+                    if (reader.readUInt() == message.msgHead.peerId.toUInt()) {
+                        reader.discardExact(1)
+                        reader.readBytes(reader.readShort().toInt())
+                    } else richMsg
+                } finally {
+                    reader.release()
                 }
-                text("的")
-                msgRef("消息", msgSeq)
+                val recallData = ProtoBuf.decodeFromByteArray<GroupRecallMessage>(buffer)
+
+                val groupCode = GroupHelper.groupUin2GroupCode(message.msgHead.peerId)
+                val msgUid = message.content.msgUid
+                val targetUid = recallData.operation.msgInfo?.senderUid ?: ""
+                val operatorUid = recallData.operation.operatorUid ?: ""
+                val msgSeq = recallData.operation.msgInfo?.msgSeq ?: 0L
+                val wording = recallData.operation.wording?.wording ?: ""
+
+                if (operatorUid == appRuntime.currentUid) return@launch
+
+                val target = ContactHelper.getUinByUidAsync(targetUid)
+                val operator = ContactHelper.getUinByUidAsync(operatorUid)
+
+                val targetInfo = if (targetUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode.toString(), target).getOrNull()
+                val targetNick = targetInfo?.troopnick
+                    .ifNullOrEmpty(targetInfo?.friendnick) ?: targetUid
+                val operatorInfo = if (operatorUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode.toString(), operator).getOrNull()
+                val operatorNick = operatorInfo?.troopnick
+                    .ifNullOrEmpty(operatorInfo?.friendnick) ?: operatorUid
+
+                val contact = ContactHelper.generateContact(
+                    chatType = MsgConstant.KCHATTYPEGROUP,
+                    id = groupCode.toString()
+                )
+                LocalGrayTips.addLocalGrayTip(contact, JsonGrayBusiId.AIO_AV_GROUP_NOTICE, LocalGrayTips.Align.CENTER) {
+                    member(operatorUid, operator, operatorNick, "3")
+                    text("尝试撤回")
+                    if (targetUid == operatorUid) {
+                        text("自己")
+                    } else {
+                        member(targetUid, target, targetNick, "3")
+                    }
+                    text("的")
+                    msgRef("消息", msgSeq)
+                }
+            } catch (e: Exception) {
+                XposedBridge.log("[QwQ onGroupRecall] 发生异常:${e.message}")
             }
         }
         return true
