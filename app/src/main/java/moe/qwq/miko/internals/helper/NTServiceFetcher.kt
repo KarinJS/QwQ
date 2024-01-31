@@ -39,20 +39,24 @@ internal object NTServiceFetcher {
         QwQSetting.getSetting(QwQSetting.INTERCEPT_RECALL).isFailed = false
 
         kernelService.wrapperSession.javaClass.hookMethod("onMsfPush").before {
-            val cmd = it.args[0] as String
-            val buffer = it.args[1] as ByteArray
-            if (cmd == "trpc.msg.register_proxy.RegisterProxy.InfoSyncPush") {
-                val syncPush = ProtoBuf.decodeFromByteArray<InfoSyncPush>(buffer)
-                if (AioListener.onInfoSyncPush(syncPush)) {
-                    it.args[1] = ProtoBuf.encodeToByteArray(syncPush.copy(
-                        syncContent = syncPush.syncContent?.copy(body = ArrayList(0))
-                    ))
+            runCatching {
+                val cmd = it.args[0] as String
+                val buffer = it.args[1] as ByteArray
+                if (cmd == "trpc.msg.register_proxy.RegisterProxy.InfoSyncPush") {
+                    val syncPush = ProtoBuf.decodeFromByteArray<InfoSyncPush>(buffer)
+                    if (AioListener.onInfoSyncPush(syncPush)) {
+                        it.args[1] = ProtoBuf.encodeToByteArray(syncPush.copy(
+                            syncContent = syncPush.syncContent?.copy(body = ArrayList(0))
+                        ))
+                    }
+                } else if (cmd == "trpc.msg.olpush.OlPushService.MsgPush") {
+                    val msgPush = ProtoBuf.decodeFromByteArray<MessagePush>(buffer)
+                    if (AioListener.onMsgPush(msgPush)) {
+                        it.result = Unit
+                    }
                 }
-            } else if (cmd == "trpc.msg.olpush.OlPushService.MsgPush") {
-                val msgPush = ProtoBuf.decodeFromByteArray<MessagePush>(buffer)
-                if (AioListener.onMsgPush(msgPush)) {
-                    it.result = Unit
-                }
+            }.onFailure {
+                XposedBridge.log(it)
             }
         }
 
