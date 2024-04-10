@@ -1,35 +1,35 @@
-@file:OptIn(DelicateCoroutinesApi::class)
-
 package moe.qwq.miko.internals.hooks
 
 import android.content.Context
-import com.tencent.common.app.AppInterface
-import com.tencent.qphone.base.remote.ToServiceMsg
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.tencent.qphone.base.util.CodecWarpper
+import de.robv.android.xposed.XposedBridge.log
+import moe.qwq.miko.actions.ActionProcess
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.hookMethod
-import moe.qwq.miko.internals.helper.AppRuntimeFetcher
 import moe.qwq.miko.internals.setting.QwQSetting
-import kotlin.random.Random
-import kotlin.random.nextInt
+import moe.qwq.miko.tools.PlatformTools
 
 /**
  * 拦截无用发包 + 修复主题验证 + 禁用更新检查
  */
 class DefaultPacketHijacker: IAction {
     override fun invoke(ctx: Context) {
-        val app = AppRuntimeFetcher.appRuntime
-        if (app !is AppInterface) return
-
-        AppInterface::class.java.hookMethod("sendToService").before {
-            val toServiceMsg = it.args[0] as ToServiceMsg
-            if (QwQSetting.disableUselessPacket && toServiceMsg.serviceCmd in TRASH_PACKET) {
+        if (!PlatformTools.isMsfProcess()) return
+        CodecWarpper::class.java.hookMethod("nativeEncodeRequest").before {
+            val cmd = it.args[5] as String
+            if (QwQSetting.disableUselessPacket && cmd in TRASH_PACKET) {
+                log("[QwQ 已拦截发送包] cmd: $cmd")
                 it.result = Unit
-            } else if (QwQSetting.disableUpdateCheck && toServiceMsg.serviceCmd == "ProfileService.CheckUpdateReq") {
+            } else if (QwQSetting.disableUpdateCheck && cmd == "ProfileService.CheckUpdateReq") {
+                log("[QwQ 已拦截发送包] cmd: $cmd")
                 it.result = Unit
             }
+
+            /*  仅为测试
+            else if (cmd in TEST_PACKET) {
+                log("[QwQ 已拦截发送包] cmd: $cmd")
+                it.result = Unit
+            } */
 
             /* 协议一键赞 问题多多
             else if (QwQSetting.oneClickLike && toServiceMsg.serviceCmd == "VisitorSvc.ReqFavorite" &&
@@ -66,5 +66,13 @@ class DefaultPacketHijacker: IAction {
             "SQQzoneSvc.getActiveFeeds",
             "trpc.qqshop.adpush.PushService.GetAd"
         )
+        private val TEST_PACKET = setOf(
+            "SQQzoneSvc.getUndealCount",
+            "trpc.qq_new_tech.status_svc.StatusService.SsoHeartBeat",
+            "Heartbeat.Alive"
+        )
     }
+
+    override val process: ActionProcess
+        get() = ActionProcess.MSF
 }
