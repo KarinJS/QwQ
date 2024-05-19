@@ -29,6 +29,7 @@ android {
                 cppFlags += ""
             }
         }
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -188,12 +189,17 @@ dependencies {
     compileOnly("de.robv.android.xposed:api:82")
     compileOnly(project(":qqinterface"))
 
-    val serializationVersion = "1.6.2"
+    val serializationVersion = "1.6.3"
 
     implementation("org.jetbrains.kotlinx:kotlinx-io-jvm:0.1.16")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0-RC2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$serializationVersion")
-    implementation("com.google.protobuf:protobuf-java:3.24.0")
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("com.google.protobuf:protobuf-java:4.26.1")
+    implementation("androidx.core:core-ktx:1.13.1")
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test:core:1.5.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test:rules:1.5.0")
 }
