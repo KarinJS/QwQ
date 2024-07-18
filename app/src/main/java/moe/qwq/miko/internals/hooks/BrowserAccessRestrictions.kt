@@ -1,5 +1,3 @@
-@file:Suppress("LocalVariableName")
-
 package moe.qwq.miko.internals.hooks
 
 import android.content.Context
@@ -10,17 +8,19 @@ import com.tencent.mobileqq.webview.swift.WebViewPlugin
 import de.robv.android.xposed.XposedBridge
 import moe.fuqiuluo.entries.ClassEnum
 import moe.fuqiuluo.entries.ClassEnum.WebSecurityPluginV2Plugin
+import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.FuzzyClassKit
 import moe.qwq.miko.ext.beforeHook
 import moe.qwq.miko.ext.toast
 import moe.qwq.miko.internals.helper.DvmLocator
+import moe.qwq.miko.internals.setting.QwQSetting
 
-/**
- * 内置浏览器安全限制解除
- */
+@HookAction(desc = "内置浏览器安全限制解除")
 class BrowserAccessRestrictions: IAction {
-    override fun invoke(ctx: Context) {
+    override val name: String = QwQSetting.ANTI_BROWSER_ACCESS_RESTRICTIONS
+
+    override fun onRun(ctx: Context) {
         val WebSecurityPluginV2Plugin = DvmLocator.findClass(WebSecurityPluginV2Plugin)
         if (WebSecurityPluginV2Plugin == null) {
             ctx.toast("QwQ模块无法载入")

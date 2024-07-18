@@ -29,13 +29,13 @@ object QwQSetting {
             it.mkdirs()
         }
     private val config: MMKV get() = MMKVTools.mmkvWithId("qwq")
-    private val settingMap = hashMapOf(
+    val settingMap = hashMapOf<String, Setting<out Any>>(
         INTERCEPT_RECALL to Setting<Boolean>(INTERCEPT_RECALL, SettingType.BOOLEAN),
-        ANTI_BROWSER_ACCESS_RESTRICTIONS to Setting<Boolean>(ANTI_BROWSER_ACCESS_RESTRICTIONS, SettingType.BOOLEAN),
+        ANTI_BROWSER_ACCESS_RESTRICTIONS to Setting(ANTI_BROWSER_ACCESS_RESTRICTIONS, SettingType.BOOLEAN, true),
         SIMPLIFY_HOMEPAGE_SIDEBAR to Setting<Boolean>(SIMPLIFY_HOMEPAGE_SIDEBAR, SettingType.BOOLEAN),
         DISABLE_UPDATE_CHECK to Setting<Boolean>(DISABLE_UPDATE_CHECK, SettingType.BOOLEAN),
         DISABLE_HOT_UPDATE_SO_BY_TRAFFIC to Setting<Boolean>(DISABLE_HOT_UPDATE_SO_BY_TRAFFIC, SettingType.BOOLEAN),
-        DISABLE_USELESS_PACKET to Setting<Boolean>(DISABLE_USELESS_PACKET, SettingType.BOOLEAN),
+        DISABLE_USELESS_PACKET to Setting(DISABLE_USELESS_PACKET, SettingType.BOOLEAN, true),
         ONE_KEY_LIKE to Setting<Boolean>(ONE_KEY_LIKE, SettingType.BOOLEAN),
         FORCE_TABLET_MODE to Setting<Boolean>(FORCE_TABLET_MODE, SettingType.BOOLEAN),
         SIMPLIFY_BUBBLE_FONT to Setting<Boolean>(SIMPLIFY_BUBBLE_FONT, SettingType.BOOLEAN),
@@ -49,24 +49,6 @@ object QwQSetting {
         ALLOW_GROUP_FLASH_PIC to Setting<Boolean>(ALLOW_GROUP_FLASH_PIC, SettingType.BOOLEAN),
     )
 
-    var interceptRecall by settingMap[INTERCEPT_RECALL] as Setting<Boolean>
-    var antiBrowserAccessRestrictions by settingMap[ANTI_BROWSER_ACCESS_RESTRICTIONS] as Setting<Boolean>
-    var simplifyHomepageSidebar by settingMap[SIMPLIFY_HOMEPAGE_SIDEBAR] as Setting<Boolean>
-    var disableUpdateCheck by settingMap[DISABLE_UPDATE_CHECK] as Setting<Boolean>
-    var disableHotUpdateSoByTraffic by settingMap[DISABLE_HOT_UPDATE_SO_BY_TRAFFIC] as Setting<Boolean>
-    var disableUselessPacket by settingMap[DISABLE_USELESS_PACKET] as Setting<Boolean>
-    var oneClickLike by settingMap[ONE_KEY_LIKE] as Setting<Boolean>
-    var forceTabletMode by settingMap[FORCE_TABLET_MODE] as Setting<Boolean>
-    var simplifyBubbleFont by settingMap[SIMPLIFY_BUBBLE_FONT] as Setting<Boolean>
-    var simplifyBubbleAvatar by settingMap[SIMPLIFY_BUBBLE_AVATAR] as Setting<Boolean>
-    var repeatMessage by settingMap[REPEAT_MESSAGE] as Setting<Boolean>
-    var disableVisitGroupAnimation by settingMap[DISABLE_VISIT_GROUP_ANIMATION] as Setting<Boolean>
-    var superGroupFile by settingMap[SUPER_GROUP_FILE] as Setting<Boolean>
-    var showBanOperator by settingMap[SHOW_BAN_OPERATOR] as Setting<Boolean>
-    var optimizeAtSort by settingMap[OPTIMIZE_AT_SORT] as Setting<Boolean>
-    var disableFlashPicture by settingMap[DISABLE_FLASH_PICTURE] as Setting<Boolean>
-    var allowGroupFlashPic by settingMap[ALLOW_GROUP_FLASH_PIC] as Setting<Boolean>
-
     val settingUrl: String
         get() = dataDir.resolve("domain").also {
             if (!it.exists()) {
@@ -75,8 +57,10 @@ object QwQSetting {
             }
         }.readText()
 
-    fun getSetting(key: String): Setting<*> {
-        return settingMap[key] ?: Setting<Boolean>(key, SettingType.BOOLEAN)
+    @Suppress("UNCHECKED_CAST")
+    inline fun <reified T : Any> getSetting(key: String): Setting<T> {
+        val result = settingMap[key] ?: Setting(key, SettingType.BOOLEAN)
+        return result as Setting<T>
     }
 
     enum class SettingType {
@@ -85,18 +69,19 @@ object QwQSetting {
 
     class Setting<T: Any>(
         val name: String,
-        private val type: SettingType
+        private val type: SettingType,
+        val default: T? = null
     ) {
         /**
-         * 功能不支持该QQ版本时为true
+         * 功能不支持该QQ时为true
          */
         var isFailed = false
 
-        operator fun getValue(any: Any, property: KProperty<*>?): T {
+        operator fun getValue(t: T?, property: KProperty<*>): T {
             val value = when(type) {
-                SettingType.STRING -> config.getString(name, "")
-                SettingType.INT -> config.getInt(name, 0)
-                SettingType.BOOLEAN -> config.getBoolean(name, false)
+                SettingType.STRING -> config.getString(name, (default as? String) ?: "")
+                SettingType.INT -> config.getInt(name, (default as? Int) ?: 0)
+                SettingType.BOOLEAN -> config.getBoolean(name, (default as? Boolean) ?: false)
             }
             return value as T
         }

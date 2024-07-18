@@ -41,7 +41,7 @@ object ActionManager {
         }
     }
 
-    fun instanceOf(cls: Class<*>): IAction = instanceMap.getOrPut(cls) {
+    private fun instanceOf(cls: Class<*>): IAction = instanceMap.getOrPut(cls) {
         cls.getConstructor().newInstance() as IAction
     }
 }

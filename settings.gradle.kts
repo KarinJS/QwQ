@@ -35,3 +35,4 @@ include(
     ":app",
     ":qqinterface"
 )
+include(":processor")

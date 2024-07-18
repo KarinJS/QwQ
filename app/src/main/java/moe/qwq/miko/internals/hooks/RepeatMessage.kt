@@ -12,61 +12,55 @@ import com.tencent.qqnt.msg.api.IMsgService
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers
+import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.afterHook
-import moe.qwq.miko.ext.toast
 import moe.qwq.miko.internals.helper.ContactHelper
 import moe.qwq.miko.internals.helper.MessageTools
-import moe.qwq.miko.internals.helper.NTServiceFetcher
-import moe.qwq.miko.internals.helper.msgService
-import moe.qwq.miko.internals.setting.QwQSetting
 import moe.qwq.miko.internals.setting.QwQSetting.REPEAT_MESSAGE
 
+@HookAction("复读机")
 class RepeatMessage: IAction {
-    override fun invoke(ctx: Context) {
-        val setting = QwQSetting.getSetting(REPEAT_MESSAGE)
-        runCatching {
-            val ImageViewLazyField = AIOMsgFollowComponent::class.java.declaredFields.first {
-                it.type.isInterface && it.type.name == Lazy::class.java.name
+    override val name: String = REPEAT_MESSAGE
+
+    override fun onRun(ctx: Context) {
+        val ImageViewLazyField = AIOMsgFollowComponent::class.java.declaredFields.first {
+            it.type.isInterface && it.type.name == Lazy::class.java.name
+        }
+        ImageViewLazyField.isAccessible = true
+
+        XposedBridge.hookMethod(AIOMsgFollowComponent::class.java.declaredMethods.first {
+            it.parameterCount == 3 && it.parameterTypes[0] == Integer.TYPE && it.parameterTypes[2] == List::class.java
+        }, afterHook {
+            val imageView = XposedHelpers.callMethod(ImageViewLazyField.get(it.thisObject), "getValue") as ImageView
+            if (imageView.context.javaClass.name.contains("MultiForwardActivity")) {
+                return@afterHook
             }
-            ImageViewLazyField.isAccessible = true
-            if (!QwQSetting.repeatMessage) return
-            XposedBridge.hookMethod(AIOMsgFollowComponent::class.java.declaredMethods.first {
-                it.parameterCount == 3 && it.parameterTypes[0] == Integer.TYPE && it.parameterTypes[2] == List::class.java
-            }, afterHook {
-                val imageView = XposedHelpers.callMethod(ImageViewLazyField.get(it.thisObject), "getValue") as ImageView
-                if (imageView.context.javaClass.name.contains("MultiForwardActivity")) {
-                    return@afterHook
-                }
-                val msgObject = it.args[1]
-                //val msgId = XposedHelpers.callMethod(msgObject, "getMsgId") as Long
-                val msgRecord = XposedHelpers.callMethod(msgObject, "getMsgRecord") as MsgRecord
-                if (disableRepeat(msgRecord) || msgRecord.elements.isEmpty()) return@afterHook
-                if (imageView.visibility != View.VISIBLE) {
-                    imageView.visibility = View.VISIBLE
-                }
-                imageView.setOnClickListener clickPlusIcon@{
-                    val contact = ContactHelper.generateContactV2(msgRecord.chatType, msgRecord.peerUid)
-                    val newMsgId = MessageTools.generateMsgUniseq(msgRecord.chatType)
-                    val msgService = QRoute.api(IMsgService::class.java)
+            val msgObject = it.args[1]
+            //val msgId = XposedHelpers.callMethod(msgObject, "getMsgId") as Long
+            val msgRecord = XposedHelpers.callMethod(msgObject, "getMsgRecord") as MsgRecord
+            if (disableRepeat(msgRecord) || msgRecord.elements.isEmpty()) return@afterHook
+            if (imageView.visibility != View.VISIBLE) {
+                imageView.visibility = View.VISIBLE
+            }
+            imageView.setOnClickListener clickPlusIcon@{
+                val contact = ContactHelper.generateContactV2(msgRecord.chatType, msgRecord.peerUid)
+                val newMsgId = MessageTools.generateMsgUniseq(msgRecord.chatType)
+                val msgService = QRoute.api(IMsgService::class.java)
 
-                    //msgService.resendMsg(contact, msgId) { result, _ ->
-                    //    if (result != 0) {
-                    //        log("[QwQ] repeat message failed: (msgType = ${msgRecord.msgType})")
-                    //    }
-                    //}
+                //msgService.resendMsg(contact, msgId) { result, _ ->
+                //    if (result != 0) {
+                //        log("[QwQ] repeat message failed: (msgType = ${msgRecord.msgType})")
+                //    }
+                //}
 
-                    msgService.sendMsgWithMsgId(contact, newMsgId, msgRecord.elements) { result, _ ->
-                        if (result != 0) {
-                            log("[QwQ] repeat message failed: (msgType = ${msgRecord.msgType})")
-                        }
+                msgService.sendMsgWithMsgId(contact, newMsgId, msgRecord.elements) { result, _ ->
+                    if (result != 0) {
+                        log("[QwQ] repeat message failed: (msgType = ${msgRecord.msgType})")
                     }
                 }
-            })
-        }.onFailure {
-            setting.isFailed = true
-            log(it)
-        }
+            }
+        })
     }
 
     private fun disableRepeat(msgRecord: MsgRecord): Boolean {

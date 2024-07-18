@@ -3,25 +3,25 @@ package moe.qwq.miko.internals.hooks
 import android.content.Context
 import com.tencent.qphone.base.util.CodecWarpper
 import de.robv.android.xposed.XposedBridge.log
+import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.ActionProcess
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.setting.QwQSetting
 import moe.qwq.miko.tools.PlatformTools
 
-/**
- * 拦截无用发包 + 修复主题验证 + 禁用更新检查
- */
+@HookAction(desc = "拦截无用发包 + 修复主题验证 + 禁用更新检查")
 class DefaultPacketHijacker: IAction {
-    override fun invoke(ctx: Context) {
+    override val name: String = QwQSetting.DISABLE_USELESS_PACKET
+
+    override fun onRun(ctx: Context) {
         if (!PlatformTools.isMsfProcess()) return
         CodecWarpper::class.java.hookMethod("nativeEncodeRequest").before {
-            val cmd = it.args[5] as String
-            if (QwQSetting.disableUselessPacket && cmd in TRASH_PACKET) {
-                log("[QwQ 已拦截发送包] cmd: $cmd")
+            val cmd = it.args[5] as? String
+                ?: return@before
+            if (cmd in TRASH_PACKET) {
                 it.result = Unit
-            } else if (QwQSetting.disableUpdateCheck && cmd == "ProfileService.CheckUpdateReq") {
-                log("[QwQ 已拦截发送包] cmd: $cmd")
+            } else if (cmd == "ProfileService.CheckUpdateReq") {
                 it.result = Unit
             }
 
