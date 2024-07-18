@@ -6,16 +6,19 @@ import com.tencent.qphone.base.remote.FromServiceMsg
 import com.tencent.qphone.base.util.CodecWarpper
 import de.robv.android.xposed.XposedBridge
 import moe.fuqiuluo.entries.ClassEnum.CodecWarpperImpl
+import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.ext.EMPTY_BYTE_ARRAY
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.ext.slice
 import moe.qwq.miko.internals.helper.DvmLocator
 import moe.qwq.miko.internals.hijackers.IHijacker
+import moe.qwq.miko.internals.setting.QwQSetting
 import moe.qwq.miko.tools.PlatformTools
 import java.util.concurrent.atomic.AtomicBoolean
 
-class PacketHijacker: IAction {
-    override fun invoke(ctx: Context) {
+@HookAction("包拦截工具")
+class PacketHijacker: AlwaysRunAction() {
+    override fun onRun(ctx: Context) {
         if (!PlatformTools.isMsfProcess()) return
         try {
             DvmLocator.findClass(CodecWarpperImpl)?.let {

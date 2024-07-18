@@ -2,6 +2,7 @@
 
 package moe.qwq.miko.internals.helper
 
+import com.google.protobuf.UnknownFieldSet
 import com.tencent.qqnt.kernel.api.IKernelService
 import com.tencent.qqnt.kernel.api.impl.MsgService
 import de.robv.android.xposed.XposedBridge
@@ -35,32 +36,35 @@ internal object NTServiceFetcher {
 
     private fun initNTKernel(msgService: MsgService) {
         XposedBridge.log("[QwQ] Init NT Kernel.")
-
-        QwQSetting.getSetting(QwQSetting.INTERCEPT_RECALL).isFailed = false
-
         kernelService.wrapperSession.javaClass.hookMethod("onMsfPush").before {
             runCatching {
                 val cmd = it.args[0] as String
-                val buffer = it.args[1] as ByteArray
-                if (cmd == "trpc.msg.register_proxy.RegisterProxy.InfoSyncPush") {
-                    val syncPush = ProtoBuf.decodeFromByteArray<InfoSyncPush>(buffer)
-                    if (AioListener.onInfoSyncPush(syncPush)) {
-                        it.args[1] = ProtoBuf.encodeToByteArray(syncPush.copy(
-                            syncContent = syncPush.syncContent?.copy(body = ArrayList(0))
-                        ))
+                val buffer = it.args[1] as? ByteArray ?: return@before
+                when (cmd) {
+                    "trpc.msg.register_proxy.RegisterProxy.InfoSyncPush" -> {
+                        val unknownFieldSet = UnknownFieldSet.parseFrom(buffer)
+                        AioListener.onInfoSyncPush(unknownFieldSet).onSuccess { new ->
+                            it.args[1] = new.toByteArray()
+                        }.onFailure {
+                            XposedBridge.log(it)
+                        }
                     }
-                } else if (cmd == "trpc.msg.olpush.OlPushService.MsgPush") {
-                    val msgPush = ProtoBuf.decodeFromByteArray<MessagePush>(buffer)
-                    if (AioListener.onMsgPush(msgPush)) {
-                        it.result = Unit
+                    "trpc.msg.olpush.OlPushService.MsgPush" -> {
+                        val msgPush = ProtoBuf.decodeFromByteArray<MessagePush>(buffer)
+                        if(AioListener.onMsgPush(msgPush)) {
+                            it.result = Unit // 提前结束
+                        } else {
+                            return@before
+                        }
                     }
+                    else -> { }
                 }
             }.onFailure {
                 XposedBridge.log(it)
             }
         }
 
-        msgService.addMsgListener(AioListener)
+        //msgService.addMsgListener(AioListener)
     }
 
     val kernelService: IKernelService

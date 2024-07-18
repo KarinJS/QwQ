@@ -1,11 +1,9 @@
 package moe.qwq.miko.internals.helper
 
-import com.tencent.qqnt.kernel.nativeinterface.Contact
+import com.tencent.qqnt.kernelpublic.nativeinterface.Contact
 import com.tencent.qqnt.kernel.nativeinterface.JsonGrayBusiId
-import com.tencent.qqnt.kernel.nativeinterface.JsonGrayElement
-import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
+import com.tencent.qqnt.kernelpublic.nativeinterface.JsonGrayElement
 import de.robv.android.xposed.XposedBridge
-import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -14,7 +12,6 @@ import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.modules.*
 import moe.qwq.miko.ext.asJsonObject
 import moe.qwq.miko.ext.json
-import java.lang.reflect.Method
 
 object LocalGrayTips {
     private val module by lazy {
@@ -42,10 +39,15 @@ object LocalGrayTips {
     ) {
         runCatching {
             val json = Builder().apply(builder).build(align)
-            val msgService = NTServiceFetcher.kernelService.wrapperSession.msgService
-            msgService.addLocalJsonGrayTipMsg(contact, JsonGrayElement(busiId.toLong(), json.second.toString(), json.first, false, null), true, true) { result, _ ->
-                if (result != 0) {
-                    XposedBridge.log("[QwQ] addLocalJsonGrayTipMsg failed, result: $result")
+            val element = JsonGrayElement(busiId.toLong(), json.second.toString(), json.first, false, null)
+            val msgService = NTServiceFetcher.kernelService.wrapperSession?.msgService
+            if (msgService == null) {
+                XposedBridge.log("[QwQ] addLocalGrayTip failed, msgService is null")
+            } else {
+                msgService.addLocalJsonGrayTipMsg(contact, element, true, true) { result, _ ->
+                    if (result != 0) {
+                        XposedBridge.log("[QwQ] addLocalJsonGrayTipMsg failed, result: $result")
+                    }
                 }
             }
         }.onFailure {

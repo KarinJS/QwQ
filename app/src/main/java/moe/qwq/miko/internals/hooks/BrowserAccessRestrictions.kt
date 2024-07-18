@@ -9,6 +9,7 @@ import de.robv.android.xposed.XposedBridge
 import moe.fuqiuluo.entries.ClassEnum
 import moe.fuqiuluo.entries.ClassEnum.WebSecurityPluginV2Plugin
 import moe.fuqiuluo.processor.HookAction
+import moe.qwq.miko.actions.AlwaysRunAction
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.FuzzyClassKit
 import moe.qwq.miko.ext.beforeHook
@@ -17,7 +18,7 @@ import moe.qwq.miko.internals.helper.DvmLocator
 import moe.qwq.miko.internals.setting.QwQSetting
 
 @HookAction(desc = "内置浏览器安全限制解除")
-class BrowserAccessRestrictions: IAction {
+class BrowserAccessRestrictions: AlwaysRunAction() {
     override val name: String = QwQSetting.ANTI_BROWSER_ACCESS_RESTRICTIONS
 
     override fun onRun(ctx: Context) {

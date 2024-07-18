@@ -1,12 +1,9 @@
 package com.tencent.qqnt.kernel.api.impl;
 
-import com.tencent.qqnt.kernel.nativeinterface.Contact;
-import com.tencent.qqnt.kernel.nativeinterface.IAddJsonGrayTipMsgCallback;
-import com.tencent.qqnt.kernel.nativeinterface.IKernelMsgListener;
-import com.tencent.qqnt.kernel.nativeinterface.IOperateCallback;
-import com.tencent.qqnt.kernel.nativeinterface.JsonGrayElement;
-import com.tencent.qqnt.kernel.nativeinterface.RichMediaFilePathInfo;
-import com.tencent.qqnt.kernel.nativeinterface.TempChatPrepareInfo;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IKernelMsgListener;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IOperateCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.RichMediaFilePathInfo;
+import com.tencent.qqnt.kernelpublic.nativeinterface.TempChatPrepareInfo;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -1,16 +1,12 @@
 package com.tencent.qqnt.aio.msg.api;
 
-import android.content.Context;
-
 import com.tencent.mobileqq.qroute.QRouteApi;
-import com.tencent.qqnt.kernel.nativeinterface.MsgElement;
-import com.tencent.qqnt.kernel.nativeinterface.MsgRecord;
+import com.tencent.qqnt.kernelpublic.nativeinterface.MsgElement;
+import com.tencent.qqnt.kernelpublic.nativeinterface.MsgRecord;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public interface IAIOMsgItemApi extends QRouteApi {

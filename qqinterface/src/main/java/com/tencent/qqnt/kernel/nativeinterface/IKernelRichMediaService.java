@@ -1,5 +1,31 @@
 package com.tencent.qqnt.kernel.nativeinterface;
 
+import com.tencent.qqnt.kernelpublic.nativeinterface.CommonFileInfo;
+import com.tencent.qqnt.kernelpublic.nativeinterface.Contact;
+import com.tencent.qqnt.kernelpublic.nativeinterface.DownloadGroupFileParams;
+import com.tencent.qqnt.kernelpublic.nativeinterface.GroupFileListForm;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IBatchGroupFileCountCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IDeleteGroupFileCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IGroupFileInfoCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IGroupSpaceCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IMoveGroupFileCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IOperateCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IOperateTransferInfoCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IRenameGroupFileCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.ISearchGroupFileCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.ITransGroupFileCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.ITranslateWordsCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IVideoPlayUrlCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IWindowsOcrCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.PicDownParams;
+import com.tencent.qqnt.kernelpublic.nativeinterface.PicReqParams;
+import com.tencent.qqnt.kernelpublic.nativeinterface.RichDownLoadReq;
+import com.tencent.qqnt.kernelpublic.nativeinterface.SearchGroupFileParams;
+import com.tencent.qqnt.kernelpublic.nativeinterface.UploadGroupFileParams;
+import com.tencent.qqnt.kernelpublic.nativeinterface.UploadStatusParams;
+import com.tencent.qqnt.kernelpublic.nativeinterface.VideoCodecFormatType;
+import com.tencent.qqnt.kernelpublic.nativeinterface.VideoRequestWay;
+
 import java.util.ArrayList;
 
 public interface IKernelRichMediaService {

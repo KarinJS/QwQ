@@ -5,8 +5,11 @@ package moe.qwq.miko.internals.helper
 import com.tencent.common.app.AppInterface
 import com.tencent.mobileqq.app.BusinessHandlerFactory
 import com.tencent.mobileqq.data.troop.TroopMemberInfo
+import com.tencent.mobileqq.data.troop.TroopMemberNickInfo
+import com.tencent.mobileqq.qroute.QRoute
 import com.tencent.mobileqq.troop.api.ITroopMemberInfoService
-import com.tencent.qqnt.kernel.nativeinterface.MemberInfo
+import com.tencent.qqnt.kernelpublic.nativeinterface.MemberInfo
+import com.tencent.qqnt.troopmemberlist.ITroopMemberListRepoApi
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -14,9 +17,12 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
 import moe.qwq.miko.internals.helper.AppRuntimeFetcher.appRuntime
+import moe.qwq.miko.tools.PlatformTools
+import moe.qwq.miko.tools.PlatformTools.QQ_9_0_65_VER
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.coroutines.resume
+import kotlin.time.Duration.Companion.seconds
 
 internal object GroupHelper {
     private val RefreshTroopMemberInfoLock by lazy {
@@ -26,12 +32,12 @@ internal object GroupHelper {
     private lateinit var METHOD_REQ_MEMBER_INFO: Method
     private lateinit var METHOD_REQ_MEMBER_INFO_V2: Method
 
-    suspend fun getTroopMemberInfoByUinViaNt(groupId: String, qq: Long): Result<MemberInfo> {
+    suspend fun getTroopMemberInfoByUinViaNt(groupId: Long, qq: Long): Result<MemberInfo> {
         val kernelService = NTServiceFetcher.kernelService
         val sessionService = kernelService.wrapperSession
         val groupService = sessionService.groupService
         val info = suspendCancellableCoroutine {
-            groupService.getTransferableMemberInfo(groupId.toLong()) { code, _, data ->
+            groupService.getTransferableMemberInfo(groupId) { code, _, data ->
                 if (code != 0) {
                     it.resume(null)
                     return@getTransferableMemberInfo
@@ -52,48 +58,59 @@ internal object GroupHelper {
         }
     }
 
-    suspend fun getTroopMemberInfoByUin(
-        groupId: String,
-        uin: String,
-        refresh: Boolean = false
-    ): Result<TroopMemberInfo> {
-        val service = appRuntime.getRuntimeService(ITroopMemberInfoService::class.java, "all")
-        var info = service.getTroopMember(groupId, uin)
-        if (refresh || !service.isMemberInCache(groupId, uin) || info == null || info.troopnick == null) {
-            info = requestTroopMemberInfo(service, groupId.toLong(), uin.toLong()).getOrNull()
-        }
-        if (info == null) {
-            info = getTroopMemberInfoByUinViaNt(groupId, uin.toLong()).getOrNull()?.let {
-                TroopMemberInfo().apply {
-                    troopnick = it.cardName
-                    friendnick = it.nick
+    suspend fun getTroopMemberNickByUin(
+        groupId: Long,
+        uin: Long
+    ): TroopMemberNickInfo? {
+        if (PlatformTools.getQQVersionCode() > QQ_9_0_65_VER) {
+            val api = QRoute.api(ITroopMemberListRepoApi::class.java)
+            return withTimeoutOrNull(5.seconds) {
+                suspendCancellableCoroutine { continuation ->
+                    runCatching {
+                        api.fetchTroopMemberName(groupId.toString(), uin.toString(), null, groupId.toString()) {
+                            continuation.resume(it)
+                        }
+                    }.onFailure {
+                        continuation.resume(null)
+                    }
                 }
             }
-        }
-        return if (info != null) {
-            Result.success(info)
         } else {
-            Result.failure(Exception("获取群成员信息失败"))
+            return null
         }
     }
 
-    suspend fun getTroopMemberInfoByUid(groupId: String, uid: String): Result<MemberInfo> {
-        val kernelService = NTServiceFetcher.kernelService
-        val sessionService = kernelService.wrapperSession
-        val groupService = sessionService.groupService
-        val info = withTimeoutOrNull(5000) {
-            suspendCancellableCoroutine {
-                groupService.getTransferableMemberInfo(groupId.toLong()) { code, _, data ->
-                    if (code != 0) {
-                        it.resume(null)
-                        return@getTransferableMemberInfo
-                    }
-                    data.forEach { (tmpUid, info) ->
-                        if (tmpUid == uid) {
-                            it.resume(info)
-                            return@forEach
-                        }
-                    }
+    fun getTroopMemberInfoByUinFromNt(
+        groupId: Long,
+        uin: Long
+    ): Result<TroopMemberInfo> {
+        return kotlin.runCatching {
+            val api = QRoute.api(ITroopMemberListRepoApi::class.java)
+            api.getTroopMemberInfoSync(groupId.toString(), uin.toString(), null, groupId.toString())
+                ?: throw Exception("获取群成员信息失败: NT兼容接口已废弃")
+        }
+    }
+
+    suspend fun getTroopMemberInfoByUin(
+        groupId: Long,
+        uin: Long,
+        refresh: Boolean = false
+    ): Result<TroopMemberInfo> {
+        var info: TroopMemberInfo?
+        if (PlatformTools.getQQVersionCode() < QQ_9_0_65_VER) {
+            val service = appRuntime.getRuntimeService(ITroopMemberInfoService::class.java, "all")
+            info = service.getTroopMember(groupId.toString(), uin.toString())
+            if (refresh || !service.isMemberInCache(groupId.toString(), uin.toString()) || info == null || info.troopnick == null) {
+                info = requestTroopMemberInfo(service, groupId, uin).getOrNull()
+            }
+        } else {
+            info = getTroopMemberInfoByUinFromNt(groupId, uin).getOrNull()
+        }
+        if (info == null) {
+            info = getTroopMemberInfoByUinViaNt(groupId, uin).getOrNull()?.let {
+                TroopMemberInfo().apply {
+                    troopnick = it.cardName
+                    friendnick = it.nick
                 }
             }
         }

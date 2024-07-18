@@ -8,6 +8,13 @@ enum class ActionProcess {
     MSF, MAIN, ALL
 }
 
+// 总是可以运行的Action
+abstract class AlwaysRunAction : IAction {
+    override val name: String = ""
+
+    override fun canRun(): Boolean = true
+}
+
 interface IAction {
     operator fun invoke(ctx: Context) {
         kotlin.runCatching {

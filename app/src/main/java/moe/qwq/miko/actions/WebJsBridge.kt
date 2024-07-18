@@ -13,8 +13,8 @@ import moe.qwq.miko.internals.setting.QwQSetting
 import mqq.app.MobileQQ
 import java.net.URL
 
-class WebJsBridge: IAction {
-    override fun invoke(ctx: Context) {
+class WebJsBridge: AlwaysRunAction() {
+    override fun onRun(ctx: Context) {
         val onLoad = afterHook {
             val web = it.thisObject as WebView
             val url = URL(web.url)
@@ -31,14 +31,10 @@ class WebJsBridge: IAction {
 
     companion object QwQJsBridge {
         @JavascriptInterface
-        fun getQQVersion(): String {
-            return PlatformTools.getQQVersion(MobileQQ.getContext())
-        }
+        fun getQQVersion(): String = PlatformTools.getQQVersion(MobileQQ.getContext())
 
         @JavascriptInterface
-        fun getStatus(): String {
-            return "LSPosed 已激活"
-        }
+        fun getStatus(): String = "LSPosed 已激活"
 
         @JavascriptInterface
         fun getModuleVersion(): String {
@@ -52,16 +48,21 @@ class WebJsBridge: IAction {
 
         @JavascriptInterface
         fun getSetting(key: String): String {
-            val setting = QwQSetting.getSetting(key)
+            val setting = QwQSetting.getSetting<Any>(key)
+            val value = when (setting.type) {
+                QwQSetting.SettingType.STRING -> setting.getValue(setting, null) as String
+                QwQSetting.SettingType.INT -> setting.getValue(setting, null) as Int
+                QwQSetting.SettingType.BOOLEAN -> setting.getValue(setting, null) as Boolean
+            }
             return mapOf(
-                "value" to setting.getValue(setting, null),
+                "value" to value,
                 "failed" to setting.isFailed
             ).json.toString()
         }
 
         @JavascriptInterface
         fun setSetting(key: String, value: Boolean) {
-            val setting = QwQSetting.getSetting(key) as QwQSetting.Setting<Any>
+            val setting = QwQSetting.getSetting<Any>(key)
             setting.setValue(setting, null, value)
         }
     }

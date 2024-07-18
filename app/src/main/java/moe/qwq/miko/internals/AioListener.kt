@@ -3,42 +3,9 @@
 )
 package moe.qwq.miko.internals
 
-import com.tencent.qqnt.kernel.nativeinterface.BroadcastHelperTransNotifyInfo
-import com.tencent.qqnt.kernel.nativeinterface.Contact
-import com.tencent.qqnt.kernel.nativeinterface.ContactMsgBoxInfo
-import com.tencent.qqnt.kernel.nativeinterface.CustomWithdrawConfig
-import com.tencent.qqnt.kernel.nativeinterface.DevInfo
-import com.tencent.qqnt.kernel.nativeinterface.DownloadRelateEmojiResultInfo
-import com.tencent.qqnt.kernel.nativeinterface.EmojiNotifyInfo
-import com.tencent.qqnt.kernel.nativeinterface.EmojiResourceInfo
-import com.tencent.qqnt.kernel.nativeinterface.FileTransNotifyInfo
-import com.tencent.qqnt.kernel.nativeinterface.FirstViewDirectMsgNotifyInfo
-import com.tencent.qqnt.kernel.nativeinterface.FirstViewGroupGuildInfo
-import com.tencent.qqnt.kernel.nativeinterface.FreqLimitInfo
-import com.tencent.qqnt.kernel.nativeinterface.GroupFileListResult
-import com.tencent.qqnt.kernel.nativeinterface.GroupGuildNotifyInfo
-import com.tencent.qqnt.kernel.nativeinterface.GroupItem
-import com.tencent.qqnt.kernel.nativeinterface.GuildInteractiveNotificationItem
-import com.tencent.qqnt.kernel.nativeinterface.GuildMsgAbFlag
-import com.tencent.qqnt.kernel.nativeinterface.GuildNotificationAbstractInfo
-import com.tencent.qqnt.kernel.nativeinterface.HitRelatedEmojiWordsResult
-import com.tencent.qqnt.kernel.nativeinterface.IKernelMsgListener
-import com.tencent.qqnt.kernel.nativeinterface.ImportOldDbMsgNotifyInfo
-import com.tencent.qqnt.kernel.nativeinterface.InputStatusInfo
+import com.google.protobuf.UnknownFieldSet
 import com.tencent.qqnt.kernel.nativeinterface.JsonGrayBusiId
-import com.tencent.qqnt.kernel.nativeinterface.KickedInfo
-import com.tencent.qqnt.kernel.nativeinterface.MsgAbstract
 import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
-import com.tencent.qqnt.kernel.nativeinterface.MsgElement
-import com.tencent.qqnt.kernel.nativeinterface.MsgRecord
-import com.tencent.qqnt.kernel.nativeinterface.MsgSetting
-import com.tencent.qqnt.kernel.nativeinterface.PicElement
-import com.tencent.qqnt.kernel.nativeinterface.RecvdOrder
-import com.tencent.qqnt.kernel.nativeinterface.RelatedWordEmojiInfo
-import com.tencent.qqnt.kernel.nativeinterface.SearchGroupFileResult
-import com.tencent.qqnt.kernel.nativeinterface.TabStatusInfo
-import com.tencent.qqnt.kernel.nativeinterface.TempChatInfo
-import com.tencent.qqnt.kernel.nativeinterface.UnreadCntInfo
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -52,20 +19,17 @@ import kotlinx.serialization.protobuf.ProtoBuf
 import moe.fuqiuluo.entries.C2CRecallMessage
 import moe.fuqiuluo.entries.Message
 import moe.fuqiuluo.entries.MessageHead
-import moe.fuqiuluo.entries.MessagePush
 import moe.fuqiuluo.entries.GroupRecallMessage
-import moe.fuqiuluo.entries.InfoSyncPush
+import moe.fuqiuluo.entries.MessagePush
 import moe.qwq.miko.ext.ifNullOrEmpty
 import moe.qwq.miko.internals.helper.AppRuntimeFetcher.appRuntime
 import moe.qwq.miko.internals.helper.ContactHelper
 import moe.qwq.miko.internals.helper.GroupHelper
 import moe.qwq.miko.internals.helper.LocalGrayTips
-import moe.qwq.miko.internals.setting.QwQSetting
-import java.util.ArrayList
-import java.util.HashMap
 
-object AioListener: IKernelMsgListener {
-    override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
+object AioListener {
+/*TODO TRY FIX GRAYTIP FOR FLASH PIC
+override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
         recordLisrt.forEach { record ->
             GlobalScope.launch {
                 if (record.elements.size == 1
@@ -91,29 +55,43 @@ object AioListener: IKernelMsgListener {
             text("对方发送了一个")
             msgRef("闪照", record.msgSeq)
         }
-    }
+    }*/
 
-    fun onInfoSyncPush(infoSyncPush: InfoSyncPush): Boolean {
-        if (infoSyncPush.type == 2) {
-            infoSyncPush.syncContent?.body?.forEach { body ->
-                body.msgs?.forEach {
-                    val msgType = it.content.msgType
-                    val subType = it.content.msgSubType
-                    if (msgType == 528 && subType == 138) {
-                        return QwQSetting.interceptRecall
-                    } else if (msgType == 732 && subType == 17) {
-                        return QwQSetting.interceptRecall
-                    }
+    fun onInfoSyncPush(fieldSet: UnknownFieldSet): Result<UnknownFieldSet> {
+        val type = fieldSet.getField(3)
+        if (!type.varintList.any { it == 2L }) {
+            return Result.success(fieldSet)
+        }
+
+        val builder = UnknownFieldSet.newBuilder(fieldSet)
+        builder.clearField(8) // 移除content的内容
+
+        val contentsBuilder = UnknownFieldSet.Field.newBuilder()
+        val contents = fieldSet.getField(8)
+        contents.groupList.forEach { content ->
+            var isRecallEvent = false
+            val bodies = content.getField(4)
+            bodies.groupList.forEach { body ->
+                val msgs = body.getField(8)
+                msgs.groupList.forEach { msg ->
+                    val msgHead = msg.getField(2).groupList.first()
+                    val msgType = msgHead.getField(1).varintList.first()
+                    val msgSubType = msgHead.getField(2).varintList.first()
+                    isRecallEvent = (msgType == 528L && msgSubType == 138L) || (msgType == 732L && msgSubType == 17L)
                 }
             }
+            if (!isRecallEvent) {
+                contentsBuilder.addGroup(content)
+            }
         }
-        return false
+
+        builder.addField(8, contentsBuilder.build())
+        return Result.success(builder.build())
     }
 
     fun onMsgPush(msgPush: MessagePush): Boolean {
         val msgType = msgPush.msgBody.content.msgType
         val subType = msgPush.msgBody.content.msgSubType
-
         return onMessage(msgType, subType, msgPush.msgBody)
     }
 
@@ -132,7 +110,6 @@ object AioListener: IKernelMsgListener {
     }
 
     private fun onC2CRecall(msgHead: MessageHead, richMsg: ByteArray): Boolean {
-        if (!QwQSetting.interceptRecall) return false
         GlobalScope.launch {
             val recallData = ProtoBuf.decodeFromByteArray<C2CRecallMessage>(richMsg)
 
@@ -161,7 +138,6 @@ object AioListener: IKernelMsgListener {
     }
 
     private fun onGroupRecall(message: Message, richMsg: ByteArray): Boolean {
-        if (!QwQSetting.interceptRecall) return false
         GlobalScope.launch {
             val reader = ByteReadPacket(richMsg)
             val buffer = try {
@@ -186,12 +162,37 @@ object AioListener: IKernelMsgListener {
             val target = ContactHelper.getUinByUidAsync(targetUid)
             val operator = ContactHelper.getUinByUidAsync(operatorUid)
 
-            val targetInfo = if (targetUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode.toString(), target).getOrNull()
-            val targetNick = targetInfo?.troopnick
-                .ifNullOrEmpty(targetInfo?.friendnick) ?: targetUid
-            val operatorInfo = if (operatorUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode.toString(), operator).getOrNull()
-            val operatorNick = operatorInfo?.troopnick
-                .ifNullOrEmpty(operatorInfo?.friendnick) ?: operatorUid
+            /*var targetNick = GroupHelper.getTroopMemberNickByUin(groupCode, target.toLong())?.let {
+                it.troopNick
+                    .ifNullOrEmpty(it.friendNick)
+                    .ifNullOrEmpty(it.showName)
+                    .ifNullOrEmpty(it.autoRemark)
+            }*/
+
+            var targetNick: String? = null
+            if (targetNick == null) {
+                targetNick = (if (targetUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode, target.toLong()).getOrNull())?.let {
+                    it.troopnick.ifNullOrEmpty(it.friendnick)
+                } ?: targetUid
+            }
+
+
+/*            var operatorNick = GroupHelper.getTroopMemberNickByUin(groupCode, operator.toLong())?.let {
+                it.troopNick
+                    .ifNullOrEmpty(it.friendNick)
+                    .ifNullOrEmpty(it.showName)
+                    .ifNullOrEmpty(it.autoRemark)
+            }*/
+            var operatorNick: String? = null
+
+
+            if (operatorNick == null) {
+                operatorNick = (if (operatorUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode, operator.toLong()).getOrNull())?.let {
+                    it.troopnick.ifNullOrEmpty(it.friendnick)
+                } ?: operatorUid
+            }
+
+            //XposedBridge.log("targetNick: $targetNick, operatorNick: $operatorNick, onGroupRecall")
 
             val contact = ContactHelper.generateContact(
                 chatType = MsgConstant.KCHATTYPEGROUP,
@@ -210,278 +211,5 @@ object AioListener: IKernelMsgListener {
             }
         }
         return true
-    }
-
-    override fun onAddSendMsg(msgRecord: MsgRecord?) {
-        
-    }
-
-    override fun onBroadcastHelperDownloadComplete(broadcastHelperTransNotifyInfo: BroadcastHelperTransNotifyInfo?) {
-        
-    }
-
-    override fun onBroadcastHelperProgerssUpdate(broadcastHelperTransNotifyInfo: BroadcastHelperTransNotifyInfo?) {
-        
-    }
-
-    override fun onChannelFreqLimitInfoUpdate(
-        contact: Contact?,
-        z: Boolean,
-        freqLimitInfo: FreqLimitInfo?
-    ) {
-
-    }
-
-    override fun onContactUnreadCntUpdate(hashMap: HashMap<Int, HashMap<String, UnreadCntInfo>>?) {
-        
-    }
-
-    override fun onCustomWithdrawConfigUpdate(customWithdrawConfig: CustomWithdrawConfig?) {
-        
-    }
-
-    override fun onDraftUpdate(contact: Contact?, arrayList: ArrayList<MsgElement>?, j2: Long) {
-        
-    }
-
-    override fun onEmojiDownloadComplete(emojiNotifyInfo: EmojiNotifyInfo?) {
-        
-    }
-
-    override fun onEmojiResourceUpdate(emojiResourceInfo: EmojiResourceInfo?) {
-        
-    }
-
-    override fun onFeedEventUpdate(firstViewDirectMsgNotifyInfo: FirstViewDirectMsgNotifyInfo?) {
-        
-    }
-
-    override fun onFileMsgCome(arrayList: ArrayList<MsgRecord>?) {
-        
-    }
-
-    override fun onFirstViewDirectMsgUpdate(firstViewDirectMsgNotifyInfo: FirstViewDirectMsgNotifyInfo?) {
-        
-    }
-
-    override fun onFirstViewGroupGuildMapping(arrayList: ArrayList<FirstViewGroupGuildInfo>?) {
-        
-    }
-
-    override fun onGrabPasswordRedBag(
-        i2: Int,
-        str: String?,
-        i3: Int,
-        recvdOrder: RecvdOrder?,
-        msgRecord: MsgRecord?
-    ) {
-        
-    }
-
-    override fun onGroupFileInfoAdd(groupItem: GroupItem?) {
-        
-    }
-
-    override fun onGroupFileInfoUpdate(groupFileListResult: GroupFileListResult?) {
-        
-    }
-
-    override fun onGroupGuildUpdate(groupGuildNotifyInfo: GroupGuildNotifyInfo?) {
-        
-    }
-
-    override fun onGroupTransferInfoAdd(groupItem: GroupItem?) {
-        
-    }
-
-    override fun onGroupTransferInfoUpdate(groupFileListResult: GroupFileListResult?) {
-        
-    }
-
-    override fun onGuildInteractiveUpdate(guildInteractiveNotificationItem: GuildInteractiveNotificationItem?) {
-        
-    }
-
-    override fun onGuildMsgAbFlagChanged(guildMsgAbFlag: GuildMsgAbFlag?) {
-
-    }
-
-    override fun onGuildNotificationAbstractUpdate(guildNotificationAbstractInfo: GuildNotificationAbstractInfo?) {
-        
-    }
-
-    override fun onHitCsRelatedEmojiResult(downloadRelateEmojiResultInfo: DownloadRelateEmojiResultInfo?) {
-        
-    }
-
-    override fun onHitEmojiKeywordResult(hitRelatedEmojiWordsResult: HitRelatedEmojiWordsResult?) {
-        
-    }
-
-    override fun onHitRelatedEmojiResult(relatedWordEmojiInfo: RelatedWordEmojiInfo?) {
-        
-    }
-
-    override fun onImportOldDbProgressUpdate(importOldDbMsgNotifyInfo: ImportOldDbMsgNotifyInfo?) {
-        
-    }
-
-    override fun onInputStatusPush(inputStatusInfo: InputStatusInfo?) {
-        
-    }
-
-    override fun onKickedOffLine(kickedInfo: KickedInfo?) {
-        
-    }
-
-    override fun onLineDev(arrayList: ArrayList<DevInfo>?) {
-        
-    }
-
-    override fun onLogLevelChanged(j2: Long) {
-        
-    }
-
-    override fun onMsgAbstractUpdate(arrayList: ArrayList<MsgAbstract>?) {
-        
-    }
-
-    override fun onMsgBoxChanged(arrayList: ArrayList<ContactMsgBoxInfo>?) {
-        
-    }
-
-    override fun onMsgDelete(contact: Contact?, arrayList: ArrayList<Long>?) {
-        
-    }
-
-    override fun onMsgEventListUpdate(hashMap: HashMap<String, ArrayList<Long>>?) {
-        
-    }
-
-    override fun onMsgInfoListAdd(arrayList: ArrayList<MsgRecord>?) {
-        
-    }
-
-    override fun onMsgInfoListUpdate(arrayList: ArrayList<MsgRecord>?) {
-        
-    }
-
-    override fun onMsgQRCodeStatusChanged(i2: Int) {
-        
-    }
-
-    override fun onMsgRecall(i2: Int, str: String?, j2: Long) {
-        
-    }
-
-    override fun onMsgSecurityNotify(msgRecord: MsgRecord?) {
-        
-    }
-
-    override fun onMsgSettingUpdate(msgSetting: MsgSetting?) {
-        
-    }
-
-    override fun onNtFirstViewMsgSyncEnd() {
-        
-    }
-
-    override fun onNtMsgSyncEnd() {
-        
-    }
-
-    override fun onNtMsgSyncStart() {
-        
-    }
-
-    override fun onReadFeedEventUpdate(firstViewDirectMsgNotifyInfo: FirstViewDirectMsgNotifyInfo?) {
-        
-    }
-
-    override fun onRecvGroupGuildFlag(i2: Int) {
-        
-    }
-
-    override fun onRecvMsgSvrRspTransInfo(
-        j2: Long,
-        contact: Contact?,
-        i2: Int,
-        i3: Int,
-        str: String?,
-        bArr: ByteArray?
-    ) {
-        
-    }
-
-    override fun onRecvOnlineFileMsg(arrayList: ArrayList<MsgRecord>?) {
-        
-    }
-
-    override fun onRecvS2CMsg(arrayList: ArrayList<Byte>?) {
-        
-    }
-
-    override fun onRecvSysMsg(arrayList: ArrayList<Byte>?) {
-        
-    }
-
-    override fun onRecvUDCFlag(i2: Int) {
-        
-    }
-
-    override fun onRichMediaDownloadComplete(fileTransNotifyInfo: FileTransNotifyInfo?) {
-        
-    }
-
-    override fun onRichMediaProgerssUpdate(fileTransNotifyInfo: FileTransNotifyInfo?) {
-        
-    }
-
-    override fun onRichMediaUploadComplete(fileTransNotifyInfo: FileTransNotifyInfo?) {
-        
-    }
-
-    override fun onSearchGroupFileInfoUpdate(searchGroupFileResult: SearchGroupFileResult?) {
-        
-    }
-
-    override fun onSendMsgError(j2: Long, contact: Contact?, i2: Int, str: String?) {
-        
-    }
-
-    override fun onSysMsgNotification(i2: Int, j2: Long, j3: Long, arrayList: ArrayList<Byte>?) {
-        
-    }
-
-    override fun onTempChatInfoUpdate(tempChatInfo: TempChatInfo?) {
-        
-    }
-
-    override fun onUnreadCntAfterFirstView(hashMap: HashMap<Int, ArrayList<UnreadCntInfo>>?) {
-        
-    }
-
-    override fun onUnreadCntUpdate(hashMap: HashMap<Int, ArrayList<UnreadCntInfo>>?) {
-        
-    }
-
-    override fun onUserChannelTabStatusChanged(z: Boolean) {
-        
-    }
-
-    override fun onUserOnlineStatusChanged(z: Boolean) {
-        
-    }
-
-    override fun onUserTabStatusChanged(arrayList: ArrayList<TabStatusInfo>?) {
-        
-    }
-
-    override fun onlineStatusBigIconDownloadPush(i2: Int, j2: Long, str: String?) {
-        
-    }
-
-    override fun onlineStatusSmallIconDownloadPush(i2: Int, j2: Long, str: String?) {
-        
     }
 }

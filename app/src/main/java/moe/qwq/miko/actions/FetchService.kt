@@ -6,12 +6,14 @@ import com.tencent.qqnt.kernel.api.impl.KernelServiceImpl
 import de.robv.android.xposed.XposedBridge
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.helper.NTServiceFetcher
 import moe.qwq.miko.tools.PlatformTools
 
-class FetchService: IAction {
-    override fun invoke(ctx: Context) {
+@HookAction("Fetch NT Service")
+class FetchService: AlwaysRunAction() {
+    override fun onRun(ctx: Context) {
         if (PlatformTools.isMqq()) {
             KernelServiceImpl::class.java.hookMethod("initService").after {
                 val service = it.thisObject as IKernelService

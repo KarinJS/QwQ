@@ -1,5 +1,16 @@
 package com.tencent.qqnt.kernel.nativeinterface;
 
+import com.tencent.qqnt.kernelpublic.nativeinterface.BackGroundInfo;
+import com.tencent.qqnt.kernelpublic.nativeinterface.Contact;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IClearMsgRecordsCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IGetMultiMsgCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IMsgOperateCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.IOperateCallback;
+import com.tencent.qqnt.kernelpublic.nativeinterface.JsonGrayElement;
+import com.tencent.qqnt.kernelpublic.nativeinterface.MsgAttributeInfo;
+import com.tencent.qqnt.kernelpublic.nativeinterface.MsgElement;
+import com.tencent.qqnt.kernelpublic.nativeinterface.MultiMsgInfo;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

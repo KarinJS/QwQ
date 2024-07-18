@@ -12,15 +12,15 @@ import moe.qwq.miko.internals.hooks.*
 
 object ActionManager {
     private val FIRST_ACTION = arrayOf(
-        Broadcast::class.java,
-        WebJsBridge::class.java,
-        FetchService::class.java,
-        PacketHijacker::class.java,
+        Broadcast::class.java, // ALWAYS RUN
+        WebJsBridge::class.java, // ALWAYS RUN
+        FetchService::class.java, // ALWAYS RUN
+        PacketHijacker::class.java, // ALWAYS RUN
 
         OneClickLike::class.java,
         ForceTabletMode::class.java,
 
-        BrowserAccessRestrictions::class.java,
+        BrowserAccessRestrictions::class.java, // ALWAYS RUN
         SimplifyHomepageSidebar::class.java,
         DefaultPacketHijacker::class.java,
         HotUpdateSoPatch::class.java,

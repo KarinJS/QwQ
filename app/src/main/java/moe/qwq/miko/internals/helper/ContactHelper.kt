@@ -1,6 +1,6 @@
 package moe.qwq.miko.internals.helper
 
-import com.tencent.qqnt.kernel.nativeinterface.Contact
+import com.tencent.qqnt.kernelpublic.nativeinterface.Contact
 import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.lang.IllegalArgumentException
@@ -36,6 +36,7 @@ internal object ContactHelper {
         val peerId = if (MsgConstant.KCHATTYPEC2C == chatType || MsgConstant.KCHATTYPETEMPC2CFROMGROUP == chatType) {
             if (id.startsWith("u_")) id else getUidByUinAsync(id.toLong())
         } else id
+
         return Contact(chatType, peerId, subId)
     }
 

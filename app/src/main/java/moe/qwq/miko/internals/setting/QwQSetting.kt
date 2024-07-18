@@ -69,7 +69,7 @@ object QwQSetting {
 
     class Setting<T: Any>(
         val name: String,
-        private val type: SettingType,
+        val type: SettingType,
         val default: T? = null
     ) {
         /**
@@ -77,7 +77,7 @@ object QwQSetting {
          */
         var isFailed = false
 
-        operator fun getValue(t: T?, property: KProperty<*>): T {
+        operator fun getValue(t: T?, property: KProperty<*>?): T {
             val value = when(type) {
                 SettingType.STRING -> config.getString(name, (default as? String) ?: "")
                 SettingType.INT -> config.getInt(name, (default as? Int) ?: 0)

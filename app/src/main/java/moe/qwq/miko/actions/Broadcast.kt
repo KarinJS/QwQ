@@ -15,9 +15,9 @@ import moe.qwq.miko.internals.receiver.IBroadcastReceiver
 import moe.qwq.miko.tools.PlatformTools
 import mqq.app.MobileQQ
 
-class Broadcast: IAction {
+class Broadcast: AlwaysRunAction() {
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
-    override fun invoke(ctx: Context) {
+    override fun onRun(ctx: Context) {
         kotlin.runCatching {
             MobileQQ.getMobileQQ().unregisterReceiver(DynamicReceiver)
         }
