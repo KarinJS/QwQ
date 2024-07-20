@@ -7,7 +7,7 @@ import android.widget.ImageView
 import com.tencent.mobileqq.aio.msglist.holder.component.msgfollow.AIOMsgFollowComponent
 import com.tencent.mobileqq.qroute.QRoute
 import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
-import com.tencent.qqnt.kernelpublic.nativeinterface.MsgRecord
+import com.tencent.qqnt.kernel.nativeinterface.MsgRecord
 import com.tencent.qqnt.msg.api.IMsgService
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedBridge.log

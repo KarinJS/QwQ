@@ -1,6 +1,7 @@
 package com.tencent.qqnt.msg.api;
 
 import com.tencent.mobileqq.qroute.QRouteApi;
+import com.tencent.qqnt.kernel.nativeinterface.MsgRecord;
 import com.tencent.qqnt.kernelpublic.nativeinterface.*;
 
 import org.jetbrains.annotations.NotNull;

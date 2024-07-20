@@ -26,6 +26,7 @@ import moe.qwq.miko.internals.helper.AppRuntimeFetcher.appRuntime
 import moe.qwq.miko.internals.helper.ContactHelper
 import moe.qwq.miko.internals.helper.GroupHelper
 import moe.qwq.miko.internals.helper.LocalGrayTips
+import moe.qwq.miko.internals.setting.QwQSetting
 
 object AioListener {
 /*TODO TRY FIX GRAYTIP FOR FLASH PIC
@@ -63,6 +64,8 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
             return Result.success(fieldSet)
         }
 
+        val interceptRecall = QwQSetting.getSetting<Boolean>(QwQSetting.INTERCEPT_RECALL)
+            .getValue(null, null)
         val builder = UnknownFieldSet.newBuilder(fieldSet)
         builder.clearField(8) // 移除content的内容
 
@@ -77,7 +80,7 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
                     val msgHead = msg.getField(2).groupList.first()
                     val msgType = msgHead.getField(1).varintList.first()
                     val msgSubType = msgHead.getField(2).varintList.first()
-                    isRecallEvent = (msgType == 528L && msgSubType == 138L) || (msgType == 732L && msgSubType == 17L)
+                    isRecallEvent = (msgType == 528L && msgSubType == 138L) || (msgType == 732L && msgSubType == 17L) && interceptRecall
                 }
             }
             if (!isRecallEvent) {
@@ -110,6 +113,9 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
     }
 
     private fun onC2CRecall(msgHead: MessageHead, richMsg: ByteArray): Boolean {
+        val interceptRecall = QwQSetting.getSetting<Boolean>(QwQSetting.INTERCEPT_RECALL)
+            .getValue(null, null)
+        if (!interceptRecall) return false
         GlobalScope.launch {
             val recallData = ProtoBuf.decodeFromByteArray<C2CRecallMessage>(richMsg)
 
@@ -138,6 +144,9 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
     }
 
     private fun onGroupRecall(message: Message, richMsg: ByteArray): Boolean {
+        val interceptRecall = QwQSetting.getSetting<Boolean>(QwQSetting.INTERCEPT_RECALL)
+            .getValue(null, null)
+        if (!interceptRecall) return false
         GlobalScope.launch {
             val reader = ByteReadPacket(richMsg)
             val buffer = try {
