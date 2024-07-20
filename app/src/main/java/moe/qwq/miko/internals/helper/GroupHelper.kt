@@ -8,7 +8,6 @@ import com.tencent.mobileqq.data.troop.TroopMemberInfo
 import com.tencent.mobileqq.data.troop.TroopMemberNickInfo
 import com.tencent.mobileqq.qroute.QRoute
 import com.tencent.mobileqq.troop.api.ITroopMemberInfoService
-import com.tencent.qqnt.kernelpublic.nativeinterface.MemberInfo
 import com.tencent.qqnt.troopmemberlist.ITroopMemberListRepoApi
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.delay
@@ -31,32 +30,6 @@ internal object GroupHelper {
 
     private lateinit var METHOD_REQ_MEMBER_INFO: Method
     private lateinit var METHOD_REQ_MEMBER_INFO_V2: Method
-
-    suspend fun getTroopMemberInfoByUinViaNt(groupId: Long, qq: Long): Result<MemberInfo> {
-        val kernelService = NTServiceFetcher.kernelService
-        val sessionService = kernelService.wrapperSession
-        val groupService = sessionService.groupService
-        val info = suspendCancellableCoroutine {
-            groupService.getTransferableMemberInfo(groupId) { code, _, data ->
-                if (code != 0) {
-                    it.resume(null)
-                    return@getTransferableMemberInfo
-                }
-                data.forEach { (_, info) ->
-                    if (info.uin == qq) {
-                        it.resume(info)
-                        return@forEach
-                    }
-                }
-                it.resume(null)
-            }
-        }
-        return if (info != null) {
-            Result.success(info)
-        } else {
-            Result.failure(Exception("获取群成员信息失败"))
-        }
-    }
 
     suspend fun getTroopMemberNickByUin(
         groupId: Long,
@@ -105,14 +78,6 @@ internal object GroupHelper {
             }
         } else {
             info = getTroopMemberInfoByUinFromNt(groupId, uin).getOrNull()
-        }
-        if (info == null) {
-            info = getTroopMemberInfoByUinViaNt(groupId, uin).getOrNull()?.let {
-                TroopMemberInfo().apply {
-                    troopnick = it.cardName
-                    friendnick = it.nick
-                }
-            }
         }
         return if (info != null) {
             Result.success(info)

@@ -1,23 +1,12 @@
 package com.tencent.qqnt.kernel.nativeinterface;
 
-import com.tencent.qqnt.kernelpublic.nativeinterface.BackGroundInfo;
-import com.tencent.qqnt.kernelpublic.nativeinterface.Contact;
-import com.tencent.qqnt.kernelpublic.nativeinterface.IClearMsgRecordsCallback;
-import com.tencent.qqnt.kernelpublic.nativeinterface.IGetMultiMsgCallback;
-import com.tencent.qqnt.kernelpublic.nativeinterface.IMsgOperateCallback;
-import com.tencent.qqnt.kernelpublic.nativeinterface.IOperateCallback;
-import com.tencent.qqnt.kernelpublic.nativeinterface.JsonGrayElement;
-import com.tencent.qqnt.kernelpublic.nativeinterface.MsgAttributeInfo;
-import com.tencent.qqnt.kernelpublic.nativeinterface.MsgElement;
-import com.tencent.qqnt.kernelpublic.nativeinterface.MultiMsgInfo;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface IKernelMsgService {
-    void deleteMsg(Contact contact, ArrayList<Long> msgIdList, IOperateCallback callback);
+/*    void deleteMsg(Contact contact, ArrayList<Long> msgIdList, IOperateCallback callback);
 
     void fetchLongMsg(Contact contact, long msgId);
 
@@ -25,11 +14,13 @@ public interface IKernelMsgService {
 
     void getRecallMsgsByMsgId(Contact contact, ArrayList<Long> msgIdList, IMsgOperateCallback callback);
 
-    void recallMsg(Contact contact, ArrayList<Long> msgIdList, IOperateCallback callback);
+    void recallMsg(Contact contact, ArrayList<Long> msgIdList, IOperateCallback callback);*/
 
     void addLocalJsonGrayTipMsg(Contact contact, JsonGrayElement jsonGrayElement, boolean z, boolean z2, IAddJsonGrayTipMsgCallback iAddJsonGrayTipMsgCallback);
 
-    void addLocalRecordMsg(Contact contact, long msgId, MsgElement elem, HashMap<Integer, MsgAttributeInfo> hashMap, boolean z, IOperateCallback callback);
+    void addLocalJsonGrayTipMsg(com.tencent.qqnt.kernelpublic.nativeinterface.Contact contact, com.tencent.qqnt.kernelpublic.nativeinterface.JsonGrayElement jsonGrayElement, boolean z, boolean z2, IAddJsonGrayTipMsgCallback iAddJsonGrayTipMsgCallback);
+
+/*    void addLocalRecordMsg(Contact contact, long msgId, MsgElement elem, HashMap<Integer, MsgAttributeInfo> hashMap, boolean z, IOperateCallback callback);
 
     long getMsgUniqueId(long time);
 
@@ -57,5 +48,5 @@ public interface IKernelMsgService {
 
     void switchForeGround(IOperateCallback cb);
 
-    void switchForeGroundForMqq(byte[] bArr, IOperateCallback cb);
+    void switchForeGroundForMqq(byte[] bArr, IOperateCallback cb);*/
 }

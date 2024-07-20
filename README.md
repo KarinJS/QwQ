@@ -22,7 +22,7 @@ QwQ 是基于 LSPosed 实现的类似于QAuxiliary的通用性QQ增强LSPosed模
 ## 兼容说明
 
 - 安卓版本 >= 8.1
-- QQ版本 >= 9.0.70
+- QQ版本 >= 8.x
 
 ## 使用方法
 

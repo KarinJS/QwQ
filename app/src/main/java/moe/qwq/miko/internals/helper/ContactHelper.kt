@@ -1,8 +1,9 @@
 package moe.qwq.miko.internals.helper
 
-import com.tencent.qqnt.kernelpublic.nativeinterface.Contact
 import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
 import kotlinx.coroutines.suspendCancellableCoroutine
+import moe.fuqiuluo.maple.MapleContact
+import moe.qwq.miko.tools.maple
 import java.lang.IllegalArgumentException
 import kotlin.coroutines.resume
 
@@ -32,18 +33,18 @@ internal object ContactHelper {
         }[peerId]!!
     }
 
-    suspend fun generateContact(chatType: Int, id: String, subId: String = ""): Contact {
+    suspend fun generateContact(chatType: Int, id: String, subId: String = ""): MapleContact {
         val peerId = if (MsgConstant.KCHATTYPEC2C == chatType || MsgConstant.KCHATTYPETEMPC2CFROMGROUP == chatType) {
             if (id.startsWith("u_")) id else getUidByUinAsync(id.toLong())
         } else id
 
-        return Contact(chatType, peerId, subId)
+        return generateContactByUid(chatType, peerId, subId)
     }
 
-    fun generateContactV2(chatType: Int, uid: String, subId: String = ""): Contact {
+    fun generateContactByUid(chatType: Int, uid: String, subId: String = ""): MapleContact {
         if (chatType == MsgConstant.KCHATTYPEC2C && !uid.startsWith("u_")) {
             throw IllegalArgumentException("uid must start with u_")
         }
-        return Contact(chatType, uid, subId)
+        return MapleContact.new(maple, chatType, uid, subId)
     }
 }

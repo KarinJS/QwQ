@@ -1,7 +1,7 @@
 package com.tencent.qqnt.aio.msg.api;
 
 import com.tencent.mobileqq.qroute.QRouteApi;
-import com.tencent.qqnt.kernelpublic.nativeinterface.MsgElement;
+//import com.tencent.qqnt.kernelpublic.nativeinterface.MsgElement;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface IAIOMsgItemApi extends QRouteApi {
-    @NotNull
-    CharSequence buildContent(@NotNull List<MsgElement> list);
+    //@NotNull
+    //CharSequence buildContent(@NotNull List<MsgElement> list);
 
     @NotNull
     byte[] generateFlashPicExtBuf(boolean z);
@@ -18,8 +18,8 @@ public interface IAIOMsgItemApi extends QRouteApi {
     //@NotNull
     //byte[] generateVideoExtBuf(@NotNull aa aaVar);
 
-    @NotNull
-    ArrayList<MsgElement> getForwardCommentElement(@NotNull String str);
+    //@NotNull
+   // ArrayList<MsgElement> getForwardCommentElement(@NotNull String str);
 
     //int getLocalIdOfAniStickerMsg(@NotNull AIOMsgItem aIOMsgItem);
 

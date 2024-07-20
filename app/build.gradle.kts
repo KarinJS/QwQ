@@ -187,8 +187,9 @@ fun getVersionName(): String {
 
 dependencies {
     compileOnly("de.robv.android.xposed:api:82")
-    compileOnly(project(":processor")) // 预编译接口
-    compileOnly(project(":qqinterface")) // QQ接口
+    compileOnly(project(":qqinterface"))  // oicq common interface
+    implementation(project(":processor"))    // pre build
+    implementation(project(":maple"))        // maple
 
     val serializationVersion = "1.6.3"
 

@@ -44,7 +44,11 @@ internal fun Class<*>.hookMethod(name: String): XCHook {
 internal fun beforeHook(ver: Int = XCallback.PRIORITY_DEFAULT, block: (param: XC_MethodHook.MethodHookParam) -> Unit): XC_MethodHook {
     return object :XC_MethodHook(ver) {
         override fun beforeHookedMethod(param: MethodHookParam) {
-            block(param)
+            kotlin.runCatching {
+                block(param)
+            }.onFailure {
+                XposedBridge.log(it)
+            }
         }
     }
 }
@@ -52,7 +56,11 @@ internal fun beforeHook(ver: Int = XCallback.PRIORITY_DEFAULT, block: (param: XC
 internal fun afterHook(ver: Int = XCallback.PRIORITY_DEFAULT, block: (param: XC_MethodHook.MethodHookParam) -> Unit): XC_MethodHook {
     return object :XC_MethodHook(ver) {
         override fun afterHookedMethod(param: MethodHookParam) {
-            block(param)
+            kotlin.runCatching {
+                block(param)
+            }.onFailure {
+                XposedBridge.log(it)
+            }
         }
     }
 }

@@ -1,8 +1,12 @@
 package com.tencent.qqnt.msg.api;
 
 import com.tencent.mobileqq.qroute.QRouteApi;
+import com.tencent.qqnt.kernel.nativeinterface.IOperateCallback;
+import com.tencent.qqnt.kernel.nativeinterface.MsgElement;
+/*
 import com.tencent.qqnt.kernel.nativeinterface.MsgRecord;
 import com.tencent.qqnt.kernelpublic.nativeinterface.*;
+*/
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,10 +14,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import kotlin.Deprecated;
 import kotlinx.coroutines.flow.Flow;
 
 public interface IMsgService extends QRouteApi {
-    void addLocalGrayTipMsg(@NotNull Contact contact, @NotNull LocalGrayTipElement localGrayTipElement, boolean z, @Nullable IOperateCallback iOperateCallback);
+    void sendMsgWithMsgId(@NotNull com.tencent.qqnt.kernelpublic.nativeinterface.Contact contact, long msgId, @NotNull ArrayList<MsgElement> arrayList, @Nullable IOperateCallback iOperateCallback);
+
+    @Deprecated(message = "安卓QQ旧版本API（兼容性保留）")
+    void sendMsgWithMsgId(@NotNull com.tencent.qqnt.kernel.nativeinterface.Contact contact, long msgId, @NotNull ArrayList<MsgElement> arrayList, @Nullable IOperateCallback iOperateCallback);
+
+/*    void addLocalGrayTipMsg(@NotNull Contact contact, @NotNull LocalGrayTipElement localGrayTipElement, boolean z, @Nullable IOperateCallback iOperateCallback);
 
     void addLocalTofuRecordMsg(@NotNull Contact contact, @NotNull TofuRecordElement tofuRecordElement, @Nullable IOperateCallback iOperateCallback);
 
@@ -235,8 +245,6 @@ public interface IMsgService extends QRouteApi {
    // @NotNull
    // Flow<g> sendMsgErrorNotificationFlow();
 
-    void sendMsgWithMsgId(@NotNull Contact contact, long msgId, @NotNull ArrayList<MsgElement> arrayList, @Nullable IOperateCallback iOperateCallback);
-
     void sendSummonMsg(@NotNull Contact contact, @NotNull ArrayList<MsgElement> arrayList, @Nullable IOperateCallback iOperateCallback);
 
     void setAllGuildMsgRead(@Nullable IOperateCallback iOperateCallback);
@@ -285,5 +293,5 @@ public interface IMsgService extends QRouteApi {
 
     void unregisterSysMsgNotification(int i2, long j2, @NotNull ArrayList<Long> arrayList, @Nullable IOperateCallback iOperateCallback);
 
-    void updateElementExtBufForUI(@NotNull Contact contact, long j2, long j3, @NotNull byte[] bArr, @Nullable IOperateCallback iOperateCallback);
+    void updateElementExtBufForUI(@NotNull Contact contact, long j2, long j3, @NotNull byte[] bArr, @Nullable IOperateCallback iOperateCallback);*/
 }

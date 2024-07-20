@@ -1,7 +1,6 @@
 package com.tencent.mobileqq.data.troop;
 
 import org.jetbrains.annotations.Nullable;
-import com.tencent.qqnt.kernelpublic.nativeinterface.MemberRole;
 
 public class TroopMemberInfo {
     public static final long VALUE_DISTANCE_TO_SELF_UNKOWN = -100;
@@ -35,7 +34,6 @@ public class TroopMemberInfo {
     public int newRealLevel;
     public TroopMemberNickInfo nickInfo;
     public int realLevel;
-    public MemberRole role;
 
     @Nullable
     public TroopMemberSpecialTitleInfo specialTitleInfo;

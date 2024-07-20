@@ -36,3 +36,4 @@ include(
     ":qqinterface"
 )
 include(":processor")
+include(":maple")
