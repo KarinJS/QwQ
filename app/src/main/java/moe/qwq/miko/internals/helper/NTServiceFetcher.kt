@@ -8,13 +8,10 @@ import com.tencent.qqnt.kernel.api.impl.MsgService
 import de.robv.android.xposed.XposedBridge
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
-import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
-import moe.fuqiuluo.entries.InfoSyncPush
 import moe.fuqiuluo.entries.MessagePush
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.AioListener
-import moe.qwq.miko.internals.setting.QwQSetting
 
 internal object NTServiceFetcher {
     private lateinit var iKernelService: IKernelService
@@ -63,8 +60,6 @@ internal object NTServiceFetcher {
                 XposedBridge.log(it)
             }
         }
-
-        //msgService.addMsgListener(AioListener)
     }
 
     val kernelService: IKernelService

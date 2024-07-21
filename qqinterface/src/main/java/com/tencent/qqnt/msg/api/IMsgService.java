@@ -23,6 +23,22 @@ public interface IMsgService extends QRouteApi {
     @Deprecated(message = "安卓QQ旧版本API（兼容性保留）")
     void sendMsgWithMsgId(@NotNull com.tencent.qqnt.kernel.nativeinterface.Contact contact, long msgId, @NotNull ArrayList<MsgElement> arrayList, @Nullable IOperateCallback iOperateCallback);
 
+/*
+    void sendInputStatusReq(int i2, int i3, @NotNull String str, @NotNull IOperateCallback iOperateCallback);
+
+    void sendMsg(@NotNull Contact contact, long msgId, @NotNull ArrayList<MsgElement> arrayList, @Nullable IOperateCallback iOperateCallback);
+
+    void sendMsg(@NotNull Contact contact, @NotNull ArrayList<MsgElement> arrayList, @Nullable IOperateCallback iOperateCallback);
+
+    void sendMsg(@NotNull Contact contact, @NotNull ArrayList<MsgElement> arrayList, @NotNull HashMap<Integer, MsgAttributeInfo> msgAttributes, @Nullable IOperateCallback callback);
+
+    // @NotNull
+    // Flow<g> sendMsgErrorNotificationFlow();
+
+    void sendSummonMsg(@NotNull Contact contact, @NotNull ArrayList<MsgElement> arrayList, @Nullable IOperateCallback iOperateCallback);*/
+
+
+
 /*    void addLocalGrayTipMsg(@NotNull Contact contact, @NotNull LocalGrayTipElement localGrayTipElement, boolean z, @Nullable IOperateCallback iOperateCallback);
 
     void addLocalTofuRecordMsg(@NotNull Contact contact, @NotNull TofuRecordElement tofuRecordElement, @Nullable IOperateCallback iOperateCallback);
@@ -233,19 +249,6 @@ public interface IMsgService extends QRouteApi {
     //void renameAnonyChatNick(@Nullable String str, @Nullable IRenameAnonymousChatNickCallback iRenameAnonymousChatNickCallback);
 
     void resendMsg(@NotNull Contact contact, long j2, @Nullable IOperateCallback iOperateCallback);
-
-    void sendInputStatusReq(int i2, int i3, @NotNull String str, @NotNull IOperateCallback iOperateCallback);
-
-    void sendMsg(@NotNull Contact contact, long msgId, @NotNull ArrayList<MsgElement> arrayList, @Nullable IOperateCallback iOperateCallback);
-
-    void sendMsg(@NotNull Contact contact, @NotNull ArrayList<MsgElement> arrayList, @Nullable IOperateCallback iOperateCallback);
-
-    void sendMsg(@NotNull Contact contact, @NotNull ArrayList<MsgElement> arrayList, @NotNull HashMap<Integer, MsgAttributeInfo> msgAttributes, @Nullable IOperateCallback callback);
-
-   // @NotNull
-   // Flow<g> sendMsgErrorNotificationFlow();
-
-    void sendSummonMsg(@NotNull Contact contact, @NotNull ArrayList<MsgElement> arrayList, @Nullable IOperateCallback iOperateCallback);
 
     void setAllGuildMsgRead(@Nullable IOperateCallback iOperateCallback);
 

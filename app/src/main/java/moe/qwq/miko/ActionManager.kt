@@ -26,6 +26,7 @@ object ActionManager {
         HotUpdateSoPatch::class.java,
 
         RepeatMessage::class.java,
+        MessageHook::class.java,
         DisableFlashPictures::class.java,
         AllowGroupFlashPic::class.java
     )

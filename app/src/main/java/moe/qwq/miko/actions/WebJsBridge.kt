@@ -61,6 +61,12 @@ class WebJsBridge: AlwaysRunAction() {
         }
 
         @JavascriptInterface
+        fun setSettingString(key: String, value: String) {
+            val setting = QwQSetting.getSetting<Any>(key)
+            setting.setValue(setting, null, value)
+        }
+
+        @JavascriptInterface
         fun setSetting(key: String, value: Boolean) {
             val setting = QwQSetting.getSetting<Any>(key)
             setting.setValue(setting, null, value)

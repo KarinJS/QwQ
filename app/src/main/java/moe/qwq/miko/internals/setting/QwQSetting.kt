@@ -6,6 +6,8 @@ import mqq.app.MobileQQ
 import kotlin.reflect.KProperty
 
 object QwQSetting {
+    const val MESSAGE_ENCRYPT: String = "message_encrypt"
+    const val MESSAGE_TAIL: String = "message_tail"
     const val INTERCEPT_RECALL = "intercept_recall"
     const val ANTI_BROWSER_ACCESS_RESTRICTIONS = "anti_browser_access_restrictions"
     const val SIMPLIFY_HOMEPAGE_SIDEBAR = "simplify_homepage_sidebar"
@@ -47,6 +49,8 @@ object QwQSetting {
         OPTIMIZE_AT_SORT to Setting<Boolean>(OPTIMIZE_AT_SORT, SettingType.BOOLEAN),
         DISABLE_FLASH_PICTURE to Setting<Boolean>(DISABLE_FLASH_PICTURE, SettingType.BOOLEAN),
         ALLOW_GROUP_FLASH_PIC to Setting<Boolean>(ALLOW_GROUP_FLASH_PIC, SettingType.BOOLEAN),
+        MESSAGE_TAIL to Setting(MESSAGE_TAIL, SettingType.STRING, ""),
+        MESSAGE_ENCRYPT to Setting(MESSAGE_ENCRYPT, SettingType.STRING, ""), // 消息加密密钥
     )
 
     val settingUrl: String
