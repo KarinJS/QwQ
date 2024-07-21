@@ -18,6 +18,8 @@ QwQ 是基于 LSPosed 实现的类似于QAuxiliary的通用性QQ增强LSPosed模
 > 本项目目的是研究 LSPosed 框架的使用。 Epic 框架开发相关知识。  
 > 如有违反法律，请联系删除。
 > 请勿在任何平台宣传，宣扬，转发本项目，请勿恶意修改企业安装包造成相关企业产生损失，如有违背，必将追责到底。
+> 
+> [Discord社区](https://discord.gg/MKR2wz863h)
 
 ## 兼容说明
 
