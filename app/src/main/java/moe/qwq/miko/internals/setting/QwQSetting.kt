@@ -30,6 +30,7 @@ object QwQSetting {
         .parentFile!!.resolve("Tencent/QwQ").also {
             it.mkdirs()
         }
+
     private val config: MMKV get() = MMKVTools.mmkvWithId("qwq")
     val settingMap = hashMapOf<String, Setting<out Any>>(
         INTERCEPT_RECALL to Setting<Boolean>(INTERCEPT_RECALL, SettingType.BOOLEAN),

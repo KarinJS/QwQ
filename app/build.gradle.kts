@@ -186,6 +186,7 @@ fun getVersionName(): String {
 }
 
 dependencies {
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
     compileOnly("de.robv.android.xposed:api:82")
     compileOnly(project(":qqinterface"))  // oicq common interface
     implementation(project(":processor"))    // pre build

@@ -5,6 +5,7 @@ import com.tencent.mobileqq.qroute.QRoute
 import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
 import com.tencent.qqnt.kernel.nativeinterface.MsgElement
 import com.tencent.qqnt.kernel.nativeinterface.MsgRecord
+import com.tencent.qqnt.kernel.nativeinterface.RichMediaFilePathInfo
 import com.tencent.qqnt.kernel.nativeinterface.TextElement
 import com.tencent.qqnt.msg.api.IMsgService
 import de.robv.android.xposed.XC_MethodHook
@@ -12,10 +13,49 @@ import de.robv.android.xposed.XposedBridge
 import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.ActionProcess
 import moe.qwq.miko.actions.IAction
+import moe.qwq.miko.internals.helper.MessageCrypt
+import moe.qwq.miko.internals.helper.NTServiceFetcher
+import moe.qwq.miko.internals.helper.msgService
 import moe.qwq.miko.internals.setting.QwQSetting
+import moe.qwq.miko.tools.PlatformTools
+import mqq.app.MobileQQ
+import java.io.File
+import java.io.RandomAccessFile
 
 @HookAction("发送消息预劫持")
 class MessageHook: IAction {
+    companion object {
+        fun tryHandleMessageDecrypt(record: MsgRecord) {
+            val encrypt by QwQSetting.getSetting<String>(QwQSetting.MESSAGE_ENCRYPT)
+            if (encrypt.isBlank()) return
+            if (record.elements.size != 1 || record.elements.first().elementType != MsgConstant.KELEMTYPEPIC) return
+
+            val pic = record.elements.first().picElement
+            val msgService = NTServiceFetcher.kernelService.msgService!!
+            val originalPath = msgService.getRichMediaFilePathForMobileQQSend(
+                RichMediaFilePathInfo(2, 0, pic.md5HexStr, "", 1, 0, null, "", true)
+            ) ?: return
+            val originalFile = RandomAccessFile(originalPath, "r")
+            val length = originalFile.length()
+            originalFile.seek(length - 12)
+            val dataSize = originalFile.readInt()
+            val hash = originalFile.readInt()
+            val magic = originalFile.readInt()
+            if (magic == 0x114514 && hash == (encrypt + record.senderUin).hashCode()) {
+                val data = ByteArray(dataSize)
+                originalFile.seek(length - 12 - dataSize)
+                originalFile.read(data)
+                originalFile.close()
+                MessageCrypt.decrypt(data, encrypt).onSuccess {
+                    record.elements.clear()
+                    record.elements.addAll(it)
+                }.onFailure {
+                    XposedBridge.log("消息解密失败: ${it.stackTraceToString()}")
+                }
+            }
+        }
+    }
+
     private fun handleMessageBody(msgs: ArrayList<MsgElement>) {
         if (msgs.isActionMsg()) return
         val tail by QwQSetting.getSetting<String>(name)
@@ -37,7 +77,12 @@ class MessageHook: IAction {
     }
 
     private fun handleMessageEncrypt(msgs: ArrayList<MsgElement>, encryptKey: String) {
-
+        MessageCrypt.encrypt(msgs, PlatformTools.app.currentAccountUin, encryptKey).onFailure {
+            XposedBridge.log("[QwQ] 消息加密失败: ${it.stackTraceToString()}")
+        }.onSuccess {
+            msgs.clear()
+            msgs.add(it)
+        }
     }
 
     override fun onRun(ctx: Context) {
