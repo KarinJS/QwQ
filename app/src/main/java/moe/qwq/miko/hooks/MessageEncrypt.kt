@@ -138,7 +138,8 @@ class MessageEncrypt: IAction, QQInterfaces() {
         val newMsgBody = UnknownFieldSet.newBuilder()
         val richText = UnknownFieldSet.newBuilder()
 
-/*        elements.addLengthDelimited(UnknownFieldSet.newBuilder().also { builder ->
+        elements.addLengthDelimited(DEFAULT_FACE) // add image
+        elements.addLengthDelimited(UnknownFieldSet.newBuilder().also { builder ->
             builder.addField(1, UnknownFieldSet.Field.newBuilder().also {
                 it.addLengthDelimited(UnknownFieldSet.newBuilder().also { textElement ->
                     textElement.addField(1, UnknownFieldSet.Field.newBuilder().also { content ->
@@ -156,9 +157,7 @@ class MessageEncrypt: IAction, QQInterfaces() {
                     }.build())
                 }.build().toByteString())
             }.build())
-        }.build().toByteString()) // add text*/
-
-        elements.addLengthDelimited(DEFAULT_FACE) // add image
+        }.build().toByteString()) // add text
 
         richText.addField(2, elements.build())
 
