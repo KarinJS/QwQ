@@ -25,7 +25,7 @@ data class C2cRecallMsgInfo(
 @Serializable
 data class GroupRecallMessage(
     @ProtoNumber(1) val type: UInt,
-    @ProtoNumber(4) val peerId: UInt,
+    @ProtoNumber(4) val peerId: ULong,
     @ProtoNumber(11) val operation: GroupRecallOperation,
 )
 

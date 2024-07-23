@@ -159,7 +159,7 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
             }
             val recallData = ProtoBuf.decodeFromByteArray<GroupRecallMessage>(buffer)
 
-            if (recallData.type != 7u || recallData.peerId == 0u) return@launch
+            if (recallData.type != 7u || recallData.peerId == 0uL) return@launch
 
             val groupCode = recallData.peerId.toLong()
             val msgUid = message.content.msgUid
