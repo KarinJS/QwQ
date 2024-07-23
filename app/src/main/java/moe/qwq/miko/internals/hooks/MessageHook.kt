@@ -28,81 +28,6 @@ import java.io.RandomAccessFile
 
 @HookAction("发送消息预劫持")
 class MessageHook: IAction {
-    companion object {
-        fun tryHandleMessageDecrypt(record: MsgRecord) {
-            val encrypt by QwQSetting.getSetting<String>(QwQSetting.MESSAGE_ENCRYPT)
-            if (encrypt.isBlank()) return
-            if (record.elements.size != 1 || record.elements.first().elementType != MsgConstant.KELEMTYPEPIC) return
-
-            val pic = record.elements.first().picElement
-            val msgService = NTServiceFetcher.kernelService.msgService!!
-            val originalPath = msgService.getRichMediaFilePathForMobileQQSend(
-                RichMediaFilePathInfo(2, 0, pic.md5HexStr, "", 1, 0, null, "", true)
-            )!!
-            if (decodeLocalMsg(originalPath, encrypt, pic, record)) return // 解密失败？文件不存在，大概率是这个图片没有被缓存在本地
-/*            val md5 = (pic.md5HexStr ?: pic.fileName
-                .replace("{", "")
-                .replace("}", "")
-                .replace("-", "").split(".")[0])
-                .uppercase()
-            var storeId = 0
-            if (PlatformTools.getQQVersionCode() > QQ_9_0_8_VER) {
-                storeId = pic.storeID
-            }
-            val originalUrl = pic.originImageUrl ?: ""
-            val downloadUrl = RichProtoHelper.getTempPicDownloadUrl(
-                record.chatType, originalUrl, md5, pic, storeId,
-                peer = when(record.chatType) {
-                    MsgConstant.KCHATTYPEDISC, MsgConstant.KCHATTYPEGROUP -> record.peerUin.toString()
-                    MsgConstant.KCHATTYPEC2C -> record.senderUin.toString()
-                    MsgConstant.KCHATTYPEGUILD -> record.channelId.ifNullOrEmpty { record.peerUin.toString() } ?: "0"
-                    else -> null
-                },
-                subPeer = when(record.chatType) {
-                    MsgConstant.KCHATTYPEDISC, MsgConstant.KCHATTYPEGROUP -> null
-                    MsgConstant.KCHATTYPEC2C -> null
-                    MsgConstant.KCHATTYPEGUILD -> record.guildId ?: "0"
-                    else -> null
-                }
-            )
-            val originalFileTmp = File("$originalPath.1")
-            DownloadUtils.download(downloadUrl, originalFileTmp)
-            *//*if(!decodeLocalMsg(originalFileTmp.absolutePath, encrypt, pic, record)) {
-                XposedBridge.log("[QwQ] 解密消息失败，无法解密消息: $originalFileTmp, ${originalFileTmp.exists()}, $downloadUrl")
-            } else {
-                //File(originalPath).let { if (!it.exists()) originalFileTmp.renameTo(it) }
-            }*/
-        }
-
-        private fun decodeLocalMsg(
-            originalPath: String,
-            encrypt: String,
-            pic: PicElement,
-            record: MsgRecord
-        ): Boolean {
-            if (!File(originalPath).exists()) return false
-            val originalRandomFile = RandomAccessFile(originalPath, "r")
-            val length = originalRandomFile.length()
-            originalRandomFile.seek(length - 12)
-            val dataSize = originalRandomFile.readInt()
-            val hash = originalRandomFile.readInt()
-            val magic = originalRandomFile.readInt()
-            if (magic == 0x114514 && hash == (encrypt + record.senderUin).hashCode()) {
-                val data = ByteArray(dataSize)
-                originalRandomFile.seek(length - 12 - dataSize)
-                originalRandomFile.read(data)
-                originalRandomFile.close()
-                MessageCrypt.decrypt(data, encrypt).onSuccess {
-                    record.elements.clear()
-                    record.elements.addAll(it)
-                }.onFailure {
-                    XposedBridge.log("消息解密失败: ${it.stackTraceToString()}")
-                }
-            }
-            return true
-        }
-    }
-
     private fun handleMessageBody(msgs: ArrayList<MsgElement>) {
         if (msgs.isActionMsg()) return
         val tail by QwQSetting.getSetting<String>(name)
@@ -124,12 +49,6 @@ class MessageHook: IAction {
     }
 
     private fun handleMessageEncrypt(msgs: ArrayList<MsgElement>, encryptKey: String) {
-        MessageCrypt.encrypt(msgs, PlatformTools.app.currentAccountUin, encryptKey).onFailure {
-            XposedBridge.log("[QwQ] 消息加密失败: ${it.stackTraceToString()}")
-        }.onSuccess {
-            msgs.clear()
-            msgs.add(it)
-        }
     }
 
     override fun onRun(ctx: Context) {
@@ -210,6 +129,7 @@ private fun ArrayList<MsgElement>.isActionMsg(): Boolean {
                 it.elementType == MsgConstant.KELEMTYPEYOLOGAMERESULT ||
                 it.elementType == MsgConstant.KELEMTYPEWALLET ||
                 it.elementType == MsgConstant.KELEMTYPEUNKNOWN ||
-                it.elementType == MsgConstant.KELEMTYPETOFU
+                it.elementType == MsgConstant.KELEMTYPETOFU ||
+                it.elementType == MsgConstant.KELEMTYPEVIDEO
     }
 }
