@@ -18,13 +18,12 @@ import kotlinx.serialization.protobuf.ProtoBuf
 import moe.fuqiuluo.xposed.loader.LuoClassloader
 import moe.qwq.miko.internals.entries.EcTextElem
 import moe.qwq.miko.internals.setting.QwQSetting
-import moe.qwq.miko.tools.FileUtils
+import moe.qwq.miko.utils.FileUtils
 import java.security.MessageDigest
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import androidx.exifinterface.media.ExifInterface
-import de.robv.android.xposed.XposedBridge
 import kotlinx.io.core.ByteReadPacket
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray

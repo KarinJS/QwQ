@@ -3,7 +3,7 @@ package moe.qwq.miko.internals.helper
 import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
 import kotlinx.coroutines.suspendCancellableCoroutine
 import moe.fuqiuluo.maple.MapleContact
-import moe.qwq.miko.tools.maple
+import moe.qwq.miko.internals.QQInterfaces
 import java.lang.IllegalArgumentException
 import kotlin.coroutines.resume
 
@@ -45,6 +45,6 @@ internal object ContactHelper {
         if (chatType == MsgConstant.KCHATTYPEC2C && !uid.startsWith("u_")) {
             throw IllegalArgumentException("uid must start with u_")
         }
-        return MapleContact.new(maple, chatType, uid, subId)
+    return MapleContact.new(QQInterfaces.maple, chatType, uid, subId)
     }
 }

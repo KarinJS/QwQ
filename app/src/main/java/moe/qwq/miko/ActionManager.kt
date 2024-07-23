@@ -2,18 +2,14 @@ package moe.qwq.miko
 
 import android.content.Context
 import moe.qwq.miko.actions.ActionProcess
-import moe.qwq.miko.actions.Broadcast
 import moe.qwq.miko.internals.hooks.BrowserAccessRestrictions
 import moe.qwq.miko.actions.FetchService
-import moe.qwq.miko.actions.IAction
-import moe.qwq.miko.actions.PacketHijacker
-import moe.qwq.miko.actions.PatchMsfCore
-import moe.qwq.miko.actions.WebJsBridge
+import moe.qwq.miko.actions.*
 import moe.qwq.miko.internals.hooks.*
 
 object ActionManager {
+    // TODO(ksp实现全自动添加action)
     private val FIRST_ACTION = arrayOf(
-        Broadcast::class.java, // ALWAYS RUN
         WebJsBridge::class.java, // ALWAYS RUN
         FetchService::class.java, // ALWAYS RUN
         PacketHijacker::class.java, // ALWAYS RUN

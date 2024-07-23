@@ -1,17 +1,17 @@
-package moe.qwq.miko.tools
+package moe.qwq.miko.utils
 
 import android.content.Context
 import com.tencent.mmkv.MMKV
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
-internal object MMKVTools {
+internal object MMKVUtils {
     private lateinit var METHOD_GET_MMKV: Method
     private lateinit var METHOD_GET_MMKV_WITH_ID: Method
     private lateinit var METHOD_INIT_MMKV: Method
 
     fun initMMKV(ctx: Context) {
-        if (!MMKVTools::METHOD_INIT_MMKV.isInitialized) {
+        if (!MMKVUtils::METHOD_INIT_MMKV.isInitialized) {
             METHOD_INIT_MMKV = MMKV::class.java.declaredMethods.first {
                 Modifier.isStatic(it.modifiers) && it.parameterCount == 1 && it.parameterTypes[0] == Context::class.java
             }
@@ -20,7 +20,7 @@ internal object MMKVTools {
     }
 
     fun defaultMMKV(): MMKV {
-        if (!MMKVTools::METHOD_GET_MMKV.isInitialized) {
+        if (!MMKVUtils::METHOD_GET_MMKV.isInitialized) {
             METHOD_GET_MMKV = MMKV::class.java.declaredMethods.first {
                 Modifier.isStatic(it.modifiers) && it.parameterCount == 0 && it.returnType == MMKV::class.java
             }
@@ -29,7 +29,7 @@ internal object MMKVTools {
     }
 
     fun mmkvWithId(id: String): MMKV {
-        if (!MMKVTools::METHOD_GET_MMKV_WITH_ID.isInitialized) {
+        if (!MMKVUtils::METHOD_GET_MMKV_WITH_ID.isInitialized) {
             METHOD_GET_MMKV_WITH_ID = MMKV::class.java.declaredMethods.first {
                 Modifier.isStatic(it.modifiers)
                         && it.parameterCount == 2

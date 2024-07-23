@@ -3,28 +3,13 @@ package moe.qwq.miko.internals.hooks
 import android.content.Context
 import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
 import com.tencent.qqnt.kernel.nativeinterface.MsgElement
-import com.tencent.qqnt.kernel.nativeinterface.MsgRecord
-import com.tencent.qqnt.kernel.nativeinterface.PicElement
-import com.tencent.qqnt.kernel.nativeinterface.RichMediaFilePathInfo
 import com.tencent.qqnt.kernel.nativeinterface.TextElement
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.ActionProcess
 import moe.qwq.miko.actions.IAction
-import moe.qwq.miko.ext.ifNullOrEmpty
-import moe.qwq.miko.internals.helper.MessageCrypt
-import moe.qwq.miko.internals.helper.NTServiceFetcher
-import moe.qwq.miko.internals.helper.RichProtoHelper
-import moe.qwq.miko.internals.helper.msgService
 import moe.qwq.miko.internals.setting.QwQSetting
-import moe.qwq.miko.tools.DownloadUtils
-import moe.qwq.miko.tools.PlatformTools
-import moe.qwq.miko.tools.PlatformTools.QQ_9_0_8_VER
-import java.io.File
-import java.io.RandomAccessFile
 
 @HookAction("发送消息预劫持")
 class MessageHook: IAction {

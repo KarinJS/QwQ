@@ -15,9 +15,9 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
-import moe.qwq.miko.internals.helper.AppRuntimeFetcher.appRuntime
-import moe.qwq.miko.tools.PlatformTools
-import moe.qwq.miko.tools.PlatformTools.QQ_9_0_65_VER
+import moe.qwq.miko.internals.QQInterfaces
+import moe.qwq.miko.utils.PlatformTools
+import moe.qwq.miko.utils.PlatformTools.QQ_9_0_65_VER
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.coroutines.resume
@@ -71,7 +71,7 @@ internal object GroupHelper {
     ): Result<TroopMemberInfo> {
         var info: TroopMemberInfo?
         if (PlatformTools.getQQVersionCode() < QQ_9_0_65_VER) {
-            val service = appRuntime.getRuntimeService(ITroopMemberInfoService::class.java, "all")
+            val service = QQInterfaces.app.getRuntimeService(ITroopMemberInfoService::class.java, "all")
             info = service.getTroopMember(groupId.toString(), uin.toString())
             if (refresh || !service.isMemberInCache(groupId.toString(), uin.toString()) || info == null || info.troopnick == null) {
                 info = requestTroopMemberInfo(service, groupId, uin).getOrNull()
@@ -110,9 +110,7 @@ internal object GroupHelper {
         }
     }
     private fun requestMemberInfo(groupId: Long, memberUin: Long) {
-        val app = AppRuntimeFetcher.appRuntime
-        if (app !is AppInterface)
-            throw RuntimeException("AppRuntime cannot cast to AppInterface")
+        val app = QQInterfaces.app
         val businessHandler = app.getBusinessHandler(BusinessHandlerFactory.TROOP_MEMBER_CARD_HANDLER)
 
         if (!::METHOD_REQ_MEMBER_INFO.isInitialized) {
@@ -128,9 +126,7 @@ internal object GroupHelper {
     }
 
     private fun requestMemberInfoV2(groupId: Long, memberUin: Long) {
-        val app = AppRuntimeFetcher.appRuntime
-        if (app !is AppInterface)
-            throw RuntimeException("AppRuntime cannot cast to AppInterface")
+        val app = QQInterfaces.app
         val businessHandler = app.getBusinessHandler(BusinessHandlerFactory.TROOP_MEMBER_CARD_HANDLER)
 
         if (!::METHOD_REQ_MEMBER_INFO_V2.isInitialized) {

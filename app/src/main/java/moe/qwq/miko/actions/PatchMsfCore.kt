@@ -1,15 +1,13 @@
 package moe.qwq.miko.actions
 
 import android.content.Context
-import com.tencent.common.app.AppInterface
 import com.tencent.mobileqq.msf.sdk.MsfMessagePair
 import de.robv.android.xposed.XposedBridge
-import moe.fuqiuluo.MSFHandler.onPush
-import moe.fuqiuluo.MSFHandler.onResp
+import moe.qwq.miko.internals.msf.MSFHandler.onPush
+import moe.qwq.miko.internals.msf.MSFHandler.onResp
 import moe.fuqiuluo.processor.HookAction
 import moe.fuqiuluo.xposed.loader.LuoClassloader
 import moe.qwq.miko.ext.hookMethod
-import moe.qwq.miko.tools.PlatformTools.app
 
 @HookAction("注入MSF收包任务")
 class PatchMsfCore: AlwaysRunAction() {

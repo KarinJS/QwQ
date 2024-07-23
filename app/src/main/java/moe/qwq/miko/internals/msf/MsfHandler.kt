@@ -1,4 +1,4 @@
-package moe.fuqiuluo
+package moe.qwq.miko.internals.msf
 
 import com.tencent.qphone.base.remote.FromServiceMsg
 import com.tencent.qphone.base.remote.ToServiceMsg

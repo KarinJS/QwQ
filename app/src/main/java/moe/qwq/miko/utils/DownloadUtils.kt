@@ -1,5 +1,5 @@
 @file:OptIn(DelicateCoroutinesApi::class, ObsoleteCoroutinesApi::class)
-package moe.qwq.miko.tools
+package moe.qwq.miko.utils
 
 import de.robv.android.xposed.XposedBridge
 import io.ktor.client.HttpClient

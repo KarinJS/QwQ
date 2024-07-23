@@ -22,7 +22,6 @@ import moe.fuqiuluo.entries.MessageHead
 import moe.fuqiuluo.entries.GroupRecallMessage
 import moe.fuqiuluo.entries.MessagePush
 import moe.qwq.miko.ext.ifNullOrEmpty
-import moe.qwq.miko.internals.helper.AppRuntimeFetcher.appRuntime
 import moe.qwq.miko.internals.helper.ContactHelper
 import moe.qwq.miko.internals.helper.GroupHelper
 import moe.qwq.miko.internals.helper.LocalGrayTips
@@ -127,7 +126,7 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
             val msgTime = recallData.info.msgTime
             val wording = recallData.info.wording?.wording ?: ""
 
-            if (senderUid == appRuntime.currentUid) return@launch
+            if (senderUid == QQInterfaces.app.currentUid) return@launch
 
             val sender = ContactHelper.getUinByUidAsync(senderUid)
             val receiver = ContactHelper.getUinByUidAsync(receiverUid)
@@ -169,7 +168,7 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
             val msgSeq = recallData.operation.msgInfo?.msgSeq ?: 0L
             val wording = recallData.operation.wording?.wording ?: ""
 
-            if (operatorUid == appRuntime.currentUid) return@launch
+            if (operatorUid == QQInterfaces.app.currentUid) return@launch
 
             val target = ContactHelper.getUinByUidAsync(targetUid)
             val operator = ContactHelper.getUinByUidAsync(operatorUid)

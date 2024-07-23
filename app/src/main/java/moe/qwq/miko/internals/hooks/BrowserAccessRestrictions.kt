@@ -2,19 +2,14 @@ package moe.qwq.miko.internals.hooks
 
 import android.content.Context
 import android.os.Bundle
-import com.tencent.mobileqq.qroute.QRoute
-import com.tencent.mobileqq.webview.api.IJsApi
-import com.tencent.mobileqq.webview.swift.WebViewPlugin
 import de.robv.android.xposed.XposedBridge
-import moe.fuqiuluo.entries.ClassEnum
 import moe.fuqiuluo.entries.ClassEnum.WebSecurityPluginV2Plugin
 import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.AlwaysRunAction
-import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.FuzzyClassKit
 import moe.qwq.miko.ext.beforeHook
 import moe.qwq.miko.ext.toast
-import moe.qwq.miko.internals.helper.DvmLocator
+import moe.qwq.miko.internals.locators.DvmLocator
 import moe.qwq.miko.internals.setting.QwQSetting
 
 @HookAction(desc = "内置浏览器安全限制解除")

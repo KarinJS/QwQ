@@ -1,4 +1,4 @@
-package moe.qwq.miko.tools
+package moe.qwq.miko.utils
 
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -9,7 +9,7 @@ import java.util.zip.GZIPOutputStream
 import java.util.zip.Inflater
 
 
-object DeflateTools {
+object DeflateUtils {
     fun uncompress(inputByte: ByteArray?): ByteArray {
         var len: Int
         val infill = Inflater()

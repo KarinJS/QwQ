@@ -2,13 +2,12 @@ package moe.qwq.miko.internals.hooks
 
 import android.content.Context
 import com.tencent.qphone.base.util.CodecWarpper
-import de.robv.android.xposed.XposedBridge.log
 import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.ActionProcess
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.setting.QwQSetting
-import moe.qwq.miko.tools.PlatformTools
+import moe.qwq.miko.utils.PlatformTools
 
 @HookAction(desc = "拦截无用发包 + 修复主题验证 + 禁用更新检查")
 class DefaultPacketHijacker: IAction {

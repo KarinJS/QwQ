@@ -7,10 +7,10 @@ import de.robv.android.xposed.XposedBridge
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
-import moe.fuqiuluo.QQInterfaces
 import moe.fuqiuluo.entries.*
 import moe.qwq.miko.ext.decodeProtobuf
 import moe.qwq.miko.ext.decodeToTrpcOidb
+import moe.qwq.miko.internals.QQInterfaces
 
 private const val GPRO_PIC = "gchat.qpic.cn"
 private const val MULTIMEDIA_DOMAIN = "multimedia.nt.qq.com.cn"

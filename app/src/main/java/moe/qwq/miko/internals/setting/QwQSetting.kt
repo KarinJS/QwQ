@@ -1,7 +1,7 @@
 package moe.qwq.miko.internals.setting
 
 import com.tencent.mmkv.MMKV
-import moe.qwq.miko.tools.MMKVTools
+import moe.qwq.miko.utils.MMKVUtils
 import mqq.app.MobileQQ
 import kotlin.reflect.KProperty
 
@@ -32,7 +32,7 @@ object QwQSetting {
             it.mkdirs()
         }
 
-    private val config: MMKV get() = MMKVTools.mmkvWithId("qwq")
+    private val config: MMKV get() = MMKVUtils.mmkvWithId("qwq")
     val settingMap = hashMapOf<String, Setting<out Any>>(
         INTERCEPT_RECALL to Setting<Boolean>(INTERCEPT_RECALL, SettingType.BOOLEAN),
         ANTI_BROWSER_ACCESS_RESTRICTIONS to Setting(ANTI_BROWSER_ACCESS_RESTRICTIONS, SettingType.BOOLEAN, true),

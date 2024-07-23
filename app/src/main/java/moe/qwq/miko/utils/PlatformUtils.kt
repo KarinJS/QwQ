@@ -1,4 +1,4 @@
-package moe.qwq.miko.tools
+package moe.qwq.miko.utils
 
 import android.annotation.SuppressLint
 import android.app.ActivityManager
@@ -6,25 +6,10 @@ import android.content.Context
 import android.content.pm.PackageInfo
 import android.os.Process
 import android.provider.Settings
-import com.tencent.common.app.AppInterface
-import moe.fuqiuluo.maple.Maple
-import moe.qwq.miko.tools.PlatformTools.QQ_9_0_70_VER
-import moe.qwq.miko.tools.PlatformTools.getQQVersionCode
 import mqq.app.MobileQQ
 import kotlin.random.Random
 
-val maple by lazy {
-    if (getQQVersionCode() >= QQ_9_0_70_VER) Maple.PublicKernel else Maple.Kernel
-}
-
 internal object PlatformTools {
-    val app by lazy {
-        (if (isMqqPackage())
-            MobileQQ.getMobileQQ().waitAppRuntime()
-        else
-            MobileQQ.getMobileQQ().waitAppRuntime(null)) as AppInterface
-    }
-
     const val QQ_9_0_8_VER = 5540
     const val QQ_9_0_65_VER = 6566
     const val QQ_9_0_70_VER = 6700

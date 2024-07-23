@@ -1,4 +1,4 @@
-package moe.qwq.miko.tools
+package moe.qwq.miko.utils
 
 import java.io.File
 

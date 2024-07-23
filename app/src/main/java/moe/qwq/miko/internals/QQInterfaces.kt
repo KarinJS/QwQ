@@ -1,4 +1,4 @@
-package moe.fuqiuluo
+package moe.qwq.miko.internals
 
 import android.os.Bundle
 import com.tencent.common.app.AppInterface
@@ -12,17 +12,31 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
+import moe.qwq.miko.internals.msf.MSFHandler
 import moe.fuqiuluo.entries.TrpcOidb
-import moe.qwq.miko.tools.PlatformTools
-import moe.qwq.miko.tools.PlatformTools.app
+import moe.fuqiuluo.maple.Maple
+import moe.qwq.miko.utils.PlatformTools
+import moe.qwq.miko.utils.PlatformTools.QQ_9_0_70_VER
+import moe.qwq.miko.utils.PlatformTools.getQQVersionCode
+import moe.qwq.miko.utils.PlatformTools.isMqqPackage
 import mqq.app.MobileQQ
 import tencent.im.oidb.oidb_sso
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-abstract class QQInterfaces {
-
+open class QQInterfaces {
     companion object {
+        val app by lazy {
+            (if (isMqqPackage())
+                MobileQQ.getMobileQQ().waitAppRuntime()
+            else
+                MobileQQ.getMobileQQ().waitAppRuntime(null)) as AppInterface
+        }
+
+        val maple by lazy {
+            if (getQQVersionCode() >= QQ_9_0_70_VER) Maple.PublicKernel else Maple.Kernel
+        }
+
         fun sendToServiceMsg(to: ToServiceMsg) {
             app.sendToService(to)
         }

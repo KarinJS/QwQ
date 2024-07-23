@@ -4,12 +4,10 @@ import android.content.Context
 import com.tencent.qqnt.kernel.api.IKernelService
 import com.tencent.qqnt.kernel.api.impl.KernelServiceImpl
 import de.robv.android.xposed.XposedBridge
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.helper.NTServiceFetcher
-import moe.qwq.miko.tools.PlatformTools
+import moe.qwq.miko.utils.PlatformTools
 
 @HookAction("Fetch NT Service")
 class FetchService: AlwaysRunAction() {

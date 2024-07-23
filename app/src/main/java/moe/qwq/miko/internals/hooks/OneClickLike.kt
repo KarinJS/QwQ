@@ -6,14 +6,11 @@ import com.tencent.mobileqq.activity.VisitorsActivity
 import com.tencent.mobileqq.data.CardProfile
 import com.tencent.mobileqq.profile.vote.VoteHelper
 import com.tencent.mobileqq.profilecard.base.component.AbsProfileHeaderComponent
-import de.robv.android.xposed.XposedBridge
 import moe.fuqiuluo.entries.MethodEnum.VoteHelperVote
-import moe.fuqiuluo.entries.MethodEnum.valueOf
 import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.hookMethod
-import moe.qwq.miko.internals.helper.DvmLocator
-import moe.qwq.miko.internals.setting.QwQSetting
+import moe.qwq.miko.internals.locators.DvmLocator
 import moe.qwq.miko.internals.setting.QwQSetting.ONE_KEY_LIKE
 import java.lang.reflect.Method
 

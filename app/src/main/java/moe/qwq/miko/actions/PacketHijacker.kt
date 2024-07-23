@@ -10,10 +10,9 @@ import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.ext.EMPTY_BYTE_ARRAY
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.ext.slice
-import moe.qwq.miko.internals.helper.DvmLocator
+import moe.qwq.miko.internals.locators.DvmLocator
 import moe.qwq.miko.internals.hijackers.IHijacker
-import moe.qwq.miko.internals.setting.QwQSetting
-import moe.qwq.miko.tools.PlatformTools
+import moe.qwq.miko.utils.PlatformTools
 import java.util.concurrent.atomic.AtomicBoolean
 
 @HookAction("包拦截工具")

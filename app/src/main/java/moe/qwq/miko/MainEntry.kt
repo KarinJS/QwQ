@@ -8,8 +8,8 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 import moe.fuqiuluo.xposed.loader.LuoClassloader
 import moe.qwq.miko.actions.ActionProcess
 import moe.qwq.miko.ext.FuzzyClassKit
-import moe.qwq.miko.tools.MMKVTools
-import moe.qwq.miko.tools.PlatformTools
+import moe.qwq.miko.utils.MMKVUtils
+import moe.qwq.miko.utils.PlatformTools
 import moe.qwq.miko.ext.afterHook
 import mqq.app.MobileQQ
 import java.lang.reflect.Field
@@ -102,7 +102,7 @@ class MainEntry: IXposedHookLoadPackage {
             secStaticStageInited = true
 
             if(PlatformTools.isTim()) {
-                MMKVTools.initMMKV(ctx)
+                MMKVUtils.initMMKV(ctx)
             }
 
             ActionManager.runFirst(ctx, when {

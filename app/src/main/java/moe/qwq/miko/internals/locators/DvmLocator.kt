@@ -1,4 +1,4 @@
-package moe.qwq.miko.internals.helper
+package moe.qwq.miko.internals.locators
 
 import de.robv.android.xposed.XposedBridge
 import kotlinx.serialization.encodeToString
@@ -10,9 +10,6 @@ import moe.fuqiuluo.entries.FieldInfo
 import moe.fuqiuluo.entries.FuzzyDexKit
 import moe.fuqiuluo.entries.MethodEnum
 import moe.fuqiuluo.entries.MethodInfo
-import moe.qwq.miko.internals.locators.ClassLocator
-import moe.qwq.miko.internals.locators.FieldLocator
-import moe.qwq.miko.internals.locators.MethodLocator
 import moe.qwq.miko.internals.setting.QwQSetting
 import mqq.app.MobileQQ
 import oicq.wlogin_sdk.tools.MD5
@@ -90,7 +87,10 @@ object DvmLocator {
 
     fun locateMethod(method: MethodEnum, result: Pair<Class<*>, Method>?) {
         if (result != null && !cacheMap.methods.containsKey(method)) {
-            if (result.second.returnType.isArray) ClassInfo(result.second.returnType.componentType.name, true)
+            if (result.second.returnType.isArray) ClassInfo(
+                result.second.returnType.componentType.name,
+                true
+            )
             else ClassInfo(result.second.returnType.name, false)
             cacheMap.methods[method] = MethodInfo(
                 parent = ClassInfo(result.first.name, false),

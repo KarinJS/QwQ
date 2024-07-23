@@ -8,7 +8,7 @@ import moe.qwq.miko.ext.afterHook
 import moe.qwq.miko.ext.getVersionName
 import moe.qwq.miko.ext.json
 import moe.qwq.miko.ext.toast
-import moe.qwq.miko.tools.PlatformTools
+import moe.qwq.miko.utils.PlatformTools
 import moe.qwq.miko.internals.setting.QwQSetting
 import mqq.app.MobileQQ
 import java.net.URL
@@ -63,6 +63,9 @@ class WebJsBridge: AlwaysRunAction() {
         @JavascriptInterface
         fun setSettingString(key: String, value: String) {
             val setting = QwQSetting.getSetting<Any>(key)
+            if (setting.type == QwQSetting.SettingType.BOOLEAN) {
+                return // 不支持
+            }
             setting.setValue(setting, null, value)
         }
 

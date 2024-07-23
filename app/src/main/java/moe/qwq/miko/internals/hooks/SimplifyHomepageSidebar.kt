@@ -4,14 +4,13 @@ package moe.qwq.miko.internals.hooks
 import android.content.Context
 import com.tencent.mobileqq.activity.qqsettingme.config.QQSettingMeBizBean
 import de.robv.android.xposed.XposedBridge
-import de.robv.android.xposed.XposedBridge.log
 import moe.fuqiuluo.entries.ClassEnum
 import moe.fuqiuluo.entries.FieldEnum.QQSettingMeItemName
 import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.ActionProcess
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.afterHook
-import moe.qwq.miko.internals.helper.DvmLocator
+import moe.qwq.miko.internals.locators.DvmLocator
 import moe.qwq.miko.internals.setting.QwQSetting
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier

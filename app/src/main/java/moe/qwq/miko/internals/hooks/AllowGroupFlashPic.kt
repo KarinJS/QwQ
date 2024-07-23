@@ -4,19 +4,13 @@ import android.content.Context
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
-import com.tencent.qqnt.qbasealbum.inject.QAlbumPickerContext
-import de.robv.android.xposed.XposedBridge
-import de.robv.android.xposed.XposedHelpers
 import moe.fuqiuluo.entries.ClassEnum
 import moe.fuqiuluo.processor.HookAction
-import moe.fuqiuluo.xposed.loader.LuoClassloader
 import moe.qwq.miko.actions.IAction
-import moe.qwq.miko.ext.afterHook
 import moe.qwq.miko.ext.hookMethod
-import moe.qwq.miko.internals.helper.DvmLocator
+import moe.qwq.miko.internals.locators.DvmLocator
 import moe.qwq.miko.internals.setting.QwQSetting
 import java.lang.reflect.Modifier
-import kotlin.reflect.KProperty
 
 @HookAction(desc = "打开群聊的闪照开关")
 class AllowGroupFlashPic : IAction {
