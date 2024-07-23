@@ -1,5 +1,5 @@
 @file:Suppress("UNUSED_VARIABLE", "LocalVariableName", "UNCHECKED_CAST")
-package moe.qwq.miko.internals.hooks
+package moe.qwq.miko.hooks
 
 import android.content.Context
 import com.tencent.mobileqq.activity.qqsettingme.config.QQSettingMeBizBean
@@ -25,7 +25,7 @@ class SimplifyHomepageSidebar: IAction {
         private lateinit var FieldQQSettingMeItemName: Field
 
         private fun findItemNameField(bean: QQSettingMeBizBean) {
-            if(!::FieldQQSettingMeItemName.isInitialized) {
+            if(!Companion::FieldQQSettingMeItemName.isInitialized) {
                 DvmLocator.findField(QQSettingMeItemName)?.let {
                     FieldQQSettingMeItemName = it
                     return

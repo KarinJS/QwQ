@@ -1,4 +1,4 @@
-package moe.qwq.miko.internals.hooks
+package moe.qwq.miko.hooks
 
 import android.content.Context
 import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
@@ -11,17 +11,13 @@ import moe.qwq.miko.actions.ActionProcess
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.internals.setting.QwQSetting
 
-@HookAction("发送消息预劫持")
-class MessageHook: IAction {
+@HookAction("消息小尾巴")
+class MessageTail: IAction {
     private fun handleMessageBody(msgs: ArrayList<MsgElement>) {
         if (msgs.isActionMsg()) return
         val tail by QwQSetting.getSetting<String>(name)
-        val encrypt by QwQSetting.getSetting<String>(QwQSetting.MESSAGE_ENCRYPT)
         if (tail.isNotBlank()) {
             handleMessageTail(msgs, tail)
-        }
-        if (encrypt.isNotBlank()) {
-            handleMessageEncrypt(msgs, encrypt)
         }
     }
 
@@ -31,9 +27,6 @@ class MessageHook: IAction {
             this.textElement = TextElement()
             this.textElement.content = tail
         })
-    }
-
-    private fun handleMessageEncrypt(msgs: ArrayList<MsgElement>, encryptKey: String) {
     }
 
     override fun onRun(ctx: Context) {
@@ -90,8 +83,7 @@ class MessageHook: IAction {
 
     override fun canRun(): Boolean {
         val tail by QwQSetting.getSetting<String>(name)
-        val encrypt by QwQSetting.getSetting<String>(QwQSetting.MESSAGE_ENCRYPT)
-        return tail.isNotEmpty() || encrypt.isNotEmpty()
+        return tail.isNotEmpty()
     }
 
     override val name: String = QwQSetting.MESSAGE_TAIL

@@ -6,21 +6,14 @@ package moe.qwq.miko.internals.helper
 import com.google.protobuf.UnknownFieldSet
 import com.tencent.qqnt.kernel.api.IKernelService
 import com.tencent.qqnt.kernel.api.impl.MsgService
-import com.tencent.qqnt.kernel.nativeinterface.MsgRecord
 import de.robv.android.xposed.XposedBridge
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import moe.fuqiuluo.entries.MessagePush
-import moe.qwq.miko.ext.beforeHook
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.AioListener
-import moe.qwq.miko.internals.hooks.MessageHook
-import java.lang.reflect.Method
 
 internal object NTServiceFetcher {
     private lateinit var iKernelService: IKernelService

@@ -147,10 +147,10 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
         val interceptRecall = QwQSetting.getSetting<Boolean>(QwQSetting.INTERCEPT_RECALL)
             .getValue(null, null)
         if (!interceptRecall) return false
-        GlobalScope.launch {
+        GlobalScope.launch { runCatching {
             val reader = ByteReadPacket(richMsg)
             val buffer = try {
-                if (reader.readUInt() == message.msgHead.peerId) {
+                if (richMsg.size >= 7 && reader.readUInt() == message.msgHead.peerId) {
                     reader.discardExact(1)
                     reader.readBytes(reader.readShort().toInt())
                 } else richMsg
@@ -188,12 +188,12 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
             }
 
 
-/*            var operatorNick = GroupHelper.getTroopMemberNickByUin(groupCode, operator.toLong())?.let {
-                it.troopNick
-                    .ifNullOrEmpty(it.friendNick)
-                    .ifNullOrEmpty(it.showName)
-                    .ifNullOrEmpty(it.autoRemark)
-            }*/
+            /*            var operatorNick = GroupHelper.getTroopMemberNickByUin(groupCode, operator.toLong())?.let {
+                            it.troopNick
+                                .ifNullOrEmpty(it.friendNick)
+                                .ifNullOrEmpty(it.showName)
+                                .ifNullOrEmpty(it.autoRemark)
+                        }*/
             var operatorNick: String? = null
 
 
@@ -220,7 +220,7 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
                 text("的")
                 msgRef("消息", msgSeq)
             }
-        }
+        } }
         return true
     }
 }

@@ -1,6 +1,6 @@
 @file:Suppress("LocalVariableName")
 
-package moe.qwq.miko.internals.hooks
+package moe.qwq.miko.hooks
 
 import android.content.Context
 import com.tencent.common.config.pad.DeviceType

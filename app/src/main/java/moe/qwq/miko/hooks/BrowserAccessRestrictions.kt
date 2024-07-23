@@ -1,4 +1,5 @@
-package moe.qwq.miko.internals.hooks
+@file:Suppress("LocalVariableName")
+package moe.qwq.miko.hooks
 
 import android.content.Context
 import android.os.Bundle

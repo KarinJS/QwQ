@@ -1,5 +1,5 @@
 @file:Suppress("LocalVariableName", "UNCHECKED_CAST")
-package moe.qwq.miko.internals.hooks
+package moe.qwq.miko.hooks
 
 import android.content.Context
 import android.view.View

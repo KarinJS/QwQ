@@ -1,16 +1,12 @@
 package moe.qwq.miko.internals.hijackers
 
-import com.tencent.qphone.base.remote.FromServiceMsg
+import com.tencent.qphone.base.remote.ToServiceMsg
 
 interface IHijacker {
-
-    /**
-     * @return true If QQ is blocked from receiving this packet
-     */
-    fun onHandle(fromServiceMsg: FromServiceMsg): Boolean
+    fun onHandle(toServiceMsg: ToServiceMsg, isPb: Boolean): Boolean
 
     /**
      * @return the cmd of the packet
      */
-    fun getCmd(): String
+    val command: String
 }

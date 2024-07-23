@@ -2,18 +2,28 @@ package moe.qwq.miko
 
 import android.content.Context
 import moe.qwq.miko.actions.ActionProcess
-import moe.qwq.miko.internals.hooks.BrowserAccessRestrictions
+import moe.qwq.miko.hooks.BrowserAccessRestrictions
 import moe.qwq.miko.actions.FetchService
 import moe.qwq.miko.actions.*
-import moe.qwq.miko.internals.hooks.*
+import moe.qwq.miko.hooks.AllowGroupFlashPic
+import moe.qwq.miko.hooks.DefaultPacketHijacker
+import moe.qwq.miko.hooks.DisableFlashPictures
+import moe.qwq.miko.hooks.ForceTabletMode
+import moe.qwq.miko.hooks.HotUpdateSoPatch
+import moe.qwq.miko.hooks.MessageEncrypt
+import moe.qwq.miko.hooks.MessageTail
+import moe.qwq.miko.hooks.OneClickLike
+import moe.qwq.miko.hooks.QQCrashHook
+import moe.qwq.miko.hooks.RepeatMessage
+import moe.qwq.miko.hooks.SimplifyHomepageSidebar
 
 object ActionManager {
     // TODO(ksp实现全自动添加action)
     private val FIRST_ACTION = arrayOf(
         WebJsBridge::class.java, // ALWAYS RUN
         FetchService::class.java, // ALWAYS RUN
-        PacketHijacker::class.java, // ALWAYS RUN
         PatchMsfCore::class.java, // ALWAYS RUN
+        HookCodec::class.java, // ALWAYS RUN
 
         OneClickLike::class.java,
         ForceTabletMode::class.java,
@@ -24,7 +34,8 @@ object ActionManager {
         HotUpdateSoPatch::class.java,
 
         RepeatMessage::class.java,
-        MessageHook::class.java,
+        MessageTail::class.java,
+        MessageEncrypt::class.java,
         DisableFlashPictures::class.java,
         AllowGroupFlashPic::class.java,
         QQCrashHook::class.java,

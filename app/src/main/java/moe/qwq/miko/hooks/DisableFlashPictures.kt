@@ -1,4 +1,4 @@
-package moe.qwq.miko.internals.hooks
+package moe.qwq.miko.hooks
 
 import android.content.Context
 import com.tencent.mobileqq.aio.msglist.AIOMsgItemFactoryProvider
