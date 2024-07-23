@@ -38,5 +38,22 @@ data class MessageContentInfo(
 
 @Serializable
 data class MessageBody(
-    @ProtoNumber(2) val richMsg: ByteArray = EMPTY_BYTE_ARRAY,
+    @ProtoNumber(1) val richMsg: NTRichText? = null,
+    @ProtoNumber(2) val msgContent: ByteArray? = EMPTY_BYTE_ARRAY,
+)
+
+@Serializable
+data class NTRichText(
+    @ProtoNumber(2) val elems: ArrayList<Elem>? = null
+)
+
+@Serializable
+data class Elem(
+    @ProtoNumber(1) val text: Text? = null,
+)
+
+@Serializable
+data class Text(
+    @ProtoNumber(1) val text: String? = null,
+    @ProtoNumber(12) val resv: ByteArray? = null
 )

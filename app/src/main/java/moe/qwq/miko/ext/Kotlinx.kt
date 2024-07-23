@@ -1,6 +1,14 @@
 package moe.qwq.miko.ext
 
+import de.robv.android.xposed.XposedBridge
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newCoroutineContext
 import java.util.Locale
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 val EMPTY_BYTE_ARRAY = ByteArray(0)
 
@@ -61,4 +69,16 @@ fun String?.ifNullOrEmpty(defaultValue: () -> String?): String? {
         bs[i] = s.substring(i * 2, i * 2 + 2).toInt(16).toByte()
     }
     return bs
+}
+
+fun CoroutineScope.launchWithCatch(
+    context: CoroutineContext = EmptyCoroutineContext,
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit
+): Job {
+    return launch(context, start) {
+        kotlin.runCatching {
+            block()
+        }
+    }
 }

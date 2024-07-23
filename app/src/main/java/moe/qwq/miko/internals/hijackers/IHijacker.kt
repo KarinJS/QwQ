@@ -1,9 +1,16 @@
 package moe.qwq.miko.internals.hijackers
 
-import com.tencent.qphone.base.remote.ToServiceMsg
+import de.robv.android.xposed.XC_MethodHook
 
 interface IHijacker {
-    fun onHandle(toServiceMsg: ToServiceMsg, isPb: Boolean): Boolean
+    fun onHandle(
+        param: XC_MethodHook.MethodHookParam,
+        uin: String,
+        cmd: String,
+        seq: Int,
+        buffer: ByteArray,
+        bufferIndex: Int
+    ): Boolean
 
     /**
      * @return the cmd of the packet

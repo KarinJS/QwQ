@@ -177,6 +177,15 @@ internal fun Any.toInnerValuesString(): String {
                     }
                     builder.append("]")
                 }
+                is Array<*> -> {
+                    builder.append("[\n\t")
+                    v.forEach { value ->
+                        builder.append("\t")
+                        builder.append(value)
+                        builder.append("\n")
+                    }
+                    builder.append("]")
+                }
                 else -> builder.append(v)
             }
             builder.append("\n")

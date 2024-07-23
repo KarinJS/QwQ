@@ -2,10 +2,14 @@ package moe.qwq.miko.utils
 
 import android.annotation.SuppressLint
 import android.app.ActivityManager
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.os.Process
 import android.provider.Settings
+import moe.qwq.miko.ext.GlobalUi
+import moe.qwq.miko.ext.toast
 import mqq.app.MobileQQ
 import kotlin.random.Random
 
@@ -79,5 +83,13 @@ internal object PlatformTools {
             androidId = sb.toString()
         }
         return androidId
+    }
+
+    // 复制到剪切板
+    fun copyToClipboard(context: Context = MobileQQ.getContext(), text: String) {
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("label", text)
+        clipboard.setPrimaryClip(clip)
+        context.toast("已复制到剪切板")
     }
 }
