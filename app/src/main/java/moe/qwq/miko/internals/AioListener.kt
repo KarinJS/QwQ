@@ -122,6 +122,7 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
             val senderUid = recallData.info.senderUid
             val receiverUid = recallData.info.receiverUid
             val msgSeq = recallData.info.msgSeq
+            val msgClientSeq = recallData.info.msgClientSeq
             val msgUid = recallData.info.msgUid
             val msgTime = recallData.info.msgTime
             val wording = recallData.info.wording?.wording ?: ""

@@ -14,11 +14,12 @@ data class C2CRecallMessage(
 data class C2cRecallMsgInfo(
     @ProtoNumber(1) val senderUid: String,
     @ProtoNumber(2) val receiverUid: String,
-    @ProtoNumber(3) val msgSeq: Long = Long.MIN_VALUE,
+    @ProtoNumber(3) val msgClientSeq: Long = Long.MIN_VALUE,
     @ProtoNumber(4) val msgUid: Long = Long.MIN_VALUE,
     @ProtoNumber(5) val msgTime: Long = Long.MIN_VALUE,
 
     @ProtoNumber(13) val wording: RecallWording? = null,
+    @ProtoNumber(20) val msgSeq: Long = Long.MIN_VALUE,
 )
 
 @Serializable
