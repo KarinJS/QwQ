@@ -151,7 +151,7 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
         GlobalScope.launch {
             val reader = ByteReadPacket(richMsg)
             val buffer = try {
-                if (reader.readUInt() == message.msgHead.peerId.toUInt()) {
+                if (reader.readUInt() == message.msgHead.peerId) {
                     reader.discardExact(1)
                     reader.readBytes(reader.readShort().toInt())
                 } else richMsg
@@ -160,7 +160,9 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
             }
             val recallData = ProtoBuf.decodeFromByteArray<GroupRecallMessage>(buffer)
 
-            val groupCode = GroupHelper.groupUin2GroupCode(message.msgHead.peerId.toLong())
+            if (recallData.type != 7u || recallData.peerId == 0u) return@launch
+
+            val groupCode = recallData.peerId.toLong()
             val msgUid = message.content.msgUid
             val targetUid = recallData.operation.msgInfo?.senderUid ?: ""
             val operatorUid = recallData.operation.operatorUid ?: ""
