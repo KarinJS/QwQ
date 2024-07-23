@@ -149,7 +149,7 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
 
             val newRichText = UnknownFieldSet.newBuilder(decryptRichText)
             val newElements = oldRichText.getUnknownObjects(2).mapNotNull {
-                if (!it.hasField(1)) it else null
+                if (!it.hasField(1) && !it.hasField(6)) it else null
             }
             newRichText.mergeField(2, UnknownFieldSet.Field.newBuilder().also { field ->
                 newElements.forEach { field.addLengthDelimited(it.toByteString()) }
