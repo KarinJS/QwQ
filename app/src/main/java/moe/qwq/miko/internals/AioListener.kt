@@ -137,7 +137,7 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
                 id = senderUid
             )
             LocalGrayTips.addLocalGrayTip(contact, JsonGrayBusiId.AIO_AV_C2C_NOTICE, LocalGrayTips.Align.CENTER) {
-                text("对方尝试撤回自己的")
+                text("对方尝试撤回一条")
                 msgRef("消息", msgSeq)
             }
         }

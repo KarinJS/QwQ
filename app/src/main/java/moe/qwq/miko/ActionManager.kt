@@ -30,7 +30,8 @@ object ActionManager {
         RepeatMessage::class.java,
         MessageHook::class.java,
         DisableFlashPictures::class.java,
-        AllowGroupFlashPic::class.java
+        AllowGroupFlashPic::class.java,
+        QQCrashHook::class.java,
     )
 
     private val instanceMap = hashMapOf<Class<*>, IAction>()
