@@ -200,9 +200,20 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$serializationVersion")
     implementation("com.google.protobuf:protobuf-java:4.26.1")
     implementation("androidx.core:core-ktx:1.13.1")
+
+    implementation(ktor("client", "core"))
+    implementation(ktor("client", "content-negotiation"))
+    implementation(ktor("client", "cio"))
+    implementation(ktor("serialization", "kotlinx-json"))
+    implementation(ktor("network", "tls-certificates"))
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:core:1.5.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestImplementation("androidx.test:rules:1.5.0")
+}
+
+fun ktor(target: String, name: String): String {
+    return "io.ktor:ktor-$target-$name:2.3.3"
 }

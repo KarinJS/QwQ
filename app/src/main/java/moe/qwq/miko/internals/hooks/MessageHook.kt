@@ -1,24 +1,28 @@
 package moe.qwq.miko.internals.hooks
 
 import android.content.Context
-import com.tencent.mobileqq.qroute.QRoute
 import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
 import com.tencent.qqnt.kernel.nativeinterface.MsgElement
 import com.tencent.qqnt.kernel.nativeinterface.MsgRecord
+import com.tencent.qqnt.kernel.nativeinterface.PicElement
 import com.tencent.qqnt.kernel.nativeinterface.RichMediaFilePathInfo
 import com.tencent.qqnt.kernel.nativeinterface.TextElement
-import com.tencent.qqnt.msg.api.IMsgService
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.ActionProcess
 import moe.qwq.miko.actions.IAction
+import moe.qwq.miko.ext.ifNullOrEmpty
 import moe.qwq.miko.internals.helper.MessageCrypt
 import moe.qwq.miko.internals.helper.NTServiceFetcher
+import moe.qwq.miko.internals.helper.RichProtoHelper
 import moe.qwq.miko.internals.helper.msgService
 import moe.qwq.miko.internals.setting.QwQSetting
+import moe.qwq.miko.tools.DownloadUtils
 import moe.qwq.miko.tools.PlatformTools
-import mqq.app.MobileQQ
+import moe.qwq.miko.tools.PlatformTools.QQ_9_0_8_VER
 import java.io.File
 import java.io.RandomAccessFile
 
@@ -34,18 +38,60 @@ class MessageHook: IAction {
             val msgService = NTServiceFetcher.kernelService.msgService!!
             val originalPath = msgService.getRichMediaFilePathForMobileQQSend(
                 RichMediaFilePathInfo(2, 0, pic.md5HexStr, "", 1, 0, null, "", true)
-            ) ?: return
-            val originalFile = RandomAccessFile(originalPath, "r")
-            val length = originalFile.length()
-            originalFile.seek(length - 12)
-            val dataSize = originalFile.readInt()
-            val hash = originalFile.readInt()
-            val magic = originalFile.readInt()
+            )!!
+            if (decodeLocalMsg(originalPath, encrypt, pic, record)) return // 解密失败？文件不存在，大概率是这个图片没有被缓存在本地
+/*            val md5 = (pic.md5HexStr ?: pic.fileName
+                .replace("{", "")
+                .replace("}", "")
+                .replace("-", "").split(".")[0])
+                .uppercase()
+            var storeId = 0
+            if (PlatformTools.getQQVersionCode() > QQ_9_0_8_VER) {
+                storeId = pic.storeID
+            }
+            val originalUrl = pic.originImageUrl ?: ""
+            val downloadUrl = RichProtoHelper.getTempPicDownloadUrl(
+                record.chatType, originalUrl, md5, pic, storeId,
+                peer = when(record.chatType) {
+                    MsgConstant.KCHATTYPEDISC, MsgConstant.KCHATTYPEGROUP -> record.peerUin.toString()
+                    MsgConstant.KCHATTYPEC2C -> record.senderUin.toString()
+                    MsgConstant.KCHATTYPEGUILD -> record.channelId.ifNullOrEmpty { record.peerUin.toString() } ?: "0"
+                    else -> null
+                },
+                subPeer = when(record.chatType) {
+                    MsgConstant.KCHATTYPEDISC, MsgConstant.KCHATTYPEGROUP -> null
+                    MsgConstant.KCHATTYPEC2C -> null
+                    MsgConstant.KCHATTYPEGUILD -> record.guildId ?: "0"
+                    else -> null
+                }
+            )
+            val originalFileTmp = File("$originalPath.1")
+            DownloadUtils.download(downloadUrl, originalFileTmp)
+            *//*if(!decodeLocalMsg(originalFileTmp.absolutePath, encrypt, pic, record)) {
+                XposedBridge.log("[QwQ] 解密消息失败，无法解密消息: $originalFileTmp, ${originalFileTmp.exists()}, $downloadUrl")
+            } else {
+                //File(originalPath).let { if (!it.exists()) originalFileTmp.renameTo(it) }
+            }*/
+        }
+
+        private fun decodeLocalMsg(
+            originalPath: String,
+            encrypt: String,
+            pic: PicElement,
+            record: MsgRecord
+        ): Boolean {
+            if (!File(originalPath).exists()) return false
+            val originalRandomFile = RandomAccessFile(originalPath, "r")
+            val length = originalRandomFile.length()
+            originalRandomFile.seek(length - 12)
+            val dataSize = originalRandomFile.readInt()
+            val hash = originalRandomFile.readInt()
+            val magic = originalRandomFile.readInt()
             if (magic == 0x114514 && hash == (encrypt + record.senderUin).hashCode()) {
                 val data = ByteArray(dataSize)
-                originalFile.seek(length - 12 - dataSize)
-                originalFile.read(data)
-                originalFile.close()
+                originalRandomFile.seek(length - 12 - dataSize)
+                originalRandomFile.read(data)
+                originalRandomFile.close()
                 MessageCrypt.decrypt(data, encrypt).onSuccess {
                     record.elements.clear()
                     record.elements.addAll(it)
@@ -53,6 +99,7 @@ class MessageHook: IAction {
                     XposedBridge.log("消息解密失败: ${it.stackTraceToString()}")
                 }
             }
+            return true
         }
     }
 

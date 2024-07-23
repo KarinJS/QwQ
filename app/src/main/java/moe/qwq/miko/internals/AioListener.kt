@@ -159,7 +159,7 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
             }
             val recallData = ProtoBuf.decodeFromByteArray<GroupRecallMessage>(buffer)
 
-            val groupCode = GroupHelper.groupUin2GroupCode(message.msgHead.peerId)
+            val groupCode = GroupHelper.groupUin2GroupCode(message.msgHead.peerId.toLong())
             val msgUid = message.content.msgUid
             val targetUid = recallData.operation.msgInfo?.senderUid ?: ""
             val operatorUid = recallData.operation.operatorUid ?: ""
@@ -181,7 +181,7 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
             var targetNick: String? = null
             if (targetNick == null) {
                 targetNick = (if (targetUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode, target.toLong()).getOrNull())?.let {
-                    it.troopnick.ifNullOrEmpty(it.friendnick)
+                    it.troopnick.ifNullOrEmpty { it.friendnick }
                 } ?: targetUid
             }
 
@@ -197,7 +197,7 @@ override fun onRecvMsg(recordLisrt: ArrayList<MsgRecord>) {
 
             if (operatorNick == null) {
                 operatorNick = (if (operatorUid.isEmpty()) null else GroupHelper.getTroopMemberInfoByUin(groupCode, operator.toLong()).getOrNull())?.let {
-                    it.troopnick.ifNullOrEmpty(it.friendnick)
+                    it.troopnick.ifNullOrEmpty { it.friendnick }
                 } ?: operatorUid
             }
 

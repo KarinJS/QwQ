@@ -41,6 +41,10 @@ internal fun Class<*>.hookMethod(name: String): XCHook {
     }
 }
 
+internal fun Class<*>.hookMethod(name: String, hook: XC_MethodHook) {
+    XposedBridge.hookAllMethods(this, name, hook)
+}
+
 internal fun beforeHook(ver: Int = XCallback.PRIORITY_DEFAULT, block: (param: XC_MethodHook.MethodHookParam) -> Unit): XC_MethodHook {
     return object :XC_MethodHook(ver) {
         override fun beforeHookedMethod(param: MethodHookParam) {

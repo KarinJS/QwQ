@@ -1,4 +1,5 @@
-@file:OptIn(ExperimentalSerializationApi::class)
+@file:OptIn(ExperimentalSerializationApi::class, DelicateCoroutinesApi::class)
+@file:Suppress("UNCHECKED_CAST")
 
 package moe.qwq.miko.internals.helper
 
@@ -7,18 +8,24 @@ import com.tencent.qqnt.kernel.api.IKernelService
 import com.tencent.qqnt.kernel.api.impl.MsgService
 import com.tencent.qqnt.kernel.nativeinterface.MsgRecord
 import de.robv.android.xposed.XposedBridge
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import moe.fuqiuluo.entries.MessagePush
+import moe.qwq.miko.ext.beforeHook
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.AioListener
 import moe.qwq.miko.internals.hooks.MessageHook
+import java.lang.reflect.Method
 
 internal object NTServiceFetcher {
     private lateinit var iKernelService: IKernelService
     private var curKernelHash = 0
-    private var isMsgListenerHookLoaded = false
+    //private var isMsgListenerHookLoaded = false
 
     fun onFetch(service: IKernelService) {
         val msgService = service.msgService ?: return
@@ -37,21 +44,30 @@ internal object NTServiceFetcher {
     private fun initNTKernel(msgService: MsgService) {
         XposedBridge.log("[QwQ] Init NT Kernel.")
 
-        msgService.javaClass.hookMethod("addMsgListener").before {
+/*        msgService.javaClass.hookMethod("addMsgListener").before {
             val listener = it.args[0]
             if (isMsgListenerHookLoaded) return@before
-            listener.javaClass.hookMethod("onRecvMsg").before {
-                val msgs = it.args[0] as ArrayList<MsgRecord>
-                msgs.forEach { msg ->
+
+            val hookV1 = beforeHook {
+                val newMsgs = arrayListOf<MsgRecord>()
+                (it.args[0] as ArrayList<MsgRecord>).forEach { msg ->
                     MessageHook.tryHandleMessageDecrypt(msg)
+                    newMsgs.add(msg)
                 }
+                it.args[0] = newMsgs
+            }
+            val hookV2 = beforeHook {
+                val msg = it.args[0] as MsgRecord
+                MessageHook.tryHandleMessageDecrypt(msg)
             }
 
-            listener.javaClass.hookMethod("onAddSendMsg").before {
-                val record = it.args[0] as MsgRecord
-                MessageHook.tryHandleMessageDecrypt(record)
-            }
-        }
+            listener.javaClass.hookMethod("onRecvMsg", hookV1)
+            listener.javaClass.hookMethod("onMsgInfoListAdd", hookV1)
+            listener.javaClass.hookMethod("onMsgInfoListUpdate", hookV1)
+            listener.javaClass.hookMethod("onAddSendMsg", hookV2)
+
+            isMsgListenerHookLoaded = true
+        }*/
 
         kernelService.wrapperSession.javaClass.hookMethod("onMsfPush").before {
             runCatching {

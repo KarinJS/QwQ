@@ -7,6 +7,7 @@ import moe.qwq.miko.internals.hooks.BrowserAccessRestrictions
 import moe.qwq.miko.actions.FetchService
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.actions.PacketHijacker
+import moe.qwq.miko.actions.PatchMsfCore
 import moe.qwq.miko.actions.WebJsBridge
 import moe.qwq.miko.internals.hooks.*
 
@@ -16,6 +17,7 @@ object ActionManager {
         WebJsBridge::class.java, // ALWAYS RUN
         FetchService::class.java, // ALWAYS RUN
         PacketHijacker::class.java, // ALWAYS RUN
+        PatchMsfCore::class.java, // ALWAYS RUN
 
         OneClickLike::class.java,
         ForceTabletMode::class.java,
