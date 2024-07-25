@@ -8,15 +8,24 @@ import android.content.Context
 import android.content.pm.PackageInfo
 import android.os.Process
 import android.provider.Settings
-import moe.qwq.miko.ext.GlobalUi
+import moe.fuqiuluo.xposed.loader.LuoClassloader
 import moe.qwq.miko.ext.toast
 import mqq.app.MobileQQ
 import kotlin.random.Random
 
 internal object PlatformTools {
     const val QQ_9_0_8_VER = 5540
+    const val QQ_9_0_15_VER = 5626
     const val QQ_9_0_65_VER = 6566
     const val QQ_9_0_70_VER = 6700
+
+    fun isQQnt(): Boolean {
+        return try {
+            LuoClassloader.load("com.tencent.qqnt.base.BaseActivity") != null
+        } catch (e: Exception) {
+            false
+        }
+    }
 
     fun getQUA(): String {
         return "V1_AND_SQ_${getQQVersion(MobileQQ.getContext())}_${getQQVersionCode()}_YYB_D"

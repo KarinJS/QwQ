@@ -15,6 +15,7 @@ import moe.qwq.miko.hooks.MessageTail
 import moe.qwq.miko.hooks.OneClickLike
 import moe.qwq.miko.hooks.QQCrashHook
 import moe.qwq.miko.hooks.RepeatMessage
+import moe.qwq.miko.hooks.SimplifyBubbleFont
 import moe.qwq.miko.hooks.SimplifyHomepageSidebar
 
 object ActionManager {
@@ -29,6 +30,7 @@ object ActionManager {
         ForceTabletMode::class.java,
 
         BrowserAccessRestrictions::class.java, // ALWAYS RUN
+        SimplifyBubbleFont::class.java,
         SimplifyHomepageSidebar::class.java,
         DefaultPacketHijacker::class.java,
         HotUpdateSoPatch::class.java,
