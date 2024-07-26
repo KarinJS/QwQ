@@ -6,10 +6,13 @@ import com.tencent.mobileqq.activity.VisitorsActivity
 import com.tencent.mobileqq.data.CardProfile
 import com.tencent.mobileqq.profile.vote.VoteHelper
 import com.tencent.mobileqq.profilecard.base.component.AbsProfileHeaderComponent
+import com.tencent.mobileqq.vas.api.IVasSingedApi
+import de.robv.android.xposed.XposedBridge
 import moe.fuqiuluo.entries.MethodEnum.VoteHelperVote
 import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.hookMethod
+import moe.qwq.miko.internals.QQInterfaces
 import moe.qwq.miko.internals.locators.DvmLocator
 import moe.qwq.miko.internals.setting.QwQSetting.ONE_KEY_LIKE
 import java.lang.reflect.Method
@@ -33,20 +36,30 @@ class OneClickLike: IAction {
             val profile = view.tag
             if (profile == null || profile !is CardProfile) return@before
             val voteHelper = voteHelperField.get(it.thisObject) as VoteHelper
-            for (i in 0..20) {
+            for (i in 0..<getMaxVoteCount()) {
                 vote.invoke(voteHelper, profile, view)
             }
             it.result = Unit
         }
 
         AbsProfileHeaderComponent::class.java.hookMethod("handleVoteBtnClickForGuestProfile").before {
-            val selfMethod = it.method as Method
-            if (!selfMethod.isAccessible) {
-                selfMethod.isAccessible = true
-            }
-            for (i in 0..19) {
-                selfMethod.invoke(it.thisObject, it.args[0])
+            for (i in 0..<getMaxVoteCount()) {
+                XposedBridge.invokeOriginalMethod(it.method, it.thisObject, it.args)
             }
         }
+    }
+
+    private fun getMaxVoteCount(): Int {
+        return if (isSVip()) 20 else 10
+    }
+
+    private fun isSVip(): Boolean {
+        kotlin.runCatching {
+            val service = QQInterfaces.app.getRuntimeService(IVasSingedApi::class.java, "all")
+            return service.vipStatus.isSVip
+        }.onFailure {
+            XposedBridge.log(it)
+        }
+        return true
     }
 }

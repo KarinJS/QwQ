@@ -129,9 +129,9 @@ class MessageEncrypt: IAction, QQInterfaces() {
         val elements = UnknownFieldSet.Field.newBuilder()
         msgBody.getUnknownObject(1).let { richText ->
             richText.getUnknownObjects(2).forEach { element ->
-                 if (element.hasField(37) || element.hasField(9)) {
-                     elements.addLengthDelimited(element.toByteString()) // 通用字段，不自己合成
-                 }
+                if (element.hasField(37) || element.hasField(9)) {
+                    elements.addLengthDelimited(element.toByteString()) // 通用字段，不自己合成
+                }
             }
         }
 
