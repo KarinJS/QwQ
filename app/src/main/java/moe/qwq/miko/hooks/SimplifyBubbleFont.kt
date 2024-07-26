@@ -2,8 +2,10 @@ package moe.qwq.miko.hooks
 
 import android.content.Context
 import com.tencent.qqnt.kernel.nativeinterface.VASMsgBubble
+import com.tencent.qqnt.kernel.nativeinterface.VASMsgFont
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
+import moe.fuqiuluo.processor.HookAction
 import moe.fuqiuluo.xposed.loader.LuoClassloader
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.beforeHook
@@ -15,28 +17,34 @@ import mqq.app.MobileQQ
 import java.io.File
 import java.lang.reflect.Modifier
 
+@HookAction("简化气泡字体")
 class SimplifyBubbleFont: IAction {
-
     private val paths = arrayOf("/bubble_info", "/files/bubble_info", "/files/bubble_paster", "/files/vas_material_folder/bubble_dir")
 
     override fun onRun(ctx: Context) {
-        // 简化气泡
-        val bubbleClsName = "com.tencent.qqnt.kernel.nativeinterface.VASMsgBubble"
         if (PlatformTools.getQQVersionCode() >= QQ_9_0_15_VER) {
-            XposedBridge.hookAllConstructors(Class.forName(bubbleClsName), object : XC_MethodHook() {
+            XposedBridge.hookAllConstructors(VASMsgBubble::class.java, object : XC_MethodHook() {
                 override fun afterHookedMethod(param: MethodHookParam) {
                     val v = param.thisObject as VASMsgBubble
                     v.bubbleId = 0
                     v.subBubbleId = 0
                 }
             })
+            XposedBridge.hookAllConstructors(VASMsgFont::class.java, object : XC_MethodHook() {
+                override fun afterHookedMethod(param: MethodHookParam) {
+                    val v = param.thisObject as VASMsgFont
+                    v.fontId = 0
+                    v.magicFontType = 0
+                }
+            })
         } else if (PlatformTools.isQQnt()) {
-            val bubbleCls = LuoClassloader.load(bubbleClsName)
             val hook = beforeHook {
                 it.result = 0
             }
-            bubbleCls?.hookMethod("getBubbleId", hook)
-            bubbleCls?.hookMethod("getSubBubbleId", hook)
+            VASMsgBubble::class.java.hookMethod("getBubbleId", hook)
+            VASMsgBubble::class.java.hookMethod("getSubBubbleId", hook)
+            VASMsgFont::class.java.hookMethod("getFontId", hook)
+            VASMsgFont::class.java.hookMethod("getMagicFontType", hook)
         } else {
             updateChmod(paths, true)
             val kAIOMsgItem = LuoClassloader.load("com.tencent.mobileqq.aio.msg.AIOMsgItem")
@@ -51,8 +59,6 @@ class SimplifyBubbleFont: IAction {
             }
         }
     }
-
-    // TODO 简化字体
 
     private fun updateChmod(paths: Array<String>, enabled: Boolean) {
         for (path in paths) {
