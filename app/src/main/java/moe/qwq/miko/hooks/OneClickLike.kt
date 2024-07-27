@@ -15,7 +15,6 @@ import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.QQInterfaces
 import moe.qwq.miko.internals.locators.DvmLocator
 import moe.qwq.miko.internals.setting.QwQSetting.ONE_KEY_LIKE
-import java.lang.reflect.Method
 
 @HookAction("一键20赞")
 class OneClickLike: IAction {

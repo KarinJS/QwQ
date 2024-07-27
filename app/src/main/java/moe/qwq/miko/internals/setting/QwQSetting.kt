@@ -6,6 +6,7 @@ import mqq.app.MobileQQ
 import kotlin.reflect.KProperty
 
 object QwQSetting {
+    const val DISABLE_QRLOGIN_CHECK: String = "disable_qrlogin_check"
     const val DISABLE_QQ_CRASH_REPORT: String = "disable_qq_crash_report"
     const val MESSAGE_ENCRYPT: String = "message_encrypt"
     const val MESSAGE_TAIL: String = "message_tail"
@@ -53,7 +54,8 @@ object QwQSetting {
         ALLOW_GROUP_FLASH_PIC to Setting<Boolean>(ALLOW_GROUP_FLASH_PIC, SettingType.BOOLEAN),
         MESSAGE_TAIL to Setting(MESSAGE_TAIL, SettingType.STRING, ""),
         MESSAGE_ENCRYPT to Setting(MESSAGE_ENCRYPT, SettingType.STRING, ""), // 消息加密密钥
-        DISABLE_QQ_CRASH_REPORT to Setting(DISABLE_QQ_CRASH_REPORT, SettingType.BOOLEAN, true)
+        DISABLE_QQ_CRASH_REPORT to Setting(DISABLE_QQ_CRASH_REPORT, SettingType.BOOLEAN, true),
+        DISABLE_QRLOGIN_CHECK to Setting(DISABLE_QRLOGIN_CHECK, SettingType.BOOLEAN, true)
     )
 
     val settingUrl: String

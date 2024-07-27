@@ -2,11 +2,9 @@ package moe.qwq.miko.hooks
 
 import android.content.Context
 import com.tencent.mobileqq.earlydownload.xmldata.XmlData
-import de.robv.android.xposed.XposedBridge
 import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.hookMethod
-import moe.qwq.miko.internals.setting.QwQSetting
 import moe.qwq.miko.internals.setting.QwQSetting.DISABLE_HOT_UPDATE_SO_BY_TRAFFIC
 
 @HookAction("禁用热更新so")

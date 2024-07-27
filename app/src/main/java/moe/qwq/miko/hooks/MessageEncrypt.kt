@@ -4,14 +4,9 @@ import android.content.Context
 import com.google.protobuf.ByteString
 import com.google.protobuf.UnknownFieldSet
 import com.tencent.mobileqq.fe.FEKit
-import com.tencent.mobileqq.msf.core.MsfCore
-import com.tencent.mobileqq.sign.QQSecuritySign
-import com.tencent.qphone.base.remote.ToServiceMsg
 import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XposedBridge
 import kotlinx.io.core.BytePacketBuilder
 import kotlinx.io.core.readBytes
-import kotlinx.io.core.toByteArray
 import kotlinx.io.core.writeFully
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
@@ -21,22 +16,13 @@ import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.ActionProcess
 import moe.qwq.miko.actions.HookCodec
 import moe.qwq.miko.actions.IAction
-import moe.qwq.miko.ext.EMPTY_BYTE_ARRAY
 import moe.qwq.miko.ext.getUnknownObject
 import moe.qwq.miko.ext.getUnknownObjects
-import moe.qwq.miko.ext.toHexString
-import moe.qwq.miko.ext.toInnerValuesString
 import moe.qwq.miko.internals.QQInterfaces
 import moe.qwq.miko.internals.hijackers.IHijacker
 import moe.qwq.miko.internals.setting.QwQSetting
 import moe.qwq.miko.utils.AesUtils.aesEncrypt
 import moe.qwq.miko.utils.AesUtils.md5
-import moe.qwq.miko.utils.PlatformTools
-import tencent.im.msg.im_msg_body.MsgBody
-import java.security.MessageDigest
-import javax.crypto.Cipher
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
 @HookAction(desc = "消息加密抄送")
 class MessageEncrypt: IAction, QQInterfaces() {

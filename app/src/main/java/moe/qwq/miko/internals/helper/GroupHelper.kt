@@ -2,7 +2,6 @@
 
 package moe.qwq.miko.internals.helper
 
-import com.tencent.common.app.AppInterface
 import com.tencent.mobileqq.app.BusinessHandlerFactory
 import com.tencent.mobileqq.data.troop.TroopMemberInfo
 import com.tencent.mobileqq.data.troop.TroopMemberNickInfo

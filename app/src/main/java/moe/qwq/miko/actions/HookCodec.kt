@@ -8,10 +8,7 @@ import moe.fuqiuluo.xposed.loader.LuoClassloader
 import moe.qwq.miko.ext.EMPTY_BYTE_ARRAY
 import moe.qwq.miko.ext.beforeHook
 import moe.qwq.miko.ext.hookMethod
-import moe.qwq.miko.ext.toHexString
-import moe.qwq.miko.ext.toInnerValuesString
 import moe.qwq.miko.internals.hijackers.IHijacker
-import moe.qwq.miko.utils.PlatformTools
 
 @HookAction(desc = "HookWrapperCodec实现捕获抓包")
 class HookCodec: AlwaysRunAction() {

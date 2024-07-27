@@ -2,11 +2,13 @@ package moe.qwq.miko.hooks
 
 import android.content.Context
 import de.robv.android.xposed.XposedHelpers
+import moe.fuqiuluo.processor.HookAction
 import moe.fuqiuluo.xposed.loader.LuoClassloader
 import moe.qwq.miko.actions.IAction
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.setting.QwQSetting
 
+@HookAction("群成员at排序优化")
 class OptimizeAtSort: IAction {
     override fun onRun(ctx: Context) {
         val atSelectMemberUseCase = LuoClassloader.load("com.tencent.mobileqq.aio.input.at.business.AIOAtSelectMemberUseCase")

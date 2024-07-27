@@ -7,11 +7,9 @@ import com.google.protobuf.UnknownFieldSet
 import com.tencent.qqnt.kernel.nativeinterface.JsonGrayBusiId
 import com.tencent.qqnt.kernel.nativeinterface.MsgConstant
 import de.robv.android.xposed.XC_MethodHook.MethodHookParam
-import de.robv.android.xposed.XposedBridge
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.io.core.BytePacketBuilder
 import kotlinx.io.core.ByteReadPacket
 import kotlinx.io.core.discardExact
 import kotlinx.io.core.readBytes
@@ -20,22 +18,20 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import moe.fuqiuluo.entries.C2CRecallMessage
+import moe.fuqiuluo.entries.GroupRecallMessage
 import moe.fuqiuluo.entries.Message
 import moe.fuqiuluo.entries.MessageHead
-import moe.fuqiuluo.entries.GroupRecallMessage
 import moe.fuqiuluo.entries.MessagePush
 import moe.fuqiuluo.entries.TextMsgExtPbResvAttr
 import moe.qwq.miko.ext.getUnknownObject
 import moe.qwq.miko.ext.getUnknownObjects
 import moe.qwq.miko.ext.ifNullOrEmpty
 import moe.qwq.miko.ext.launchWithCatch
-import moe.qwq.miko.ext.toHexString
 import moe.qwq.miko.internals.helper.ContactHelper
 import moe.qwq.miko.internals.helper.GroupHelper
 import moe.qwq.miko.internals.helper.LocalGrayTips
 import moe.qwq.miko.internals.setting.QwQSetting
 import moe.qwq.miko.utils.AesUtils
-import moe.qwq.miko.utils.PlatformTools
 
 object AioListener {
 /*TODO TRY FIX GRAYTIP FOR FLASH PIC

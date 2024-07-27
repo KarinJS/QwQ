@@ -3,15 +3,12 @@ package moe.qwq.miko.actions
 
 import android.content.Context
 import com.tencent.mobileqq.msf.sdk.MsfMessagePair
-import com.tencent.qphone.base.remote.ToServiceMsg
 import de.robv.android.xposed.XposedBridge
-import moe.qwq.miko.internals.msf.MSFHandler.onPush
-import moe.qwq.miko.internals.msf.MSFHandler.onResp
 import moe.fuqiuluo.processor.HookAction
 import moe.fuqiuluo.xposed.loader.LuoClassloader
-import moe.qwq.miko.ext.beforeHook
 import moe.qwq.miko.ext.hookMethod
-import moe.qwq.miko.internals.hijackers.IHijacker
+import moe.qwq.miko.internals.msf.MSFHandler.onPush
+import moe.qwq.miko.internals.msf.MSFHandler.onResp
 
 @HookAction("注入MSF收包任务")
 class PatchMsfCore: AlwaysRunAction() {
