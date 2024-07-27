@@ -69,6 +69,35 @@ internal fun afterHook(ver: Int = XCallback.PRIORITY_DEFAULT, block: (param: XC_
     }
 }
 
+internal fun Any.field(
+    fieldName: String,
+    isStatic: Boolean = false,
+    fieldType: Class<*>? = null
+): Field {
+    if (fieldName.isBlank()) throw IllegalArgumentException("Field name must not be empty!")
+    var c: Class<*> = if (this is Class<*>) this else this.javaClass
+    do {
+        c.declaredFields
+            .filter { isStatic == Modifier.isStatic(it.modifiers) }
+            .firstOrNull { (fieldType == null || it.type == fieldType) && (it.name == fieldName) }
+            ?.let { it.isAccessible = true;return it }
+    } while (c.superclass?.also { c = it } != null)
+    throw NoSuchFieldException("Name: $fieldName,Static: $isStatic, Type: ${if (fieldType == null) "ignore" else fieldType.name}")
+}
+
+internal fun Class<*>.staticField(fieldName: String, type: Class<*>? = null): Field {
+    if (fieldName.isBlank()) throw IllegalArgumentException("Field name must not be empty!")
+    return this.field(fieldName, true, type)
+}
+
+internal fun Class<*>.getStaticObject(
+    objName: String,
+    type: Class<*>? = null
+): Any {
+    if (objName.isBlank()) throw IllegalArgumentException("Object name must not be empty!")
+    return this.staticField(objName, type).get(this)!!
+}
+
 object FuzzyClassKit {
     private val dic = arrayOf(
         "r" , "t", "o", "a", "b", "c", "e", "f", "d", "g", "h", "i", "j", "k", "l", "m", "n", "p", "q", "s", "t", "u", "v", "w", "x", "y", "z"
