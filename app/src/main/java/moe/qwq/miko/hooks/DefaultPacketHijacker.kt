@@ -5,6 +5,7 @@ import com.tencent.qphone.base.util.CodecWarpper
 import moe.fuqiuluo.processor.HookAction
 import moe.qwq.miko.actions.ActionProcess
 import moe.qwq.miko.actions.IAction
+import moe.qwq.miko.ext.EMPTY_BYTE_ARRAY
 import moe.qwq.miko.ext.hookMethod
 import moe.qwq.miko.internals.setting.QwQSetting
 import moe.qwq.miko.utils.PlatformTools
@@ -19,36 +20,10 @@ class DefaultPacketHijacker: IAction {
             val cmd = it.args[5] as? String
                 ?: return@before
             if (cmd in TRASH_PACKET) {
-                it.result = Unit
+                it.result = EMPTY_BYTE_ARRAY
             } else if (cmd == "ProfileService.CheckUpdateReq") {
-                it.result = Unit
+                it.result = EMPTY_BYTE_ARRAY
             }
-
-            /*  仅为测试
-            else if (cmd in TEST_PACKET) {
-                log("[QwQ 已拦截发送包] cmd: $cmd")
-                it.result = Unit
-            } */
-
-            /* 协议一键赞 问题多多
-            else if (QwQSetting.oneClickLike && toServiceMsg.serviceCmd == "VisitorSvc.ReqFavorite" &&
-                !toServiceMsg.extraData.getBoolean("qwq", false)
-                ) {
-                toServiceMsg.extraData.putBoolean("qwq", true)
-                GlobalScope.launch {
-                    var total = 0
-                    while (total < 20) {
-                        var random = Random.nextInt(1 .. 10)
-                        if (20 - total < random) {
-                            random = 20 - total
-                        }
-                        toServiceMsg.extraData.putInt("iCount", random)
-                        app.sendToService(toServiceMsg)
-                        total += random
-                    }
-                }
-                it.result = Unit
-            }*/
         }
     }
 
@@ -60,7 +35,6 @@ class DefaultPacketHijacker: IAction {
             "QQClubComm.getNewFlag",
             "LightAppSvc.mini_app_ad.GetAd",
             "TianShu.GetAds", // noteworthy
-            "LightAppSvc.mini_app_info.GetAppInfoByLink",
             "trpc.qqshop.adpush.PushService.GetAd"
         )
     }
