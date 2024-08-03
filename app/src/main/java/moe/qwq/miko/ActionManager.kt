@@ -9,6 +9,7 @@ import moe.qwq.miko.hooks.AllowGroupFlashPic
 import moe.qwq.miko.hooks.DefaultPacketHijacker
 import moe.qwq.miko.hooks.DisableFlashPictures
 import moe.qwq.miko.hooks.DisableQRLoginCheck
+import moe.qwq.miko.hooks.DisableReplyAt
 import moe.qwq.miko.hooks.ForceTabletMode
 import moe.qwq.miko.hooks.HotUpdateSoPatch
 import moe.qwq.miko.hooks.MessageEncrypt
@@ -44,7 +45,8 @@ object ActionManager {
         AllowGroupFlashPic::class.java,
         QQCrashHook::class.java,
         OptimizeAtSort::class.java,
-        DisableQRLoginCheck::class.java
+        DisableQRLoginCheck::class.java,
+        DisableReplyAt::class.java
     )
 
     private val instanceMap = hashMapOf<Class<*>, IAction>()
