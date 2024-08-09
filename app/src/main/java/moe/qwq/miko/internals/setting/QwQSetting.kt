@@ -6,6 +6,7 @@ import mqq.app.MobileQQ
 import kotlin.reflect.KProperty
 
 object QwQSetting {
+    const val CHECK_BOX_HOOK: String = "check_box_hook"
     const val DISABLE_REPLY_AT: String = "disable_reply_at"
     const val DISABLE_QRLOGIN_CHECK: String = "disable_qrlogin_check"
     const val DISABLE_QQ_CRASH_REPORT: String = "disable_qq_crash_report"
@@ -57,7 +58,8 @@ object QwQSetting {
         MESSAGE_ENCRYPT to Setting(MESSAGE_ENCRYPT, SettingType.STRING, ""), // 消息加密密钥
         DISABLE_QQ_CRASH_REPORT to Setting(DISABLE_QQ_CRASH_REPORT, SettingType.BOOLEAN, true),
         DISABLE_QRLOGIN_CHECK to Setting(DISABLE_QRLOGIN_CHECK, SettingType.BOOLEAN, true),
-        DISABLE_REPLY_AT to Setting<Boolean>(DISABLE_REPLY_AT, SettingType.BOOLEAN)
+        DISABLE_REPLY_AT to Setting<Boolean>(DISABLE_REPLY_AT, SettingType.BOOLEAN),
+        CHECK_BOX_HOOK to Setting(CHECK_BOX_HOOK, SettingType.BOOLEAN, true)
     )
 
     val settingUrl: String

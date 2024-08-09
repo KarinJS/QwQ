@@ -6,6 +6,7 @@ import moe.qwq.miko.hooks.BrowserAccessRestrictions
 import moe.qwq.miko.actions.FetchService
 import moe.qwq.miko.actions.*
 import moe.qwq.miko.hooks.AllowGroupFlashPic
+import moe.qwq.miko.hooks.CheckBoxHook
 import moe.qwq.miko.hooks.DefaultPacketHijacker
 import moe.qwq.miko.hooks.DisableFlashPictures
 import moe.qwq.miko.hooks.DisableQRLoginCheck
@@ -46,7 +47,8 @@ object ActionManager {
         QQCrashHook::class.java,
         OptimizeAtSort::class.java,
         DisableQRLoginCheck::class.java,
-        DisableReplyAt::class.java
+        DisableReplyAt::class.java,
+        CheckBoxHook::class.java
     )
 
     private val instanceMap = hashMapOf<Class<*>, IAction>()
